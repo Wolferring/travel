@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>WhimsyLove-旅途记录</title>
+  <style>
+    *{margin: 0;padding:0;}
+    body{
+
+    } 
+    #container {width:100vw; height: 100vh; }  
+  </style>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no"> 
+  <script src="https://webapi.amap.com/loader.js"></script>  
+</head>
+<body>
+  <div id="container"></div>
+  <script>
+    const interestPoints = [
+      {
+        id:0,
+        weight:0,
+        lnglat:["104.059399","30.562253"],
+        title:"成都",
+        remark:"成都都成",
+        address:"",
+        dateTime:"",
+        createTime:"",
+        photos:[],
+        people:[],
+      },
+      {
+        id:0,
+        weight:0,
+        lnglat:["104.159399","30.562253"],
+        title:"成都",
+        remark:"成都都成",
+        address:"",
+        dateTime:"",
+        createTime:"",
+        photos:[],
+        people:[],
+      }      
+    ]
+  </script> 
+  <script>
+    AMapLoader.load({
+        "key": "42b77b78693257d472dc3c70311c3b1f",              // 申请好的Web端开发者Key，首次调用 load 时必填
+        "version": "2.0",   // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+        "plugins": ["AMap.MarkerCluster","AMap.MouseTool"]           // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+    }).then((AMap)=>{
+      window.AMap = AMap
+      initMap(AMap)
+    }).catch((e)=>{
+        console.error(e);  //加载错误提示
+    });   
+
+    const initMap = (AMap)=>{
+      var map = new AMap.Map('container', {
+          zoom:11,//级别
+          zooms:[4,12],
+          doubleClickZoom:false,
+      })      
+      //创建地图右键菜单
+      var contextMenu = new AMap.ContextMenu();
+      var rightContextMenu = new AMap.ContextMenu();
+
+      const markerRightClick = (e)=>{
+        rightContextMenu.open(map, e.lnglat);
+      }      
+      const createMarkerContent = (poi)=>{
+        return `<h3>${poi.title}</h3>
+        <p>${poi.remark}</p>
+        <button type="button" onclick="markerRemoveClick">删除</button>`
+      }      
+      var markerClick = (e) => {
+          pointDetailWindow.setContent(e.target.content);
+          pointDetailWindow.open(map, e.target.getPosition());
+      }      
+      var markerRemoveClick = (e)=>{
+
+      }
+      var pointDetailWindow = new AMap.InfoWindow({
+        closeWhenClickMap:true,
+        offset: new AMap.Pixel(0, -30)
+      });
+      for (var i = 0, marker; i < interestPoints.length; i++) {
+          var marker = new AMap.Marker({
+              position: interestPoints[i]['lnglat'],
+              map: map
+          });
+          marker.content = createMarkerContent(interestPoints[i]);
+          marker.on('click', markerClick);
+          // marker.emit('click', {target: marker});
+          marker.on('rightclick',markerRightClick)
+      }
+
+
+      //右键添加Marker标记
+      contextMenu.addItem("添加标记", function (e) {
+          var marker = new AMap.Marker({
+              map: map,
+              position: contextMenuPositon //基点位置
+          });       
+      }, 0);
+      //右键添加Marker标记
+      rightContextMenu.addItem("移除标记", function (e) {
+        console.log(e)      
+      }, 0);      
+
+      //地图绑定鼠标右击事件——弹出右键菜单
+      map.on('rightclick', function (e) {
+          contextMenu.open(map, e.lnglat);
+          contextMenuPositon = e.lnglat;
+      });       
+
+
+      map.setFitView();
+    }
+  </script>
+</body>
+</html>
