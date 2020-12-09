@@ -9,59 +9,101 @@
     body{
 
     } 
-    #container {width:100vw; height: 100vh; }  
+    #container {width:100vw; height: 100vh; }
+    .point-form-container{
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100vh;
+      width: 20vw;
+      min-width: 200px;
+      background-color: rgba(255,255,255,.6);
+      backdrop-filter:  blur(5px);
+      transition: all .3s ease;
+      transform: translateX(100%);
+    } 
+    .point-form-container.active{
+      transform: translateX(0);
+    }
+    .point-form{
+      display: flex;
+      flex-direction: column;
+      padding: 10px 20px;
+    }  
   </style>
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no"> 
-  <script src="https://webapi.amap.com/loader.js"></script>  
+  <script src="https://webapi.amap.com/loader.js"></script> 
+  <script src="./static/fetch.js"></script> 
 </head>
 <body>
   <div id="container"></div>
+  <div class="point-form-container" id="point-form-container">
+    <form class="point-form" id="point-form">
+      <label for="">地点名称</label>
+      <input type="text" name="title">
+      <label for="">备注</label>
+      <textarea rows="4" name="remark"></textarea> 
+      <label for="">详细地址</label>
+      <input type="text" name="address">
+      <label for="">去的时间</label>
+      <input type="text" name="dateTime">
+
+      <button type="button" id="point-form-submit">提交</button>
+    </form>
+  </div>
   <script>
-    const interestPoints = [
-      {
-        id:0,
-        weight:0,
-        lnglat:["104.059399","30.562253"],
-        title:"成都",
-        remark:"成都都成",
-        address:"",
-        dateTime:"",
-        createTime:"",
-        photos:[],
-        people:[],
-      },
-      {
-        id:0,
-        weight:0,
-        lnglat:["104.159399","30.562253"],
-        title:"成都",
-        remark:"成都都成",
-        address:"",
-        dateTime:"",
-        createTime:"",
-        photos:[],
-        people:[],
-      }      
-    ]
-  </script> 
+    let pointFormSubmit = document.querySelector("#point-form-submit")
+    pointFormSubmit.addEventListener("click",(e)=>{
+
+      let form = document.getElementById("point-form"),
+          formData = new FormData(form),
+          params = {
+            lnglat:contextMenuPositon
+          }
+      formData.forEach((v,k)=>{
+        params[k] = v
+      })
+      ajax({
+        url:"/points",
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify(params)
+      })
+    })
+  </script>
   <script>
+    //contextMenuPositon 全局变量，右键点击的位置和地址
+    //contextMenuAddress
     AMapLoader.load({
         "key": "42b77b78693257d472dc3c70311c3b1f",              // 申请好的Web端开发者Key，首次调用 load 时必填
         "version": "2.0",   // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
-        "plugins": ["AMap.MarkerCluster","AMap.MouseTool"]           // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+        "plugins": ["AMap.MarkerCluster","AMap.MouseTool","AMap.Geocoder"]           // 需要使用的的插件列表，如比例尺'AMap.Scale'等
     }).then((AMap)=>{
       window.AMap = AMap
-      initMap(AMap)
+      ajax({
+        url:'/points'
+      })
+      .then(function(result) {
+        console.log(result);
+        if(result.status==1){
+          initMap(AMap,result.data.points)
+        }
+      })
     }).catch((e)=>{
         console.error(e);  //加载错误提示
     });   
 
-    const initMap = (AMap)=>{
+    const initMap = (AMap,interestPoints)=>{
       var map = new AMap.Map('container', {
           zoom:11,//级别
-          zooms:[4,12],
+          zooms:[4,14],
           doubleClickZoom:false,
-      })      
+      })    
+      var geocoder = new AMap.Geocoder({
+        extensions:"all"
+      });        
       //创建地图右键菜单
       var contextMenu = new AMap.ContextMenu();
       var rightContextMenu = new AMap.ContextMenu();
@@ -99,20 +141,33 @@
 
       //右键添加Marker标记
       contextMenu.addItem("添加标记", function (e) {
-          var marker = new AMap.Marker({
-              map: map,
-              position: contextMenuPositon //基点位置
-          });       
+          // var marker = new AMap.Marker({
+          //     map: map,
+          //     position: contextMenuPositon //基点位置
+          // }); 
+          // console.log(e)
+          document.querySelector("#point-form-container").classList.add("active")
       }, 0);
       //右键添加Marker标记
       rightContextMenu.addItem("移除标记", function (e) {
-        console.log(e)      
+        // console.log(e)      
       }, 0);      
 
       //地图绑定鼠标右击事件——弹出右键菜单
       map.on('rightclick', function (e) {
           contextMenu.open(map, e.lnglat);
           contextMenuPositon = e.lnglat;
+          geocoder.getAddress(contextMenuPositon, function(status, result) {
+            if (status === 'complete'&&result.regeocode) {
+              console.log(result)
+                var address = result.regeocode.formattedAddress;
+                contextMenuAddress = address
+                document.querySelector("input[name='address']").value = address
+            }else{
+                log.error('根据经纬度查询地址失败')
+            }
+          });          
+
       });       
 
 

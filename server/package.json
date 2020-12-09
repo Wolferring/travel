@@ -1,0 +1,23 @@
+{
+  "name": "travel-server",
+  "version": "1.0.0",
+  "description": "旅途记录的api服务器",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "whimsy",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.13.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-compose": "^4.1.0",
+    "koa-cors": "0.0.16",
+    "koa-router": "^10.0.0"
+  },
+  "devDependencies": {
+    "glob": "^7.1.6",
+    "nodemon": "^2.0.6"
+  }
+}
