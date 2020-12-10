@@ -1,7 +1,7 @@
 var AUTH = window.localStorage.getItem("AUTH")
 
 
-let apiurl = "//localhost:3000";
+let apiurl = "//travel.whimsylove.cn/api";
 
 // if( (location.host).indexOf("eptonic")!=-1){
 //     apiurl ="//cloud.eptonic.cn";

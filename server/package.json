@@ -14,7 +14,9 @@
     "koa-bodyparser": "^4.3.0",
     "koa-compose": "^4.1.0",
     "koa-cors": "0.0.16",
-    "koa-router": "^10.0.0"
+    "koa-mysql-session": "0.0.2",
+    "koa-router": "^10.0.0",
+    "mysql": "^2.18.1"
   },
   "devDependencies": {
     "glob": "^7.1.6",
