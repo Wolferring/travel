@@ -54,8 +54,17 @@ route
     ctx.body={
         status:1,
         data:{
-            
-        }
+            id:2,
+            weight:0,
+            lnglat:point.lnglat,
+            title:point.title,
+            remark:point.remark,
+            address:point.address,
+            dateTime:point.dateTime,
+            createTime:new Date().getTime(),
+            photos:[],
+            people:[],
+        } 
     }    
 })
 module.exports = route

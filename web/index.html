@@ -5,6 +5,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>WhimsyLove旅途记录-去过的地方和读过的书，构成独一无二的我</title>
   <style>
+    :root{
+      --primary-color: #F3E04E;
+    }
     *{margin: 0;padding:0;}
     body{
       overflow-x: hidden;
@@ -30,10 +33,12 @@
       display: flex;
       flex-direction: column;
       padding: 10px 20px;
+      background-color: var(--primary-color);
     }  
   </style>
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no"> 
   <script src="https://webapi.amap.com/loader.js"></script> 
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="./static/fetch.js"></script> 
 </head>
 <body>
@@ -47,15 +52,15 @@
       <label for="">详细地址</label>
       <input type="text" name="address">
       <label for="">去的时间</label>
-      <input type="text" name="dateTime">
+      <input type="date" name="dateTime">
 
       <button type="button" id="point-form-submit">提交</button>
     </form>
   </div>
   <script>
     let pointFormSubmit = document.querySelector("#point-form-submit")
-    pointFormSubmit.addEventListener("click",(e)=>{
 
+    pointFormSubmit.addEventListener("click",(e)=>{
       let form = document.getElementById("point-form"),
           formData = new FormData(form),
           params = {
@@ -64,95 +69,145 @@
       formData.forEach((v,k)=>{
         params[k] = v
       })
-      ajax({
-        url:"/points",
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body: JSON.stringify(params)
+      api.createPoint(params)
+      .then(res=>{
+        TEMP_MARKER.setMap(null)
+        createMarkers(res.data,window.map)
       })
     })
   </script>
   <script>
+    //window.map map实例
     //contextMenuPositon 全局变量，右键点击的位置和地址
     //contextMenuAddress
+    window.TEMP_MARKER = null
     AMapLoader.load({
         "key": "42b77b78693257d472dc3c70311c3b1f",              // 申请好的Web端开发者Key，首次调用 load 时必填
         "version": "2.0",   // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
         "plugins": ["AMap.MarkerCluster","AMap.MouseTool","AMap.Geocoder"]           // 需要使用的的插件列表，如比例尺'AMap.Scale'等
-    }).then((AMap)=>{
+    })
+    .then((AMap)=>{
       window.AMap = AMap
-      ajax({
-        url:'/points'
-      })
-      .then(function(result) {
-        console.log(result);
+      api.getPoints()
+      .then(result=>{
         if(result.status==1){
           initMap(AMap,result.data.points)
         }
       })
-    }).catch((e)=>{
+    })
+    .catch((e)=>{
         console.error(e);  //加载错误提示
     });   
+    const createMarkerContent = (poi)=>{
+      return `<h3>${poi.title}</h3>
+      <p>${poi.remark}</p>
+      <button type="button" onclick="markerRemoveClick">删除</button>`
+    }      
+    const createMarkers = (types,map)=>{
+      var markerClick = (e) => {
+        var pointDetailWindow = new AMap.InfoWindow({
+          closeWhenClickMap:true,
+          offset: new AMap.Pixel(0, -30)
+        })          
+        pointDetailWindow.setContent(e.target.content);
+        pointDetailWindow.open(map, e.target.getPosition());
+      }      
+      // var markerRemoveClick = (e)=>{
 
+      // }        
+      let type = Object.prototype.toString.call(types)
+      switch(type){
+        case "[object String]" :
+          if(types=="temp"){
+            try{
+              TEMP_MARKER.setMap(null)
+            }catch(e){
+
+            }
+            // console.log(contextMenuPositon)
+              var marker = new AMap.Marker({
+                position: contextMenuPositon,
+                map: map,
+                offset:new AMap.Pixel(-13, -30),
+                icon:"./static/image/point-temp.png"
+
+              });
+              marker.on('click', ()=>{
+                marker.setMap(null)
+              });
+              TEMP_MARKER = marker
+              return TEMP_MARKER
+          }
+          break;
+        case "[object Array]" :
+          for (let i = 0; i < types.length; i++) {
+              var marker = new AMap.Marker({
+                  position: types[i]['lnglat'],
+                  map: map,
+                  offset:new AMap.Pixel(-13, -30),
+                  icon:"./static/image/point.png"
+              });
+              marker.content = createMarkerContent(types[i]);
+              marker.on('click', markerClick);
+              // marker.emit('click', {target: marker});
+              // marker.on('rightclick',markerRightClick)
+          }        
+          break;
+        case "[object Object]" :
+          console.log(types)
+          var marker = new AMap.Marker({
+              position: types['lnglat'],
+              map: map,
+              offset:new AMap.Pixel(-13, -30),  
+              icon:"./static/image/point.png"
+          });
+          marker.content = createMarkerContent(types);
+          marker.on('click', markerClick);      
+          break;          
+      }
+    
+
+    }
     const initMap = (AMap,interestPoints)=>{
-      var map = new AMap.Map('container', {
+      window.map = new AMap.Map('container', {
           zoom:11,//级别
           zooms:[4,14],
           doubleClickZoom:false,
-      })    
+      })  
+      //创建POI详情
+   
+      //创建经纬度解码器  
       var geocoder = new AMap.Geocoder({
         extensions:"all"
-      });        
+      })       
+
+      // var rightContextMenu = new AMap.ContextMenu();
+
+      // const markerRightClick = (e)=>{
+      //   rightContextMenu.open(map, e.lnglat);
+      // }      
+    
+
+
+
+      createMarkers(interestPoints,map)
+
+
       //创建地图右键菜单
-      var contextMenu = new AMap.ContextMenu();
-      var rightContextMenu = new AMap.ContextMenu();
-
-      const markerRightClick = (e)=>{
-        rightContextMenu.open(map, e.lnglat);
-      }      
-      const createMarkerContent = (poi)=>{
-        return `<h3>${poi.title}</h3>
-        <p>${poi.remark}</p>
-        <button type="button" onclick="markerRemoveClick">删除</button>`
-      }      
-      var markerClick = (e) => {
-          pointDetailWindow.setContent(e.target.content);
-          pointDetailWindow.open(map, e.target.getPosition());
-      }      
-      var markerRemoveClick = (e)=>{
-
-      }
-      var pointDetailWindow = new AMap.InfoWindow({
-        closeWhenClickMap:true,
-        offset: new AMap.Pixel(0, -30)
-      });
-      for (var i = 0, marker; i < interestPoints.length; i++) {
-          var marker = new AMap.Marker({
-              position: interestPoints[i]['lnglat'],
-              map: map
-          });
-          marker.content = createMarkerContent(interestPoints[i]);
-          marker.on('click', markerClick);
-          // marker.emit('click', {target: marker});
-          marker.on('rightclick',markerRightClick)
-      }
-
-
+      var contextMenu = new AMap.ContextMenu()
       //右键添加Marker标记
       contextMenu.addItem("添加标记", function (e) {
           // var marker = new AMap.Marker({
           //     map: map,
           //     position: contextMenuPositon //基点位置
           // }); 
-          // console.log(e)
+          var marker = createMarkers("temp",map)
           document.querySelector("#point-form-container").classList.add("active")
       }, 0);
       //右键添加Marker标记
-      rightContextMenu.addItem("移除标记", function (e) {
-        // console.log(e)      
-      }, 0);      
+      // rightContextMenu.addItem("移除标记", function (e) {
+      //   // console.log(e)      
+      // }, 0);      
 
       //地图绑定鼠标右击事件——弹出右键菜单
       map.on('rightclick', function (e) {
@@ -160,7 +215,6 @@
           contextMenuPositon = e.lnglat;
           geocoder.getAddress(contextMenuPositon, function(status, result) {
             if (status === 'complete'&&result.regeocode) {
-              console.log(result)
                 var address = result.regeocode.formattedAddress;
                 contextMenuAddress = address
                 document.querySelector("input[name='address']").value = address
