@@ -2,7 +2,7 @@ const Koa = require('koa');
 const app = new Koa();
 const registerRouter = require('./router/index.js')
 const cors = require('koa-cors');
-const bodyParser = require('koa-bodyParser')
+const bodyParser = require('koa-bodyparser')
 
 // app.use(async(ctx)=>{
 //     let url =ctx.url;
