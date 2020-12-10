@@ -1,7 +1,8 @@
 const Router = require('koa-router')
 const route = new Router()
+const pointModel = require('../store/mysql.js');
 route
-.get("/points",(ctx,next)=>{
+.get("/points",async (ctx,next)=>{
     console.log("获取地点")
     const interestPoints = [
       {
@@ -29,17 +30,18 @@ route
         people:[],
       }      
     ]    
+    let ps = await pointModel.findPoints()
+
     ctx.body={
         status:1,
         data:{
-            points:interestPoints
+            points:ps
         }
     }    
 })
-.post("/points",(ctx,next)=>{
+.post("/points",async (ctx,next)=>{
     console.log("新建地点")
-    console.log(ctx.request.body)
-    const point = ctx.request.body
+    let point = ctx.request.body
     // let point = {
     //     weight:0,
     //     lnglat:["104.059399","30.562253"],
@@ -50,21 +52,21 @@ route
     //     createTime:"",
     //     photos:[],
     //     people:[],
-    // }    
-    ctx.body={
-        status:1,
-        data:{
-            id:2,
-            weight:0,
-            lnglat:point.lnglat,
-            title:point.title,
-            remark:point.remark,
-            address:point.address,
-            dateTime:point.dateTime,
-            createTime:new Date().getTime(),
-            photos:[],
-            people:[],
-        } 
-    }    
+    // }   
+    await pointModel.insertPoint([
+        point.title,
+        point.address,
+        point.remark,
+        point.lnglat.toString(),
+        point.dateTime
+    ]) 
+    .then(async(res)=>{
+        let result = await pointModel.findPointsById(res.insertId)
+        
+        ctx.body={
+            status:1,
+            data:result
+        }    
+    })
 })
 module.exports = route

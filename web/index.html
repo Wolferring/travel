@@ -73,6 +73,8 @@
       .then(res=>{
         TEMP_MARKER.setMap(null)
         createMarkers(res.data,window.map)
+        form.reset()
+        document.querySelector("#point-form-container").classList.remove("active")
       })
     })
   </script>
@@ -101,6 +103,8 @@
     const createMarkerContent = (poi)=>{
       return `<h3>${poi.title}</h3>
       <p>${poi.remark}</p>
+      <p><small>${poi.address}</small></p>
+      <p><small>${new Date(poi.dateTime).toLocaleString()}</small></p>
       <button type="button" onclick="markerRemoveClick">删除</button>`
     }      
     const createMarkers = (types,map)=>{
@@ -142,7 +146,7 @@
         case "[object Array]" :
           for (let i = 0; i < types.length; i++) {
               var marker = new AMap.Marker({
-                  position: types[i]['lnglat'],
+                  position: types[i]['lnglat'].split(","),
                   map: map,
                   offset:new AMap.Pixel(-13, -30),
                   icon:"./static/image/point.png"
