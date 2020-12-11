@@ -3,8 +3,16 @@ const route = new Router()
 const pointModel = require('../store/points.js');
 route
 .get("/points",async (ctx,next)=>{
-    console.log("获取地点")    
     let ps = await pointModel.findPoints()
+    ctx.body={
+        status:1,
+        data:{
+            points:ps
+        }
+    }    
+})
+.get("/points/:id",async (ctx,next)=>{
+    let ps = await pointModel.findPointById()
     ctx.body={
         status:1,
         data:{
@@ -34,7 +42,6 @@ route
     }    
 })
 .post("/points",async (ctx,next)=>{
-    console.log("新建地点")
     let point = ctx.request.body
     // let point = {
     //     weight:0,
@@ -57,7 +64,7 @@ route
         point.city
     ]) 
     .then(async(res)=>{
-        let result = await pointModel.findPointsById(res.insertId)
+        let result = await pointModel.findPointById(res.insertId)
         ctx.body={
             status:1,
             data:result

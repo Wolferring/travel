@@ -6,7 +6,7 @@ let points =
      id INT NOT NULL AUTO_INCREMENT,
      title VARCHAR(400) NOT NULL,
      province VARCHAR(40),
-     city VARCHAR(400HAR(40),
+     city VARCHAR(40),
      address VARCHAR(400) NOT NULL,
      remark VARCHAR(2000) NOT NULL,
      lnglat CHAR(50) NOT NULL,
