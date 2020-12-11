@@ -1,13 +1,11 @@
 var AUTH = window.localStorage.getItem("AUTH")
 
 
-let apiurl = "//travel.whimsylove.cn/api";
+let apiurl = "//localhost:3000";
 
-// if( (location.host).indexOf("eptonic")!=-1){
-//     apiurl ="//cloud.eptonic.cn";
-// }else if( (location.host).indexOf("eptcms")!=-1){
-//     apiurl ="https://eptcms.57124.pw";
-// }
+if( (location.host).indexOf("travel")!=-1){
+    apiurl ="//travel.whimsylove.cn/api";
+}
 
 const service = axios.create({//设置全局配置
     baseURL:`${apiurl}`, //请求路径
@@ -49,6 +47,12 @@ window.api = {
             params: query
         })
     },
+    getPointsStatistic(){
+        return service({
+            url:`/statistic`,
+            method:'GET'
+        })
+    },    
     createPoint(obj){
         return service({
             url:`/points`,
@@ -56,6 +60,12 @@ window.api = {
             data: obj
         })        
     },
+    removePoint(id){
+        return service({
+            url:`/points/${id}`,
+            method:'DELETE'
+        })        
+    },    
     login(obj){ 
         return service({
             url:`/token/get`,

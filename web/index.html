@@ -3,15 +3,28 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>WhimsyLove旅途记录-去过的地方和读过的书，构成独一无二的我</title>
+  <title>旅途记录-去过的地方和读过的书，构成独一无二的我.Via Whimsy</title>
   <link rel="shortcut icon" href="./favicon.ico">
+  <link href="https://cdn.bootcdn.net/ajax/libs/normalize/8.0.1/normalize.css" rel="stylesheet">
   <style>
     :root{
-      --primary-color: #F3E04E;
+      --primary-color: #45a1e2;
+      --grey-color: #939597;
     }
-    *{margin: 0;padding:0;}
+    *{margin: 0;padding:0;box-sizing: border-box;}
+    input,textarea,select{
+      outline: none;
+      border: none;
+    }
+    textarea{
+      resize: none;
+    }
     body{
       overflow-x: hidden;
+      color: #333;
+      font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-size: 14px;
+      line-height: 1.42857143;      
     } 
     #container {width:100vw; height: 100vh; }
     .point-form-container{
@@ -22,7 +35,8 @@
       height: 100vh;
       width: 20vw;
       min-width: 200px;
-      background-color: rgba(255,255,255,.6);
+      overflow-y: auto;
+      background-color: #00000088;
       backdrop-filter:  blur(5px);
       transition: all .3s ease;
       transform: translateX(100%);
@@ -34,8 +48,111 @@
       display: flex;
       flex-direction: column;
       padding: 10px 20px;
-      background-color: var(--primary-color);
+      /* background-color: var(--primary-color); */
+    } 
+    .point-form .button{
+      display: block;
+      width: 100%;
+    } 
+    .form-heading{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #aaa;
+      margin-bottom: 28px;
+    }
+    .form-heading .button{
+      flex:0;
+    }
+    .form-heading h3{
+      font-size: 28px;
+      padding: 14px 0;
+      color: #fff;
+      flex: 1;
+    }
+    .form-group{
+      margin-bottom: 15px;
+    }
+    .form-group label{
+      display: block;
+    }
+    .form-group .form-control{
+      display: block;
+      width: 100%;
+      font-size:14px;
+      padding-left: 10px;
+      line-height: 32px;
+      min-height: 32px;
+      border-radius: 4px;
+    }
+    .form-group input.form-control{
+    }
+    .form-group label{
+      font-size: 14px;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .button{
+      display: inline-block;
+      height:auto;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+      background: #fff;
+      border: 1px solid #dcdfe6;
+      color: #fff;
+      -webkit-appearance: none;
+      text-align: center;
+      box-sizing: border-box;
+      outline: none;
+      margin: 0;
+      transition: .1s;
+      font-weight: 500;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      padding: 10px 16px;
+      font-size: 14px;
+      border-radius: 4px;  
+      background-color:var(--primary-color);
+      color:#fff;
+      border-color:var(--primary-color);            
+    } 
+    .button:hover,.button:focus{
+      /* color: #409eff; */
+      border-color: #0180da;
+      background-color: #0180da;   
+    }
+    .button:active{
+      /* color: #3a8ee6; */
+      border-color: #3a8ee6;
+      opacity: .8;   
     }  
+    .button.button-mini{
+      font-size: 12px;
+      padding:6px 8px;      
+    }  
+    #statistic{
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      background-color: rgba(255,255,255,0.9);
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0px 0px 15px #ccc;
+      text-align: center;
+      user-select: none;
+    }
+    #statistic .items{
+      margin-top: 10px;
+    }
+    #statistic .items span{
+      padding: 0px 10px;
+      border-right: 1px solid #ccc;
+    }
+    #statistic .items span:last-of-type{
+      border-right:none;
+    }
   </style>
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no"> 
   <script src="https://webapi.amap.com/loader.js"></script> 
@@ -44,40 +161,106 @@
 </head>
 <body>
   <div id="container"></div>
+  <div id="statistic">
+    
+  </div>
   <div class="point-form-container" id="point-form-container">
     <form class="point-form" id="point-form">
-      <label for="">地点名称</label>
-      <input type="text" name="title">
-      <label for="">备注</label>
-      <textarea rows="4" name="remark"></textarea> 
-      <label for="">详细地址</label>
-      <input type="text" name="address">
-      <label for="">去的时间</label>
-      <input type="date" name="dateTime">
+      <div class="form-heading">
+        <h3>创建足迹</h3>
+        <button class="button" onclick="FORM.close()" type="button">取消</button>
+      </div>
+      <div class="form-group">
+        <label for="">地点名称</label>
+        <input required="required" class="form-control" type="text" name="title">
+      </div>
+      <div class="form-group">
 
-      <button type="button" id="point-form-submit">提交</button>
+        <label for="">备注</label>
+        <textarea required="required" class="form-control" rows="4" name="remark"></textarea> 
+      </div>
+           
+      <div class="form-group">
+        <label for="">详细地址</label>
+        <select required="required" class="form-control" name="address"></select>
+      </div>
+      <div class="form-group">
+        <label for="">去的时间</label>
+        <input required="required" class="form-control" type="date" name="dateTime">
+      </div>                      
+      <div class="form-group">
+
+        <button type="button" class="button" id="point-form-submit">创建足迹</button>
+      </div>
     </form>
   </div>
   <script>
-    let pointFormSubmit = document.querySelector("#point-form-submit")
+    const STATISTIC = (()=>{
+        let dom = document.querySelector("#statistic"),
+            detail = ``
+        return {
+          open:()=>{
 
-    pointFormSubmit.addEventListener("click",(e)=>{
-      let form = document.getElementById("point-form"),
-          formData = new FormData(form),
-          params = {
-            lnglat:contextMenuPositon
+          },
+          refresh:()=>{
+            api.getPointsStatistic()
+            .then(res=>{
+              let html = `
+              <h4>累计去过</h4>  
+              <div class="items" onclick="STATISTIC.open()">
+                <span><b>${res.data.total}</b>个地点</span>  
+                <span><b>${res.data.province.length}</b>个省</span>
+                <span><b>${res.data.city.length}</b>个城市</span>
+              </div>`
+              dom.innerHTML = html
+            })
           }
-      formData.forEach((v,k)=>{
-        params[k] = v
-      })
-      api.createPoint(params)
-      .then(res=>{
-        TEMP_MARKER.setMap(null)
-        createMarkers(res.data,window.map)
-        form.reset()
-        document.querySelector("#point-form-container").classList.remove("active")
-      })
+        }
+    })()
+    const FORM = (()=>{
+        let dom = document.querySelector("#point-form-container"),
+            form = document.querySelector("#point-form")
+        return {
+          open:() => {
+            dom.classList.add("active")
+          },
+          close:() => {
+            dom.classList.remove("active")
+            form.reset()
+            if(TEMP_MARKER){
+              TEMP_MARKER.setMap(null)
+            }
+          },
+          valid:()=>{
+            return false
+          },
+          submit:()=>{
+            let formData = new FormData(form),
+                params = {
+                  lnglat:contextMenuPositon,
+                  city:contextMenuAddress.addressComponent.city,
+                  province:contextMenuAddress.addressComponent.province
+                }
+            formData.forEach((v,k)=>{
+              params[k] = v
+            })
+            api.createPoint(params)
+            .then(res=>{
+              createMarkers(res.data)
+              STATISTIC.refresh()
+              FORM.close()
+            })            
+          }          
+        }
+    })();    
+  </script>
+  <script>
+    document
+    .querySelector("#point-form-submit")
+    .addEventListener("click",(e)=>{
+      FORM.submit()
     })
+    STATISTIC.refresh()
   </script>
   <script>
     //window.map map实例
@@ -100,22 +283,45 @@
     })
     .catch((e)=>{
         console.error(e);  //加载错误提示
-    });   
+    });
+    //点标
+    window.MARKERS = []
+
     const createMarkerContent = (poi)=>{
-      return `<h3>${poi.title}</h3>
-      <p>${poi.remark}</p>
+      let index = MARKERS.length
+      let container = document.createElement("div")
+      container.classList.add("point-detail")
+      container.innerHTML =  
+      `<h3>${poi.title}</h3>
+      <pre>${poi.remark}</pre>
       <p><small>${poi.address}</small></p>
-      <p><small>${new Date(poi.dateTime).toLocaleString()}</small></p>
-      <button type="button" onclick="markerRemoveClick">删除</button>`
-    }      
-    const createMarkers = (types,map)=>{
+      <p><small>${new Date(poi.dateTime).toLocaleString()}</small></p>`
+      let button = document.createElement("button")
+      button.textContent = "删除"
+      button.classList.add("point-remove","button","button-mini")
+      button.addEventListener("click",()=>{
+        removeMarker(poi,index)
+      })
+      container.appendChild(button)
+      return container
+    }    
+    const removeMarker = (poi,markerIndex) =>{
+      //需要增加删除确认
+      api.removePoint(poi.id)
+      .then(res=>{
+        MARKERS[markerIndex-1].setMap(null)
+        MAP.clearInfoWindow()
+        STATISTIC.refresh()
+      })
+    }  
+    const createMarkers = (types)=>{
       var markerClick = (e) => {
         var pointDetailWindow = new AMap.InfoWindow({
           closeWhenClickMap:true,
           offset: new AMap.Pixel(0, -30)
         })          
         pointDetailWindow.setContent(e.target.content);
-        pointDetailWindow.open(map, e.target.getPosition());
+        pointDetailWindow.open(MAP, e.target.getPosition());
       }      
       // var markerRemoveClick = (e)=>{
 
@@ -132,7 +338,7 @@
             // console.log(contextMenuPositon)
               var marker = new AMap.Marker({
                 position: contextMenuPositon,
-                map: map,
+                map: MAP,
                 offset:new AMap.Pixel(-13, -30),
                 icon:"./static/image/point-temp.png"
 
@@ -148,24 +354,23 @@
           for (let i = 0; i < types.length; i++) {
               var marker = new AMap.Marker({
                   position: types[i]['lnglat'].split(","),
-                  map: map,
+                  map: MAP,
                   offset:new AMap.Pixel(-13, -30),
                   icon:"./static/image/point.png"
               });
+              MARKERS.push(marker)
               marker.content = createMarkerContent(types[i]);
               marker.on('click', markerClick);
-              // marker.emit('click', {target: marker});
-              // marker.on('rightclick',markerRightClick)
           }        
           break;
         case "[object Object]" :
-          console.log(types)
           var marker = new AMap.Marker({
               position: types['lnglat'],
-              map: map,
+              map: MAP,
               offset:new AMap.Pixel(-13, -30),  
               icon:"./static/image/point.png"
           });
+          MARKERS.push(marker)
           marker.content = createMarkerContent(types);
           marker.on('click', markerClick);      
           break;          
@@ -174,10 +379,11 @@
 
     }
     const initMap = (AMap,interestPoints)=>{
-      window.map = new AMap.Map('container', {
+      window.MAP = new AMap.Map('container', {
           zoom:11,//级别
           zooms:[4,14],
           doubleClickZoom:false,
+          rotateEnable:false
       })  
       //创建POI详情
    
@@ -186,43 +392,42 @@
         extensions:"all"
       })       
 
-      // var rightContextMenu = new AMap.ContextMenu();
-
-      // const markerRightClick = (e)=>{
-      //   rightContextMenu.open(map, e.lnglat);
-      // }      
-    
 
 
 
-      createMarkers(interestPoints,map)
+      createMarkers(interestPoints)
 
 
       //创建地图右键菜单
       var contextMenu = new AMap.ContextMenu()
       //右键添加Marker标记
       contextMenu.addItem("添加标记", function (e) {
-          // var marker = new AMap.Marker({
-          //     map: map,
-          //     position: contextMenuPositon //基点位置
-          // }); 
-          var marker = createMarkers("temp",map)
-          document.querySelector("#point-form-container").classList.add("active")
-      }, 0);
-      //右键添加Marker标记
-      // rightContextMenu.addItem("移除标记", function (e) {
-      //   // console.log(e)      
-      // }, 0);      
-
+          var marker = createMarkers("temp")
+          document
+          .querySelector("#point-form-container")
+          .classList
+          .add("active")
+      }, 0);    
+      const createSelect = (options,dom)=>{
+        let html = ``
+        for(let opt of options){
+          html+=`<option value="${opt.name}">${opt.name}</option>`
+        }
+        dom.innerHTML = html
+      }
       //地图绑定鼠标右击事件——弹出右键菜单
-      map.on('rightclick', function (e) {
-          contextMenu.open(map, e.lnglat);
+      let event = "rightclick"
+      if(AMap.Browser.mobile){
+        event = "click"
+      }
+      MAP.on(event, function (e) {
+          contextMenu.open(MAP, e.lnglat);
           contextMenuPositon = e.lnglat;
           geocoder.getAddress(contextMenuPositon, function(status, result) {
             if (status === 'complete'&&result.regeocode) {
-                var address = result.regeocode.formattedAddress;
-                contextMenuAddress = address
-                document.querySelector("input[name='address']").value = address
+                var address = result.regeocode;
+                window.contextMenuAddress = address
+                createSelect(address.pois,document.querySelector("select[name='address']"))
             }else{
                 log.error('根据经纬度查询地址失败')
             }
@@ -231,7 +436,7 @@
       });       
 
 
-      map.setFitView();
+      MAP.setFitView();
     }
   </script>
 </body>
