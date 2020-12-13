@@ -20,7 +20,13 @@ let query = (sql,values)=>{
           if ( err ) {
             reject( err )
           } else {
-            resolve( rows )
+            if(rows.length==0){
+              resolve(null)
+            }else if(rows.length&&rows.length==1){
+              resolve( rows[0] )
+            }else{
+              resolve(rows)
+            }
           }
           connection.release()
         })

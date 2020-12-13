@@ -3,7 +3,7 @@ const route = new Router()
 const pointModel = require('../store/points.js');
 route
 .get("/points",async (ctx,next)=>{
-    let ps = await pointModel.findPoints()
+    let ps = await pointModel.findPoints(ctx.state.user.id)
     ctx.body={
         status:1,
         data:{
@@ -12,7 +12,7 @@ route
     }    
 })
 .get("/points/:id",async (ctx,next)=>{
-    let ps = await pointModel.findPointById()
+    let ps = await pointModel.findPointById(ctx.state.user.id)
     ctx.body={
         status:1,
         data:{
@@ -21,7 +21,7 @@ route
     }    
 })
 .get("/statistic",async (ctx,next)=>{   
-    let ps = await pointModel.findPoints(),
+    let ps = await pointModel.findPoints(ctx.state.user.id)||[],
         province = [],
         city = []
     for(let i = 0;i<ps.length;i++){
@@ -61,10 +61,11 @@ route
         point.lnglat.toString(),
         point.dateTime,
         point.province,
-        point.city
-    ]) 
+        point.city,
+        ctx.state.user.id
+    ],ctx.state.user.id) 
     .then(async(res)=>{
-        let result = await pointModel.findPointById(res.insertId)
+        let result = await pointModel.findPointById(res.insertId,ctx.state.user.id)
         ctx.body={
             status:1,
             data:result
@@ -72,7 +73,7 @@ route
     })
 })
 .delete("/points/:id",async (ctx,next)=>{
-    await pointModel.removePointsById(ctx.params.id)
+    await pointModel.removePointsById(ctx.params.id,ctx.state.user.id)
     .then(async(res)=>{
         ctx.body={
             status:1,

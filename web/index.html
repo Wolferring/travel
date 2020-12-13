@@ -22,10 +22,15 @@
     body{
       overflow-x: hidden;
       color: #333;
-      font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
       font-size: 14px;
       line-height: 1.42857143;      
     } 
+    a{
+      text-decoration: none;
+      color: inherit;
+      font-size: inherit; 
+    }
     #container {width:100vw; height: 100vh; }
     .point-form-container{
       z-index: 999;
@@ -59,19 +64,23 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid #aaa;
-      margin-bottom: 28px;
+      color: #fff;
+      margin-bottom: 14px;
+      padding: 8px 0; 
     }
     .form-heading .button{
       flex:0;
     }
     .form-heading h3{
       font-size: 28px;
-      padding: 14px 0;
-      color: #fff;
+      padding: 6px 0;
       flex: 1;
     }
     .form-group{
       margin-bottom: 15px;
+    }
+    .form-group:last-of-type{
+      margin-bottom: 0;
     }
     .form-group label{
       display: block;
@@ -143,6 +152,13 @@
       text-align: center;
       user-select: none;
     }
+    #statistic h3{
+      font-size: 14px;
+    }
+    #statistic p{
+      font-size: 12px;
+      color: #999;
+    }    
     #statistic .items{
       margin-top: 10px;
     }
@@ -152,6 +168,45 @@
     }
     #statistic .items span:last-of-type{
       border-right:none;
+    }
+    #login-form-container{
+      display: none;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      z-index: 9999;
+      width: 100%;
+      height: 100%;
+      left: 0px;
+      top: 0px;
+      background-color: #f0f8ff;
+      backdrop-filter:  blur(5px);
+    }
+    #login-form-container.active{
+      display: flex;
+    }
+    #login-form-container .form{
+      min-width: 300px;
+      background-color: var(--grey-color);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0px 0px 15px #999;
+      transition: all .4s ease; 
+    }
+    #login-form-container .form:hover{
+      box-shadow: 0px 0px 20px #666;
+    }
+    #login-form-container .button{
+      width: 100%;
+    }
+    .flex{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .flex-column{
+      flex-direction: column;
+      align-items: flex-start;  
     }
   </style>
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no"> 
@@ -163,6 +218,61 @@
   <div id="container"></div>
   <div id="statistic">
     
+  </div>
+  <div id="login-form-container">
+    <form class="form" id="login-form">
+      <div class="form-heading flex-column">
+        <h3>途纪</h3>
+        <p>去过的地方和读过的书，构成独一无二的你</p>
+      </div>      
+      <div class="form-group">
+        <label>用户名</label>
+        <input autocomplete required="required" class="form-control" type="text" name="username">
+      </div>
+      <div class="form-group">
+
+        <label>密码</label>
+        <input autocomplete required="required" type="password" class="form-control"  name="password" /> 
+      </div>  
+     <div class="form-group">
+        <button type="button" class="button" id="login-form-submit">登录</button>
+      </div> 
+     <div class="form-group flex">
+        <small>还没有账号？</small>
+        <a href="/">免费注册</a>
+      </div>                
+    </form>
+    <form class="form" id="register-form">
+      <div class="form-heading flex-column">
+        <h3>途纪</h3>
+        <p>去过的地方和读过的书，构成独一无二的你</p>
+      </div>      
+      <div class="form-group">
+        <label>登录用户名</label>
+        <input autocomplete required="required" class="form-control" type="text" name="username">
+      </div>
+      <div class="form-group">
+        <label>显示名称</label>
+        <input autocomplete required="required" class="form-control" type="text" name="nickname">
+      </div>      
+      <div class="form-group">
+
+        <label>密码</label>
+        <input required="required" type="password" class="form-control"  name="password" /> 
+      </div> 
+      <div class="form-group">
+
+        <label>确认密码</label>
+        <input required="required" type="password" class="form-control" /> 
+      </div>        
+     <div class="form-group">
+        <button type="button" class="button" id="register-form-submit">注册</button>
+      </div> 
+     <div class="form-group flex">
+        <small>已有账号？</small>
+        <a href="/">立即登录</a>
+      </div>                
+    </form>    
   </div>
   <div class="point-form-container" id="point-form-container">
     <form class="point-form" id="point-form">
@@ -195,6 +305,89 @@
     </form>
   </div>
   <script>
+
+    const USER = (()=>{
+      let loginForm = document.querySelector("#login-form"),
+          registerForm = document.querySelector("#register-form"),
+          dom = document.querySelector("#login-form-container"),
+          userDetail = {}
+        return {
+          refresh:()=>{
+            return new Promise((resolve,reject)=>{
+              api.getUserInfo()
+              .then(res=>{
+                if(res.status==1){
+                  userDetail = res.data
+                  USER.close()
+                  resolve(userDetail)
+                }else{
+                  reject(res)
+                }
+              })
+              .catch(e=>{
+                if(e.status==-1){
+                  USER.open()
+                }
+                reject(e)
+              })            
+              
+            })
+          },
+          open:()=>{
+            dom.classList.add("active")
+          },
+          close:()=>{
+            loginForm.reset()
+            dom.classList.remove("active")
+          },
+          info:(key)=>{
+            if(key&&userDetail.hasOwnProperty(key)) return userDetail[key]
+            return userDetail
+          },
+          register:()=>{
+            let formData = new FormData(registerForm),
+                params = {
+
+                }
+            formData.forEach((v,k)=>{
+              params[k] = v
+            })
+            api.register(params)
+            .then(res=>{
+              if(res.status==1){
+                try{
+                  window.localStorage.setItem("AUTH",res.data.token)
+                }catch(e){}
+                userDetail = res.data
+                USER.refresh()
+                USER.close()
+                window.initApplication()
+              }
+            })             
+          },
+          login:()=>{
+            let formData = new FormData(loginForm),
+                params = {
+
+                }
+            formData.forEach((v,k)=>{
+              params[k] = v
+            })
+            api.login(params)
+            .then(res=>{
+              if(res.status==1){
+                try{
+                  window.localStorage.setItem("AUTH",res.data.token)
+                }catch(e){}
+                userDetail = res.data
+                USER.refresh()
+                USER.close()
+                window.initApplication()
+              }
+            })              
+          }
+        }
+    })()
     const STATISTIC = (()=>{
         let dom = document.querySelector("#statistic"),
             detail = ``
@@ -206,7 +399,8 @@
             api.getPointsStatistic()
             .then(res=>{
               let html = `
-              <h4>累计去过</h4>  
+              <h4>${USER.info('nickname')}</h4>  
+              <p>${USER.info('username')}</p>
               <div class="items" onclick="STATISTIC.open()">
                 <span><b>${res.data.total}</b>个地点</span>  
                 <span><b>${res.data.province.length}</b>个省</span>
@@ -260,30 +454,49 @@
     .addEventListener("click",(e)=>{
       FORM.submit()
     })
-    STATISTIC.refresh()
+    document
+    .querySelector("#login-form-submit")
+    .addEventListener("click",(e)=>{
+      USER.login()
+    }) 
+    document
+    .querySelector("#register-form-submit")
+    .addEventListener("click",(e)=>{
+      USER.register()
+    })     
+ 
+    
   </script>
   <script>
+    window.initApplication = ()=>{
+      AMapLoader.load({
+          "key": "42b77b78693257d472dc3c70311c3b1f",              // 申请好的Web端开发者Key，首次调用 load 时必填
+          "version": "2.0",   // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+          "plugins": ["AMap.MarkerCluster","AMap.MouseTool","AMap.Geocoder"]           // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+      })
+      .then((AMap)=>{
+        window.AMap = AMap
+        api.getPoints()
+        .then(result=>{
+          if(result.status==1){
+            initMap(AMap,result.data.points)
+          }
+        })
+        STATISTIC.refresh()
+      })
+      .catch((e)=>{
+          console.error(e);  //加载错误提示
+      });      
+    }
+    USER.refresh()
+    .then(()=>{
+      initApplication()
+    })  
     //window.map map实例
     //contextMenuPositon 全局变量，右键点击的位置和地址
     //contextMenuAddress
     window.TEMP_MARKER = null
-    AMapLoader.load({
-        "key": "42b77b78693257d472dc3c70311c3b1f",              // 申请好的Web端开发者Key，首次调用 load 时必填
-        "version": "2.0",   // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
-        "plugins": ["AMap.MarkerCluster","AMap.MouseTool","AMap.Geocoder"]           // 需要使用的的插件列表，如比例尺'AMap.Scale'等
-    })
-    .then((AMap)=>{
-      window.AMap = AMap
-      api.getPoints()
-      .then(result=>{
-        if(result.status==1){
-          initMap(AMap,result.data.points)
-        }
-      })
-    })
-    .catch((e)=>{
-        console.error(e);  //加载错误提示
-    });
+    
     //点标
     window.MARKERS = []
 
@@ -365,7 +578,7 @@
           break;
         case "[object Object]" :
           var marker = new AMap.Marker({
-              position: types['lnglat'],
+              position: types['lnglat'].split(","),
               map: MAP,
               offset:new AMap.Pixel(-13, -30),  
               icon:"./static/image/point.png"

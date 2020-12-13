@@ -17,23 +17,23 @@ let points =
 
 mysql.createTable(points)
 
-let findPoints = function( ) {
-  let _sql = `select * from points where status = 'ACTIVE';`
+let findPoints = function(uid) {
+  let _sql = `select * from points where status = 'ACTIVE' and uid = ${uid};`
   return mysql.query( _sql )
 }
-let findPointsByGroup = function( ) {
-  let _sql = `SELECT province FROM points WHERE status = 'ACTIVE' GROUP BY province`
+let findPointsByGroup = function(uid) {
+  let _sql = `SELECT province FROM points WHERE status = 'ACTIVE' and uid = ${uid} GROUP BY province`
   return mysql.query( _sql )
 }
-let findPointsById = function(value) {
-  let _sql = `select * from points where id = ${value} and status = 'ACTIVE';`
+let findPointById = function(value,uid) {
+  let _sql = `select * from points where id = ${value} and  uid = ${uid} and status = 'ACTIVE';`
   return mysql.query( _sql )
 }
-let removePointsById = function(value) {
-  let _sql = `UPDATE points SET status = 'DELETE' where id = ${value};`
+let removePointsById = function(value,uid) {
+  let _sql = `UPDATE points SET status = 'DELETE' where id = ${value} and uid = ${uid};`
   return mysql.query( _sql )
 }
-let insertPoint = function( value ) {
+let insertPoint = function(value,uid) {
   let _sql = `insert into points 
   set title=?,
   address=?,
@@ -41,14 +41,15 @@ let insertPoint = function( value ) {
   lnglat=?,
   dateTime=?,
   province=?,
-  city=?;`
+  city=?,
+  uid=?;`
   return mysql.query( _sql, value )
 }
 
 
 module.exports = {
     findPoints,
-    findPointsById,
+    findPointById,
     removePointsById,
     findPointsByGroup,
     insertPoint

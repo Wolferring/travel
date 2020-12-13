@@ -1,4 +1,4 @@
-var AUTH = window.localStorage.getItem("AUTH")
+
 
 
 let apiurl = "//localhost:3000";
@@ -14,8 +14,9 @@ const service = axios.create({//设置全局配置
 // 请求拦截器
 service.interceptors.request.use(
   config => {
+    var AUTH = window.localStorage.getItem("AUTH")    
     if(AUTH){
-        config.headers['Authorization'] = token;
+        config.headers['Authorization'] ="Bearer "+ AUTH;
     }
     return config;
   },
@@ -28,14 +29,17 @@ service.interceptors.response.use(
     response => { 
       if(response.status==200&&response.data.status==1){
         return response.data
-      }else{
+      }else if(response.data.status==-1){
+        return Promise.reject(response.data);
+      }
+      else{
         return Promise.reject(response);
       }
     },
     error => {
-        if(error.response.data.status == '2'){
-            //需要登录
-        }
+        // if(error.response.data.status == '-1'){
+        //     //需要登录
+        // }
         return error;   
     }
 );
@@ -65,12 +69,25 @@ window.api = {
             url:`/points/${id}`,
             method:'DELETE'
         })        
+    },
+    getUserInfo(){
+        return service({
+            url:`/user`,
+            method:'GET'
+        })      
     },    
     login(obj){ 
         return service({
-            url:`/token/get`,
+            url:`/login`,
             method:'POST',
             data: obj
         })   
-    }
+    },
+    register(obj){ 
+        return service({
+            url:`/register`,
+            method:'POST',
+            data: obj
+        })   
+    }    
 } 
