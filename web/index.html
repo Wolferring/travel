@@ -199,6 +199,15 @@
     #login-form-container .button{
       width: 100%;
     }
+    #register-form{
+      display: none;
+    }
+    #login-form-container.register #register-form{
+      display: block;
+    }
+    #login-form-container.register #login-form{
+      display: none;
+    }    
     .flex{
       display: flex;
       justify-content: space-between;
@@ -239,7 +248,8 @@
       </div> 
      <div class="form-group flex">
         <small>还没有账号？</small>
-        <a href="/">免费注册</a>
+        <a href="javascript:void(0);"  onclick="USER.switch()"><small>免费注册</small></a>
+
       </div>                
     </form>
     <form class="form" id="register-form">
@@ -270,7 +280,7 @@
       </div> 
      <div class="form-group flex">
         <small>已有账号？</small>
-        <a href="/">立即登录</a>
+        <a href="javascript:void(0);" onclick="USER.switch()"><small>立即登录</small></a>
       </div>                
     </form>    
   </div>
@@ -346,6 +356,9 @@
           close:()=>{
             loginForm.reset()
             dom.classList.remove("active")
+          },
+          switch:()=>{
+            dom.classList.toggle("register")
           },
           info:(key)=>{
             if(key&&Object.prototype.hasOwnProperty.call(userDetail,key)) return userDetail[key]
