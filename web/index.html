@@ -297,7 +297,14 @@
       <div class="form-group">
         <label for="">去的时间</label>
         <input required="required" class="form-control" type="date" name="dateTime">
-      </div>                      
+      </div> 
+      <div class="form-group">
+        <label for="">回忆照片</label>
+        <input class="form-control" multiple type="file" id="point-file" onchange="FORM.fileChange(this)">
+        <div id="point-file-preview">
+          
+        </div>
+      </div>                            
       <div class="form-group">
 
         <button type="button" class="button" id="point-form-submit">创建足迹</button>
@@ -341,7 +348,7 @@
             dom.classList.remove("active")
           },
           info:(key)=>{
-            if(key&&userDetail.hasOwnProperty(key)) return userDetail[key]
+            if(key&&Object.prototype.hasOwnProperty.call(userDetail,key)) return userDetail[key]
             return userDetail
           },
           register:()=>{
@@ -427,6 +434,20 @@
           },
           valid:()=>{
             return false
+          },
+          filePreview:(files)=>{
+            let preview = document.querySelector("#point-file-preview")
+            let html  = ``
+            for(file of files){
+              html+= `<img src="${window.URL.createObjectURL(file)}" alt="">`
+            }
+            preview.innerHTML = html
+          },
+          fileChange:(img)=>{
+            let images = img.files
+            if(images.length){
+              FORM.filePreview(images)
+            }
           },
           submit:()=>{
             let formData = new FormData(form),

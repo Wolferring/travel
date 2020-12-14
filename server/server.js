@@ -2,10 +2,12 @@ const Koa = require('koa');
 const app = new Koa();
 const registerRouter = require('./router/index.js')
 const cors = require('koa-cors');
-const bodyParser = require('koa-bodyparser')
+const koaBody = require('koa-body')
 const koajwt = require('koa-jwt')
 const config = require('./store/config.js')
 const AUTH = require('./util/token.js')
+const path = require('path')
+const staticFiles = require('koa-static')
 // app.use(async(ctx)=>{
 //     let url =ctx.url;
  
@@ -29,7 +31,12 @@ const AUTH = require('./util/token.js')
 app.use(cors({
     origin:"*"
 }));
-app.use(bodyParser())
+app.use(koaBody({
+    multipart: true,
+    formidable: {
+        maxFileSize: 2000*1024*1024    // 设置上传文件大小最大限制，默认2M
+    }
+}));
 app.use(async(ctx, next)=> {
     var token = ctx.headers.authorization;
     if(!token){
@@ -65,6 +72,7 @@ app.use(koajwt({ secret: config.secret }).unless({
   path: [/^\/login/,/^\/register/]
 }));
 app.use(registerRouter())
+app.use(staticFiles(path.join(__dirname + './public/')))
 
 app.listen(3000,()=>{
     console.log('[travel] server is starting at port 3000');

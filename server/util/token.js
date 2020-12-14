@@ -6,7 +6,7 @@ exports.set = (user)=>{
   const token = jwt.sign({
     username:user.username,
     id:user.id
-  },config.secret,{ expiresIn: 60 * 60 })
+  },config.secret,{ expiresIn: "7d" })
   resolve(token)
  })
  .catch(e=>{

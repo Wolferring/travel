@@ -45,8 +45,6 @@ let insertPoint = function(value,uid) {
   uid=?;`
   return mysql.query( _sql, value )
 }
-
-
 module.exports = {
     findPoints,
     findPointById,

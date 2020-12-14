@@ -4,6 +4,7 @@ const config = require('../store/config.js')
 const userModel = require('../store/user.js')
 const token = require('../util/token.js')
 const crypt = require('../util/crypt.js')
+
 route
 .get("/user",async (ctx,next)=>{
     let user = await userModel.findUserById(ctx.state.user.id)
