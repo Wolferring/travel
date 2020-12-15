@@ -18,15 +18,15 @@ let points =
 mysql.createTable(points)
 
 let findPoints = function(uid) {
-  let _sql = `select * from points where status = 'ACTIVE' and uid = ${uid};`
+  let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,"}") as images  from points as p left join images as img on img.pid = p.id where p.uid = ${uid} AND status = "ACTIVE"  group by p.id;`
+  return mysql.query( _sql )
+}
+let findPointById = function(value,uid) {
+  let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,"}") as images  from points as p left join images as img on img.pid = p.id where p.id=${value} AND p.uid = ${uid} AND status = "ACTIVE"  group by p.id;`
   return mysql.query( _sql )
 }
 let findPointsByGroup = function(uid) {
   let _sql = `SELECT province FROM points WHERE status = 'ACTIVE' and uid = ${uid} GROUP BY province`
-  return mysql.query( _sql )
-}
-let findPointById = function(value,uid) {
-  let _sql = `select * from points where id = ${value} and  uid = ${uid} and status = 'ACTIVE';`
   return mysql.query( _sql )
 }
 let removePointsById = function(value,uid) {

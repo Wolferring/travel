@@ -83,6 +83,14 @@ window.api = {
             data: obj
         })   
     },
+    upload(obj){
+      return service({
+            url:`/upload`,
+            headers:{'Content-Type':'multipart/form-data'},
+            method:'POST',
+            data: obj        
+      })
+    },
     register(obj){ 
         return service({
             url:`/register`,

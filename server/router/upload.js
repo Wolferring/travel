@@ -4,6 +4,7 @@ const route = new Router()
 const fs = require('fs')
 const path = require('path')
 const bcrypt = require("bcrypt")
+const images = require('../store/image.js')
 // const Client = require('@alicloud/imageaudit-2019-12-30')
 // 创建实例
 // 引入SDK
@@ -39,7 +40,7 @@ const genName = (name)=>{
   for (i = 0; i < 16; i++) {
     pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
   }  
-  return (new Date().getTime())+pwd+`.${name.split(".")[1]}`
+  return (new Date().getTime())+pwd+`.${name.split(".").pop()}`
 }
 const saveFile = (file,ctx)=>{
     let fileName = genName(file.name)
@@ -66,15 +67,26 @@ const saveFile = (file,ctx)=>{
     // console.log(filePath)
 
 }
-
+const insertImages = async(query)=>{
+  return images.insertImages(query)
+}
 route
+// .get("/images",async (ctx,next)=>{
+//   images.updateImagesPOI(42,ctx.state.user.id,[1,2,3,4])
+//   ctx.body = {
+//     status:1,
+//     data:{}
+//   }
+// })
 .post("/upload",async (ctx,next)=>{
-
+  console.log(ctx.request.files)
+  const user = ctx.state.user
   const files = ctx.request.files.files; // 获取上传文件
   let type = Object.prototype.toString.call(files)
   switch(type){
     case "[object Array]":
-      let urls = []
+      let urls = [],
+          query = []
       for (let file of files) {
         await saveFile(file,ctx)
         .then(res=>{
@@ -83,9 +95,14 @@ route
               real_url:res,
               url:path.join(config.host,res)
             })
+            query.push([res,user.id])
           }
         })
       }
+      let result = await insertImages(query)
+      urls.map((item,index)=>{
+        item["id"] = result.insertId+index
+      })
       ctx.body = {
         status:1,
         data:{
@@ -95,14 +112,16 @@ route
       break;
     case "[object Object]":
         await saveFile(files,ctx)
-        .then(res=>{
+        .then(async res=>{
           if(res){
+            let result = await insertImages([[res,user.id]])
             ctx.body = {
               status:1,
-              data:{
+              data:[{
+                id:result.insertId,
                 real_url:res,
                 url:path.join(config.host,res)
-              }
+              }]
             }
           }
         })

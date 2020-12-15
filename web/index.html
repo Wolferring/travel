@@ -310,9 +310,13 @@
       </div> 
       <div class="form-group">
         <label for="">回忆照片</label>
-        <input class="form-control" multiple type="file" id="point-file" onchange="FORM.fileChange(this)">
-        <div id="point-file-preview">
-          
+        <div class="upload-group">
+          <div id="point-file-preview" class="upload-preview">
+            
+          </div>
+          <div class="upload-card">
+            <input class="form-control" multiple type="file" id="point-file" onchange="FORM.fileChange(this)">
+          </div>
         </div>
       </div>                            
       <div class="form-group">
@@ -433,7 +437,9 @@
     })()
     const FORM = (()=>{
         let dom = document.querySelector("#point-form-container"),
-            form = document.querySelector("#point-form")
+            form = document.querySelector("#point-form"),
+            fileList = [],
+            uploadedImageList = []
         return {
           open:() => {
             dom.classList.add("active")
@@ -452,9 +458,15 @@
             let preview = document.querySelector("#point-file-preview")
             let html  = ``
             for(file of files){
-              html+= `<img src="${window.URL.createObjectURL(file)}" alt="">`
+              fileList.push(file)
+              html+= `<div class="upload-preview-image">
+                      <div class="upload-preview-image-remove">
+                         
+                      </div>
+                      <img src="${window.URL.createObjectURL(file)}" alt="">
+                      </div>   `
             }
-            preview.innerHTML = html
+            preview.innerHTML += html
           },
           fileChange:(img)=>{
             let images = img.files
@@ -462,22 +474,45 @@
               FORM.filePreview(images)
             }
           },
-          submit:()=>{
-            let formData = new FormData(form),
-                params = {
-                  lnglat:contextMenuPositon,
-                  city:contextMenuAddress.addressComponent.city,
-                  province:contextMenuAddress.addressComponent.province
-                }
-            formData.forEach((v,k)=>{
-              params[k] = v
+          upload:()=>{
+
+            return new Promise((resolve,reject)=>{
+              if(fileList.length<1){
+                resolve([])
+                return false
+              }
+              let formData = new FormData()
+              fileList.forEach(file=>{
+                formData.append('files',file)
+              })
+              api.upload(formData)
+              .then(res=>{
+                resolve(res.data)
+                uploadedImageList = res.data
+              })
             })
-            api.createPoint(params)
-            .then(res=>{
-              createMarkers(res.data)
-              STATISTIC.refresh()
-              FORM.close()
-            })            
+          },
+          submit:()=>{
+
+            FORM.upload()
+            .then(images=>{
+              let formData = new FormData(form),
+                  params = {
+                    images:images,
+                    lnglat:contextMenuPositon,
+                    city:contextMenuAddress.addressComponent.city,
+                    province:contextMenuAddress.addressComponent.province
+                  }
+              formData.forEach((v,k)=>{
+                params[k] = v
+              })
+              api.createPoint(params)
+              .then(res=>{
+                createMarkers(res.data)
+                STATISTIC.refresh()
+                FORM.close()
+              })            
+            })
           }          
         }
     })();    

@@ -1,9 +1,26 @@
 const Router = require('koa-router')
 const route = new Router()
 const pointModel = require('../store/points.js');
+const imageModel = require('../store/image.js');
+const config = require("../store/config.js")
+const path = require('path')
+
+const resolveImages = (imageStr)=>{
+    let images = JSON.parse("["+(imageStr).replace(/'/g, '"')+"]")
+    images.forEach(item=>{
+        item.url = path.join(config.host,item.url)
+    })
+    return images
+}
+
 route
 .get("/points",async (ctx,next)=>{
     let ps = await pointModel.findPoints(ctx.state.user.id)
+    ps.forEach(poi=>{
+        if(poi.images){
+            poi.images = resolveImages(poi.images)
+        }
+    })    
     ctx.body={
         status:1,
         data:{
@@ -12,12 +29,13 @@ route
     }    
 })
 .get("/points/:id",async (ctx,next)=>{
-    let ps = await pointModel.findPointById(ctx.state.user.id)
+    let ps = await pointModel.findPointById(ctx.params.id,ctx.state.user.id)
+    if(ps.images){
+        ps.images = JSON.parse("["+(ps.images).replace(/'/g, '"')+"]")
+    }
     ctx.body={
         status:1,
-        data:{
-            points:ps
-        }
+        data:ps
     }    
 })
 .get("/statistic",async (ctx,next)=>{   
@@ -62,13 +80,20 @@ route
         point.dateTime,
         point.province,
         point.city,
-        ctx.state.user.id
+        ctx.state.user.id   
     ],ctx.state.user.id) 
     .then(async(res)=>{
-        let result = await pointModel.findPointById(res.insertId,ctx.state.user.id)
+        if(point.images.length){
+            let ids = point.images.map(item=>item.id)
+            await imageModel.updateImagesPOI(res.insertId,ctx.state.user.id,ids)
+        }
+        let ps = await pointModel.findPointById(res.insertId,ctx.state.user.id)
+        if(ps.images){
+            ps.images = JSON.parse("["+(ps.images).replace(/'/g, '"')+"]")
+        }        
         ctx.body={
             status:1,
-            data:result
+            data:ps
         }    
     })
 })
