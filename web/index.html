@@ -59,6 +59,89 @@
       display: block;
       width: 100%;
     } 
+    .upload-preview-image{
+      width: 100px;
+      height: 100px;
+      position: relative;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+    .upload-preview{
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .upload-preview-image img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;      
+    }
+    .upload-preview-image-remove{
+      width: 0;
+      height: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      color: #fff;
+      border-top: 30px solid var(--primary-color);
+      border-left: 30px solid transparent;   
+      opacity: .7;
+      cursor: pointer;
+    }
+    .upload-preview-image-remove:before{
+      content: "+";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: -12px;
+      top: 0;
+      top: -31px;
+      font-size: 20px;
+      transform: rotate(45deg);
+    }
+    .upload-card{
+      width: 100px;
+      height: 100px;
+      color: var(--grey-color);
+      border-radius: 5px;
+      border: 1px dashed var(--grey-color);
+      cursor: pointer;
+    }
+    .upload-card:before{
+      display: block;
+      content: "+";
+      font-size: 40px;
+      width: 100%;
+      line-height: 96px;
+      text-align: center;
+      color: inherit;
+    }
+    .upload-card:hover{
+      color: var(--primary-color);
+      border: 1px dashed var(--primary-color);
+    }
+    .upload-card input.form-control{
+      display: none;
+    }
+    .point-images{
+      display: flex;
+      flex-wrap: wrap;      
+    }
+    .point-image{
+      width: 100px;
+      height: 100px;
+      position: relative;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-right: 5px;
+      margin-bottom: 5px;      
+    }
+    .point-image img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;      
+    }    
     .form-heading{
       display: flex;
       justify-content: space-between;
@@ -93,7 +176,11 @@
       line-height: 32px;
       min-height: 32px;
       border-radius: 4px;
+      border: 1px solid #dfdfdf;
     }
+    .form-group .form-control.invalid{
+      border-color: red;
+    }    
     .form-group input.form-control{
     }
     .form-group label{
@@ -222,6 +309,7 @@
   <script src="https://webapi.amap.com/loader.js"></script> 
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="./static/fetch.js"></script> 
+  <script src="./static/util.js"></script> 
 </head>
 <body>
   <div id="container"></div>
@@ -291,7 +379,7 @@
         <button class="button" onclick="FORM.close()" type="button">取消</button>
       </div>
       <div class="form-group">
-        <label for="">地点名称</label>
+        <label for="">回忆标题</label>
         <input required="required" class="form-control" type="text" name="title">
       </div>
       <div class="form-group">
@@ -313,9 +401,9 @@
         <div class="upload-group">
           <div id="point-file-preview" class="upload-preview">
             
-          </div>
-          <div class="upload-card">
-            <input class="form-control" multiple type="file" id="point-file" onchange="FORM.fileChange(this)">
+            <div class="upload-card" onclick="document.querySelector('#point-file').click()">
+              <input class="form-control" multiple type="file" id="point-file" accept="image/*"  onchange="FORM.fileChange(this)">
+            </div>
           </div>
         </div>
       </div>                            
@@ -426,7 +514,7 @@
               <h4>${USER.info('nickname')}</h4>  
               <p>${USER.info('username')}</p>
               <div class="items" onclick="STATISTIC.open()">
-                <span><b>${res.data.total}</b>个地点</span>  
+                <span><b>${res.data.total||0}</b>个地点</span>  
                 <span><b>${res.data.province.length}</b>个省</span>
                 <span><b>${res.data.city.length}</b>个城市</span>
               </div>`
@@ -438,35 +526,67 @@
     const FORM = (()=>{
         let dom = document.querySelector("#point-form-container"),
             form = document.querySelector("#point-form"),
-            fileList = [],
-            uploadedImageList = []
+            preview = document.querySelector("#point-file-preview"),
+            fileList = [];
+        preview.addEventListener("click",(e)=>{
+          if(e.srcElement.classList.contains('upload-preview-image-remove')){
+            let index = Array.from(preview.querySelectorAll('.upload-preview-image')).indexOf(e.srcElement.parentNode)
+            fileList.splice(index,1)
+            e.srcElement.parentNode.remove()
+          }
+        })
         return {
           open:() => {
             dom.classList.add("active")
           },
           close:() => {
-            dom.classList.remove("active")
             form.reset()
+            FORM.filePreviewReset()
             if(TEMP_MARKER){
               TEMP_MARKER.setMap(null)
             }
+            dom.classList.remove("active")
           },
           valid:()=>{
-            return false
+            let valid = true
+            let inputs = form.querySelectorAll(".form-control[name]")
+            inputs.forEach(input=>{
+              input.classList.remove("invalid")
+              if(input.getAttribute("required")=="required"){
+                if(input.value===""||input.value===null||input.value===undefined){
+                  input.classList.add("invalid")
+                  valid = false 
+                }
+              }
+              if(input.getAttribute("data-pattern")){
+                if(!new RegExp(input.getAttribute("data-pattern")).test(input.value)){
+                  valid = false
+                }
+              }
+            })
+            return valid
+          },
+          filePreviewReset:()=>{
+            fileList = []
+            preview.querySelectorAll('.upload-preview-image')
+            .forEach(item=>{
+              item.remove()
+            })            
           },
           filePreview:(files)=>{
-            let preview = document.querySelector("#point-file-preview")
-            let html  = ``
+            let node  = preview.querySelector(".upload-card"),
+              html  = ``
             for(file of files){
               fileList.push(file)
-              html+= `<div class="upload-preview-image">
+              html = `<div class="upload-preview-image">
                       <div class="upload-preview-image-remove">
-                         
+                         X
                       </div>
                       <img src="${window.URL.createObjectURL(file)}" alt="">
-                      </div>   `
+                      </div>`
+              let newImage = util.createDom(html)
+              preview.insertBefore(newImage,node)
             }
-            preview.innerHTML += html
           },
           fileChange:(img)=>{
             let images = img.files
@@ -475,7 +595,6 @@
             }
           },
           upload:()=>{
-
             return new Promise((resolve,reject)=>{
               if(fileList.length<1){
                 resolve([])
@@ -488,11 +607,11 @@
               api.upload(formData)
               .then(res=>{
                 resolve(res.data)
-                uploadedImageList = res.data
               })
             })
           },
           submit:()=>{
+            if(!FORM.valid()) return false
 
             FORM.upload()
             .then(images=>{
@@ -571,16 +690,18 @@
 
     const createMarkerContent = (poi)=>{
       let index = MARKERS.length
-      let container = document.createElement("div")
-      container.classList.add("point-detail")
-      container.innerHTML =  
-      `<h3>${poi.title}</h3>
+      let container = util.createDom(`<div class='point-detail'><h3>${poi.title}</h3>
       <pre>${poi.remark}</pre>
       <p><small>${poi.address}</small></p>
-      <p><small>${new Date(poi.dateTime).toLocaleString()}</small></p>`
-      let button = document.createElement("button")
-      button.textContent = "删除"
-      button.classList.add("point-remove","button","button-mini")
+      <p><small>${new Date(poi.dateTime).toLocaleString()}</small></p></div>`)
+      if(poi.images&&poi.images.length){
+        let images = util.createDom(`<div class="point-images"></div>`)
+        for(p of poi.images){
+          images.appendChild(util.createDom(`<div class="point-image"><img data-src="${p.url}" alt=""></div>`))
+        }
+        container.appendChild(images)
+      }
+      let button = util.createDom("<button class='point-remove button button-mini'>删除</button")
       button.addEventListener("click",()=>{
         removeMarker(poi,index)
       })
@@ -602,6 +723,14 @@
           closeWhenClickMap:true,
           offset: new AMap.Pixel(0, -30)
         })          
+        let images = e.target.content.querySelectorAll(".point-images img")
+        if(images&&images.length){
+          for(image of images){
+            if(!image.src){
+              image.src = image.getAttribute("data-src")
+            }
+          }
+        }
         pointDetailWindow.setContent(e.target.content);
         pointDetailWindow.open(MAP, e.target.getPosition());
       }      

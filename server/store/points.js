@@ -18,11 +18,11 @@ let points =
 mysql.createTable(points)
 
 let findPoints = function(uid) {
-  let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,"}") as images  from points as p left join images as img on img.pid = p.id where p.uid = ${uid} AND status = "ACTIVE"  group by p.id;`
+  let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,"}") as images  from points as p left join images as img on img.pid = p.id where p.uid = ${uid} AND p.status = "ACTIVE"  group by p.id;`
   return mysql.query( _sql )
 }
 let findPointById = function(value,uid) {
-  let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,"}") as images  from points as p left join images as img on img.pid = p.id where p.id=${value} AND p.uid = ${uid} AND status = "ACTIVE"  group by p.id;`
+  let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,"}") as images  from points as p left join images as img on img.pid = p.id where p.id=${value} AND p.uid = ${uid} AND p.status = "ACTIVE"  group by p.id;`
   return mysql.query( _sql )
 }
 let findPointsByGroup = function(uid) {

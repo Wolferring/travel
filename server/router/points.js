@@ -8,7 +8,7 @@ const path = require('path')
 const resolveImages = (imageStr)=>{
     let images = JSON.parse("["+(imageStr).replace(/'/g, '"')+"]")
     images.forEach(item=>{
-        item.url = path.join(config.host,item.url)
+        item.url = config.host+item.url
     })
     return images
 }
@@ -16,11 +16,13 @@ const resolveImages = (imageStr)=>{
 route
 .get("/points",async (ctx,next)=>{
     let ps = await pointModel.findPoints(ctx.state.user.id)
-    ps.forEach(poi=>{
-        if(poi.images){
-            poi.images = resolveImages(poi.images)
-        }
-    })    
+    if(ps&&ps.length){
+        ps.forEach(poi=>{
+            if(poi.images){
+                poi.images = resolveImages(poi.images)
+            }
+        })    
+    }
     ctx.body={
         status:1,
         data:{
@@ -30,8 +32,8 @@ route
 })
 .get("/points/:id",async (ctx,next)=>{
     let ps = await pointModel.findPointById(ctx.params.id,ctx.state.user.id)
-    if(ps.images){
-        ps.images = JSON.parse("["+(ps.images).replace(/'/g, '"')+"]")
+    if(ps&&ps.images){
+        ps.images = resolveImages(ps.images)
     }
     ctx.body={
         status:1,
@@ -41,7 +43,10 @@ route
 .get("/statistic",async (ctx,next)=>{   
     let ps = await pointModel.findPoints(ctx.state.user.id)||[],
         province = [],
-        city = []
+        city = [];
+    if(Object.prototype.toString.call(ps)=="[object Object]"){
+        ps = [ps]
+    }
     for(let i = 0;i<ps.length;i++){
         if(province.indexOf(ps[i].province)<0){
             province.push(ps[i].province)
@@ -89,7 +94,7 @@ route
         }
         let ps = await pointModel.findPointById(res.insertId,ctx.state.user.id)
         if(ps.images){
-            ps.images = JSON.parse("["+(ps.images).replace(/'/g, '"')+"]")
+            ps.images = resolveImages(ps.images)
         }        
         ctx.body={
             status:1,
