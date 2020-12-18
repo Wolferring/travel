@@ -20,7 +20,8 @@ window.util = (()=>{
     },
     resolvePreview:(url,width=200,height=200)=>{
       let str = `_${width}x${height}`
-      return url.split(".")[0]+str+"."+ url.split(".")[1]
+      let replace = url.replace(/(.*\/)*([^.]+).*/ig,"$2")
+      return url.replace(replace,replace+str)
     },
     isNull:(val)=>{
       return realType(val)==="[object Null]"
