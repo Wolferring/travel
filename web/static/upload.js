@@ -3,6 +3,7 @@ class Upload{
     this.$el = document.querySelector(el)
     this.fileList = [] 
     this.options = options
+    this.maxSize = 50*1024
     this._init()
   }
   _init(){
@@ -65,6 +66,12 @@ class Upload{
     let node  = self.$card,
       html  = ``
     for(let file of files){
+      if(file.size/1024>self.maxSize){
+        util.toast(`【${file.name}】文件过大，单个文件小于50M`,{
+          type:"error"
+        })        
+        continue;
+      }
       self.fileList.push(file)
       html = `<div class="upload-preview-image">
               <div class="upload-preview-image-remove">
@@ -84,20 +91,75 @@ class Upload{
     }
   } 
   upload(){
-    let self = this
-    return new Promise((resolve,reject)=>{
-      if(self.fileList.length<1){
-        resolve([])
-        return false
-      }
-      let formData = new FormData()
-      self.fileList.forEach(file=>{
-        formData.append('files',file)
+
+    let self = this,
+        totalSize = 0;
+    self.fileList.forEach(file=>{
+      totalSize+=file.size
+    })   
+    if(totalSize/1024>self.maxSize){
+      return new Promise((finalResolve,finalReject)=>{
+        util.toast("文件总大小超过50M，正在分批上传，请等待",{
+          type:"success"
+        })
+        self.fileList.sort((a,b)=>{
+          return a.size-b.size
+        })
+        let subTotal = 0,
+            index = 0,
+            result = [];
+        for(let file of self.fileList){
+          if((subTotal+file.size)/1024<self.maxSize){
+            subTotal+=file.size
+            if(result[index]){
+              result[index].push(file)
+            }else{
+              result[index] = [file]
+            }
+          }else{
+            ++index
+            subTotal = file.size
+            result[index] = [file]
+          }
+        }
+        let data = [],
+            promises = [];
+        for(let request of result){
+          promises.push(new Promise((resolve,reject)=>{
+            let formData = new FormData()
+            request.forEach(file=>{
+              formData.append('files',file)
+            })        
+            api.upload(formData)
+            .then(res=>{
+              data = data.concat(res.data)
+              resolve()
+            })           
+          })
+          )
+        }
+        Promise.all(promises)
+        .then(res=>{
+          finalResolve(data)
+        })
+      })      
+      //这里有个算法组合的问题，已知最单次请求最大不超过50M，文件大小[2,10,32,10,33,23]，如何组合才能实现最少请求次数
+      // return Promise.reject()
+    }else{
+      return new Promise((resolve,reject)=>{
+        if(self.fileList.length<1){
+          resolve([])
+          return false
+        }
+        let formData = new FormData()
+        self.fileList.forEach(file=>{
+          formData.append('files',file)
+        })
+        api.upload(formData)
+        .then(res=>{
+          resolve(res.data)
+        })
       })
-      api.upload(formData)
-      .then(res=>{
-        resolve(res.data)
-      })
-    })
+    }
   }  
 }

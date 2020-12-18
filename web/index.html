@@ -326,6 +326,30 @@
       flex-direction: column;
       align-items: flex-start;  
     }
+
+    .toast-item{
+      position: fixed;
+      z-index: 9999;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0px 0px 15px #dedede;
+      padding: 5px 10px;
+      text-align: center;
+      width: 300px;
+      font-size: 14px;
+      line-height: 2;
+      word-break: break-all;
+    }
+    .toast-item.toast-danger{
+      background-color: #F56C6C;
+      color: #fff;
+    }
+    .toast-item.toast-primary{
+      background-color: var(--primary-color);
+      color: #fff;
+    }    
   </style>
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no"> 
   <script src="https://webapi.amap.com/loader.js"></script> 
@@ -473,6 +497,8 @@
             return userDetail
           },
           register:()=>{
+            if(!util.valid("#register-form")) return false
+
             let formData = new FormData(registerForm),
                 params = {
 
@@ -494,6 +520,8 @@
             })             
           },
           login:()=>{
+            if(!util.valid("#login-form")) return false
+
             let formData = new FormData(loginForm),
                 params = {
 
@@ -503,16 +531,19 @@
             })
             api.login(params)
             .then(res=>{
-              if(res.status==1){
-                try{
-                  window.localStorage.setItem("AUTH",res.data.token)
-                }catch(e){}
-                userDetail = res.data
-                USER.refresh()
-                USER.close()
-                window.initApplication()
-              }
-            })              
+              try{
+                window.localStorage.setItem("AUTH",res.data.token)
+              }catch(e){}
+              userDetail = res.data
+              USER.refresh()
+              USER.close()
+              window.initApplication()
+            }) 
+            .catch(e=>{
+                util.toast(e.data.msg,{
+                  type:"error"
+                })
+            })             
           }
         }
     })()
@@ -557,32 +588,9 @@
             }
             dom.classList.remove("active")
           },
-          valid:()=>{
-            let valid = true
-            let inputs = form.querySelectorAll(".form-control[name]")
-            inputs.forEach(input=>{
-              input.classList.remove("invalid")
-              let value = input.value
-              if(util.isString(value)){
-                value = value.trim()
-              }
-              if(input.getAttribute("required")=="required"){
-                if(value===""||value===null||value===undefined){
-                  input.classList.add("invalid")
-                  valid = false 
-                }
-              }
-              if(input.getAttribute("data-pattern")){
-                if(!new RegExp(input.getAttribute("data-pattern")).test(value)){
-                  input.classList.add("invalid")
-                  valid = false
-                }
-              }
-            })
-            return valid
-          },
+
           submit:()=>{
-            if(!FORM.valid()) return false
+            if(!util.valid("#point-form")) return false
 
             upload.upload()
             .then(images=>{
@@ -763,7 +771,7 @@
               position: types['lnglat'].split(","),
               map: MAP,
               offset:new AMap.Pixel(-13, -30),  
-              icon:"./static/image/point.png"
+              icon:NormalIcon
           });
           MARKERS.push(marker)
           marker.content = createMarkerContent(types);

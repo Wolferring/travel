@@ -93,7 +93,7 @@ route
           if(res){
             urls.push({
               real_url:res,
-              url:path.join(config.host,res)
+              url:config.host+res
             })
             query.push([res,user.id])
           }
@@ -105,9 +105,7 @@ route
       })
       ctx.body = {
         status:1,
-        data:{
-          url:urls
-        }
+        data:urls
       }
       break;
     case "[object Object]":
@@ -120,7 +118,7 @@ route
               data:[{
                 id:result.insertId,
                 real_url:res,
-                url:path.join(config.host,res)
+                url:config.host+res
               }]
             }
           }
