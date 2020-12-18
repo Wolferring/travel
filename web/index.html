@@ -5,6 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>旅途记录-去过的地方和读过的书，构成独一无二的我.Via Whimsy</title>
   <link rel="shortcut icon" href="./favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link href="https://cdn.bootcdn.net/ajax/libs/normalize/8.0.1/normalize.css" rel="stylesheet">
   <style>
     :root{
@@ -19,33 +20,45 @@
     textarea{
       resize: none;
     }
+    html{
+      height: 100%;
+      width: 100%;
+    }
     body{
       overflow-x: hidden;
       color: #333;
       font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
       font-size: 14px;
       line-height: 1.42857143;      
+      height: 100%;
+      width: 100%;      
     } 
     a{
       text-decoration: none;
       color: inherit;
       font-size: inherit; 
     }
-    #container {width:100vw; height: 100vh; }
+    #container {width:100%; height: 100%; }
     .point-form-container{
       z-index: 999;
       position: fixed;
       right: 0;
       top: 0;
-      height: 100vh;
-      width: 20vw;
+      height: 100%;
+      width: 20%;
       min-width: 200px;
       overflow-y: auto;
       background-color: #00000088;
       backdrop-filter:  blur(5px);
+      -webkit-backdrop-filter:  blur(5px);
       transition: all .3s ease;
       transform: translateX(100%);
     } 
+    @media screen and (max-width: 750px) {
+      .point-form-container{
+        width: 100%;
+      }
+    }
     .point-form-container.active{
       transform: translateX(0);
     }
@@ -59,9 +72,14 @@
       display: block;
       width: 100%;
     } 
+    .upload{}
+    .upload.dragging{
+      outline: 2px dashed  var(--primary-color);
+    }
     .upload-preview-image{
       width: 100px;
       height: 100px;
+      background-color: #dedede;
       position: relative;
       border-radius: 5px;
       overflow: hidden;
@@ -177,6 +195,8 @@
       min-height: 32px;
       border-radius: 4px;
       border: 1px solid #dfdfdf;
+      background-color: #fff;
+      -webkit-appearance: none;
     }
     .form-group .form-control.invalid{
       border-color: red;
@@ -268,6 +288,8 @@
       top: 0px;
       background-color: #f0f8ff;
       backdrop-filter:  blur(5px);
+      -webkit-backdrop-filter:  blur(5px);
+
     }
     #login-form-container.active{
       display: flex;
@@ -310,6 +332,7 @@
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="./static/fetch.js"></script> 
   <script src="./static/util.js"></script> 
+  <script src="./static/upload.js"></script> 
 </head>
 <body>
   <div id="container"></div>
@@ -398,14 +421,7 @@
       </div> 
       <div class="form-group">
         <label for="">回忆照片</label>
-        <div class="upload-group">
-          <div id="point-file-preview" class="upload-preview">
-            
-            <div class="upload-card" onclick="document.querySelector('#point-file').click()">
-              <input class="form-control" multiple type="file" id="point-file" accept="image/*"  onchange="FORM.fileChange(this)">
-            </div>
-          </div>
-        </div>
+        <div id="upload-test"></div>
       </div>                            
       <div class="form-group">
 
@@ -525,15 +541,9 @@
     })()
     const FORM = (()=>{
         let dom = document.querySelector("#point-form-container"),
-            form = document.querySelector("#point-form"),
-            preview = document.querySelector("#point-file-preview"),
-            fileList = [];
-        preview.addEventListener("click",(e)=>{
-          if(e.srcElement.classList.contains('upload-preview-image-remove')){
-            let index = Array.from(preview.querySelectorAll('.upload-preview-image')).indexOf(e.srcElement.parentNode)
-            fileList.splice(index,1)
-            e.srcElement.parentNode.remove()
-          }
+            form = document.querySelector("#point-form");
+        let upload = new Upload("#upload-test",{
+          drag:true
         })
         return {
           open:() => {
@@ -541,7 +551,7 @@
           },
           close:() => {
             form.reset()
-            FORM.filePreviewReset()
+            upload.filePreviewReset()
             if(TEMP_MARKER){
               TEMP_MARKER.setMap(null)
             }
@@ -552,68 +562,29 @@
             let inputs = form.querySelectorAll(".form-control[name]")
             inputs.forEach(input=>{
               input.classList.remove("invalid")
+              let value = input.value
+              if(util.isString(value)){
+                value = value.trim()
+              }
               if(input.getAttribute("required")=="required"){
-                if(input.value===""||input.value===null||input.value===undefined){
+                if(value===""||value===null||value===undefined){
                   input.classList.add("invalid")
                   valid = false 
                 }
               }
               if(input.getAttribute("data-pattern")){
-                if(!new RegExp(input.getAttribute("data-pattern")).test(input.value)){
+                if(!new RegExp(input.getAttribute("data-pattern")).test(value)){
+                  input.classList.add("invalid")
                   valid = false
                 }
               }
             })
             return valid
           },
-          filePreviewReset:()=>{
-            fileList = []
-            preview.querySelectorAll('.upload-preview-image')
-            .forEach(item=>{
-              item.remove()
-            })            
-          },
-          filePreview:(files)=>{
-            let node  = preview.querySelector(".upload-card"),
-              html  = ``
-            for(file of files){
-              fileList.push(file)
-              html = `<div class="upload-preview-image">
-                      <div class="upload-preview-image-remove">
-                         X
-                      </div>
-                      <img src="${window.URL.createObjectURL(file)}" alt="">
-                      </div>`
-              let newImage = util.createDom(html)
-              preview.insertBefore(newImage,node)
-            }
-          },
-          fileChange:(img)=>{
-            let images = img.files
-            if(images.length){
-              FORM.filePreview(images)
-            }
-          },
-          upload:()=>{
-            return new Promise((resolve,reject)=>{
-              if(fileList.length<1){
-                resolve([])
-                return false
-              }
-              let formData = new FormData()
-              fileList.forEach(file=>{
-                formData.append('files',file)
-              })
-              api.upload(formData)
-              .then(res=>{
-                resolve(res.data)
-              })
-            })
-          },
           submit:()=>{
             if(!FORM.valid()) return false
 
-            FORM.upload()
+            upload.upload()
             .then(images=>{
               let formData = new FormData(form),
                   params = {
@@ -622,8 +593,8 @@
                     city:contextMenuAddress.addressComponent.city,
                     province:contextMenuAddress.addressComponent.province
                   }
-              formData.forEach((v,k)=>{
-                params[k] = v
+              formData.forEach((val,key)=>{
+                params[key] = util.isString(val)?val.trim():val
               })
               api.createPoint(params)
               .then(res=>{
@@ -676,6 +647,8 @@
           console.error(e);  //加载错误提示
       });      
     }
+
+
     USER.refresh()
     .then(()=>{
       initApplication()
@@ -697,7 +670,7 @@
       if(poi.images&&poi.images.length){
         let images = util.createDom(`<div class="point-images"></div>`)
         for(p of poi.images){
-          images.appendChild(util.createDom(`<div class="point-image"><img data-src="${p.url}" alt=""></div>`))
+          images.appendChild(util.createDom(`<div class="point-image"><img data-source="${p.url}" data-src="${util.resolvePreview(p.url,200)}" alt=""></div>`))
         }
         container.appendChild(images)
       }
@@ -734,6 +707,14 @@
         pointDetailWindow.setContent(e.target.content);
         pointDetailWindow.open(MAP, e.target.getPosition());
       }      
+      const NormalIcon = new AMap.Icon({
+        // 图标尺寸
+          size: new AMap.Size(30, 30),
+          // 图标的取图地址
+          image: './static/image/point.png',
+          // 图标所用图片大小
+          imageSize: new AMap.Size(30, 30),
+      });
       // var markerRemoveClick = (e)=>{
 
       // }        
@@ -748,6 +729,7 @@
             }
             // console.log(contextMenuPositon)
               var marker = new AMap.Marker({
+                imageSize: new AMap.Size(25, 34),
                 position: contextMenuPositon,
                 map: MAP,
                 offset:new AMap.Pixel(-13, -30),
@@ -764,10 +746,11 @@
         case "[object Array]" :
           for (let i = 0; i < types.length; i++) {
               var marker = new AMap.Marker({
+                  imageSize: new AMap.Size(100, 100),
                   position: types[i]['lnglat'].split(","),
                   map: MAP,
                   offset:new AMap.Pixel(-13, -30),
-                  icon:"./static/image/point.png"
+                  icon:NormalIcon
               });
               MARKERS.push(marker)
               marker.content = createMarkerContent(types[i]);
@@ -776,6 +759,7 @@
           break;
         case "[object Object]" :
           var marker = new AMap.Marker({
+              imageSize: new AMap.Size(25, 34),
               position: types['lnglat'].split(","),
               map: MAP,
               offset:new AMap.Pixel(-13, -30),  
@@ -814,10 +798,8 @@
       //右键添加Marker标记
       contextMenu.addItem("添加标记", function (e) {
           var marker = createMarkers("temp")
-          document
-          .querySelector("#point-form-container")
-          .classList
-          .add("active")
+          FORM.open()
+          contextMenu.close()
       }, 0);    
       const createSelect = (options,dom)=>{
         let html = ``
@@ -832,13 +814,18 @@
         event = "click"
       }
       MAP.on(event, function (e) {
-          contextMenu.open(MAP, e.lnglat);
           contextMenuPositon = e.lnglat;
           geocoder.getAddress(contextMenuPositon, function(status, result) {
             if (status === 'complete'&&result.regeocode) {
                 var address = result.regeocode;
                 window.contextMenuAddress = address
                 createSelect(address.pois,document.querySelector("select[name='address']"))
+                if(AMap.Browser.mobile){
+                  var marker = createMarkers("temp")
+                  FORM.open()               
+                }else{
+                  contextMenu.open(MAP, e.lnglat);
+                }
             }else{
                 log.error('根据经纬度查询地址失败')
             }
