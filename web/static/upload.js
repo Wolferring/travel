@@ -56,6 +56,7 @@ class Upload{
   filePreviewReset(){
     let self = this
     self.fileList = []
+    self.$el.value = null
     self.$preview.querySelectorAll('.upload-preview-image')
     .forEach(item=>{
       item.remove()
