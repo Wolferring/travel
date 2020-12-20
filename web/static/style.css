@@ -18,17 +18,22 @@ html{
 }
 body{
   overflow-x: hidden;
-  color: #333;
+  color: #121212;
   font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
   font-size: 14px;
   line-height: 1.42857143;      
   height: 100%;
-  width: 100%;      
+  width: 100%;   
+  -webkit-tap-highlight-color: rgba(18,18,18,0)   
 } 
 a{
   text-decoration: none;
   color: inherit;
   font-size: inherit; 
+}
+pre{
+	font-family: inherit;
+	font-size: inherit;
 }
 #map-container {width:100%; height: 100%; }
 .point-form-container{
@@ -60,6 +65,8 @@ a{
   display: block;
   width: 100%;
 } 
+
+
 .upload{}
 .upload.dragging{
   outline: 2px dashed  var(--primary-color);
@@ -130,13 +137,40 @@ a{
 .upload-card input.form-control{
   display: none;
 }
+
+.point-detail{
+	max-width: 400px;
+}
+.point-detail pre,.point-detail p{
+	word-break: break-all;
+}
+.point-detail pre{
+	color: #333;
+	margin: 10px 0;
+	font-size: 15px;
+	line-height: 1.67;
+	white-space: pre-wrap;
+}
+.point-detail h3{
+	color: #121212;
+	font-size: 18px;
+	font-weight: 600;
+}
+.point-detail p{
+	color: #999;
+	font-size: 12px;
+}
+.point-remove{
+	margin-top: 10px;
+}
 .point-images{
   display: flex;
-  flex-wrap: wrap;      
+  flex-wrap: wrap;   
+  margin-top: 10px;   
 }
 .point-image{
-  width: 100px;
-  height: 100px;
+  width: 95px;
+  height: 95px;
   position: relative;
   border-radius: 5px;
   overflow: hidden;
@@ -236,14 +270,14 @@ a{
   font-size: 12px;
   padding:6px 8px;      
 }  
-#widget-container{
+#public-widget-container{
 	position: fixed;
 	right: 20px;
 	bottom: 20px;
 	display: flex;
 	flex-direction: column;
 }
-.widget-item{
+.public-widget-item{
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -257,49 +291,69 @@ a{
 	cursor: pointer;
 	transition: all .3s ease;
 	will-change:transform;
+
 }
-.widget-item svg{
+.public-widget-item svg{
 	vertical-align: middle;
 	transition: all .3s ease;
 	will-change:transform;
 }
-.widget-item:hover{
+.public-widget-item:hover{
 	transform: scale(1.02);
 }
-.widget-item:hover svg{
+.public-widget-item:hover svg{
 	transform: scale(1.1);
 }
-.widget-item:hover svg *{
+.public-widget-item:hover svg *{
 	fill:var(--primary-color);
 }
-#statistic{
-  position: absolute;
-  left: 10px;
-  top: 10px;
+#user-widget-container{
+	position: fixed;
+	left: 0px;
+	padding-left: 20px;
+	top: 20px;
+	display: flex;
+	flex-direction: column;
+	transform: translateX(-100%);
+	opacity: 0;
+	transition: all .3s ease;
+}
+#user-widget-container.active{
+	transform: translateX(0);
+	opacity: 1;
+}
+.user-widget-item{
   background-color: rgba(255,255,255,0.9);
   padding: 10px;
   border-radius: 5px;
   box-shadow: var(--widget-boxshadow);
-
   text-align: center;
   user-select: none;
+  margin: 5px 0;
+}
+#statistic{
+	text-align: left;
 }
 #statistic h3{
   font-size: 14px;
 }
 #statistic p{
   font-size: 12px;
+  line-height: 1.6;
   color: #999;
 }    
 #statistic .items{
   margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  min-width: 200px;
 }
 #statistic .items span{
-  padding: 0px 10px;
-  border-right: 1px solid #ccc;
+
 }
 #statistic .items span:last-of-type{
   border-right:none;
+  padding-right: 0px;
 }
 #login-form-container{
   display: none;
@@ -379,4 +433,19 @@ a{
   .point-form-container{
     width: 100%;
   }
+  .point-detail{
+		max-width: 80vw;
+	}
+	.point-images{
+		justify-content: center;
+	}
+	.point-image{
+	  width: 23.5vw;
+	  height: 23.5vw;
+	  position: relative;
+	  border-radius: 5px;
+	  overflow: hidden;
+	  margin-right: 1vw;
+	  margin-bottom: 5px;      
+	}	
 } 
