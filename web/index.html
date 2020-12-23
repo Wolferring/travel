@@ -374,7 +374,7 @@
       if(poi.images&&poi.images.length){
         let images = util.createDom(`<div class="point-images"></div>`)
         for(p of poi.images){
-          images.appendChild(util.createDom(`<div class="point-image"><img data-source="${p.url}" data-src="${util.resolvePreview(p.url,200)}" alt=""></div>`))
+          images.appendChild(util.createDom(`<div class="point-image"><img data-source="${p.url}" data-src="${p.thumb}" alt=""></div>`))
         }
         container.appendChild(images)
       }

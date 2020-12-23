@@ -19,7 +19,7 @@ let query = (sql,values)=>{
 
           if ( err ) {
             reject( err )
-            console.log(err)
+            
           } else {
             if(rows.length==0){
               resolve(null)

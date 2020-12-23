@@ -5,6 +5,9 @@ const fs = require('fs')
 const path = require('path')
 const bcrypt = require("bcrypt")
 const images = require('../store/image.js')
+const ExifReader = require('exifreader');
+const sharp = require('sharp')
+
 // const Client = require('@alicloud/imageaudit-2019-12-30')
 // 创建实例
 // 引入SDK
@@ -44,23 +47,31 @@ const genName = (name)=>{
 }
 const saveFile = (file,ctx)=>{
     let fileName = genName(file.name)
-    var destPath = path.join(__dirname,'../public/upload/'+ctx.state.user.id) + `/${fileName}`;
-    var dest_Dir = path.join(__dirname,'../public/upload/'+ctx.state.user.id);  
+    let destPath = path.join(__dirname,'../public/upload/'+ctx.state.user.id) + `/${fileName}`;
+    let destThumbnailPath = path.join(__dirname,'../public/upload/'+ctx.state.user.id) + `/thumb_${fileName}`;
+    let dest_Dir = path.join(__dirname,'../public/upload/'+ctx.state.user.id);  
     let finalPath = path.join('/public/upload/'+ctx.state.user.id) + `/${fileName}`;
+    let finalThumbPath = path.join('/public/upload/'+ctx.state.user.id) + `/thumb_${fileName}`;
     const reader = fs.createReadStream(file.path);
     return new Promise((resolve,reject)=>{
       fs.mkdir(dest_Dir, {recursive:true}, (err)=>{
          if (err) {
             reject(err)
          } else {
-             // fs.rename(file.path, destPath, (err)=>{
-             //    resolve(destPath)
-             // });
             const upStream = fs.createWriteStream(destPath);
+            const upThumbStream = fs.createWriteStream(destThumbnailPath);
             // 可读流通过管道写入可写流
-            reader.pipe(upStream)
-            resolve(finalPath)
-                        
+            var rotator = sharp()
+            .rotate();
+            var thumb = sharp()
+            .rotate()
+            .resize({width:400});
+            reader.pipe(rotator).pipe(upStream)  
+            reader.pipe(thumb).pipe(upThumbStream)  
+            resolve({
+              url:finalPath,
+              thumb:finalThumbPath
+            })            
          }
       })
     })
@@ -68,6 +79,7 @@ const saveFile = (file,ctx)=>{
 
 }
 const insertImages = async(query)=>{
+  console.log(query)
   return images.insertImages(query)
 }
 route
@@ -79,7 +91,6 @@ route
 //   }
 // })
 .post("/upload",async (ctx,next)=>{
-  console.log(ctx.request.files)
   const user = ctx.state.user
   const files = ctx.request.files.files; // 获取上传文件
   let type = Object.prototype.toString.call(files)
@@ -92,10 +103,11 @@ route
         .then(res=>{
           if(res){
             urls.push({
-              real_url:res,
-              url:config.host+res
+              real_url:res.url,
+              url:config.host+res.url,
+              thumb:config.host+res.thumb,
             })
-            query.push([res,user.id])
+            query.push([res.url,res.thumb,user.id])
           }
         })
       }
@@ -112,13 +124,14 @@ route
         await saveFile(files,ctx)
         .then(async res=>{
           if(res){
-            let result = await insertImages([[res,user.id]])
+            let result = await insertImages([[res.url,res.thumb,user.id]])
             ctx.body = {
               status:1,
               data:[{
                 id:result.insertId,
-                real_url:res,
-                url:config.host+res
+                real_url:res.url,
+                url:config.host+res.url,
+                thumb:config.host+res.thumb,
               }]
             }
           }

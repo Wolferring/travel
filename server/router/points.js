@@ -9,6 +9,7 @@ const resolveImages = (imageStr)=>{
     let images = JSON.parse("["+(imageStr).replace(/'/g, '"')+"]")
     images.forEach(item=>{
         item.url = config.host+item.url
+        item.thumb = config.host+item.thumb
     })
     return images
 }

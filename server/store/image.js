@@ -1,6 +1,6 @@
 const mysql = require('./mysql.js')
 let insertImages = function(value) {
-  let _sql = `insert into images(url,uid) values ?;`
+  let _sql = `insert into images(url,thumb,uid) values ?;`
   return mysql.query( _sql, [value] )
 }
 let updateImagesPOI = function(pid,uid,ids) {
