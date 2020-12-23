@@ -310,6 +310,11 @@
       let dom = util.createDom(`<div class="full-preview-container"><div class="full-preview-list"> <img></div><div class="full-preview-indicator"></div>`);
       let imgListDom = dom.querySelector(".full-preview-list")
       let imgIndicatorDom = dom.querySelector(".full-preview-indicator")
+      dom.addEventListener("click",(e)=>{
+        if(e.target==dom){
+          dom.remove()
+        }
+      })
       return {
         closePreview:()=>{
           dom.remove()
@@ -318,9 +323,17 @@
           imgIndicatorDom.innerHTML = ""
           imgs.forEach((item,which)=>{
             let indicator = util.createDom(`<div class="preview-indicator ${which==index?"active":""}"><img src="${item.thumb}" alt=""></div>`)
-
+            indicator.addEventListener("click",()=>{
+              imgIndicatorDom.querySelector(".preview-indicator.active").classList.remove("active")
+              indicator.classList.add("active")
+              let img = new Image()
+              img.src = item.url
+              img.onload = ()=>{
+                imgListDom.querySelector("img").src = item.url
+              }
+              
+            })
             imgIndicatorDom.appendChild(indicator)
-
           })
           imgListDom.querySelector("img").src = imgs[index].url
           document.body.appendChild(dom)

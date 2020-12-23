@@ -456,13 +456,13 @@ img{
   display: flex;
   justify-content: center;
   flex-grow: 1;
-  width: 100%;
-  max-height: 100%;
+  height: calc(100% - 70px);
   text-align: center;
+  padding-top: 20px;
 }
 .full-preview-list img{
   height: 100%;
-  width: 100%;
+  max-width: 100%;
   object-fit: contain;
 }
 .full-preview-indicator{
@@ -479,6 +479,11 @@ img{
   margin: 5px 10px;
   border-radius: 5px;
   overflow: hidden;
+  cursor: pointer;
+  border:2px solid transparent;
+}
+.preview-indicator.active{
+	border-color: var(--primary-color);
 }
 .preview-indicator img{
   width: 100%;
