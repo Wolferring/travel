@@ -1,10 +1,6 @@
-
-
-
-
 window.api = (()=>{
 
-  let apiurl = "//192.168.0.117:3000";
+  let apiurl = "//192.168.50.74:3000";
   if( (location.host).indexOf("travel")!=-1){
       apiurl ="//travel.whimsylove.cn/api";
   }
