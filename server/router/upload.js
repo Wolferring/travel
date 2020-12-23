@@ -5,7 +5,6 @@ const fs = require('fs')
 const path = require('path')
 const bcrypt = require("bcrypt")
 const images = require('../store/image.js')
-const ExifReader = require('exifreader');
 const sharp = require('sharp')
 
 // const Client = require('@alicloud/imageaudit-2019-12-30')
