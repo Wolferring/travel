@@ -17,9 +17,9 @@
   <script src="./static/upload.js"></script> 
 </head>
 <body>
-  <div id="map-container"></div>
+  <div id="map-container" ></div>
   <div id="user-widget-container">
-    <div id="statistic" class="user-widget-item"></div>
+    <div id="statistic" class="user-widget-item hidden-mobile"></div>
     <div id="search-widget" class="user-widget-item">
       <div class="form-group">
         <input type="text" placeholder="搜索地点" class="form-control" id="poi-search-input">
@@ -305,6 +305,28 @@
           }          
         }
     })();    
+
+    const PREVIEW = (()=>{
+      let dom = util.createDom(`<div class="full-preview-container"><div class="full-preview-list"> <img></div><div class="full-preview-indicator"></div>`);
+      let imgListDom = dom.querySelector(".full-preview-list")
+      let imgIndicatorDom = dom.querySelector(".full-preview-indicator")
+      return {
+        closePreview:()=>{
+          dom.remove()
+        },
+        previewImages:(imgs,index)=>{
+          imgIndicatorDom.innerHTML = ""
+          imgs.forEach((item,which)=>{
+            let indicator = util.createDom(`<div class="preview-indicator ${which==index?"active":""}"><img src="${item.thumb}" alt=""></div>`)
+
+            imgIndicatorDom.appendChild(indicator)
+
+          })
+          imgListDom.querySelector("img").src = imgs[index].url
+          document.body.appendChild(dom)
+        }
+      }
+    })()
   </script>
   <script>
     document
@@ -373,9 +395,14 @@
       <p><small>${new Date(poi.dateTime).format("yyyy-MM-dd")}</small></p></div>`)
       if(poi.images&&poi.images.length){
         let images = util.createDom(`<div class="point-images"></div>`)
-        for(p of poi.images){
-          images.appendChild(util.createDom(`<div class="point-image"><img data-source="${p.url}" data-src="${p.thumb}" alt=""></div>`))
-        }
+        poi.images.forEach((p,index)=>{
+          let img = util.createDom(`<div class="point-image"><img data-source="${p.url}" data-src="${p.thumb}" alt=""></div>`)
+          img.addEventListener("click",()=>{
+            PREVIEW.previewImages(poi.images,index)
+          })
+
+          images.appendChild(img)
+        })
         container.appendChild(images)
       }
       let button = util.createDom("<button class='point-remove button button-mini'>删除</button")
@@ -398,13 +425,15 @@
       var pointDetailWindow = new AMap.InfoWindow({
         closeWhenClickMap:true,
         offset: new AMap.Pixel(0, -30)
-      })      
-      pointDetailWindow.on("open",()=>{
-        USER_WIDGET.hide()
-      }) 
-      pointDetailWindow.on("close",()=>{
-        USER_WIDGET.show()
-      })                
+      })  
+      if(AMap.Browser.mobile){
+        pointDetailWindow.on("open",()=>{
+          USER_WIDGET.hide()
+        }) 
+        pointDetailWindow.on("close",()=>{
+          USER_WIDGET.show()
+        })                
+      }    
       let images = e.target.content.querySelectorAll(".point-images img")
       if(images&&images.length){
         for(image of images){
@@ -475,7 +504,7 @@
       BUS.emit("marker:create")
 
     }
-    const initMap = (AMap,interestPoints)=>{
+    var initMap = (AMap,interestPoints)=>{
       window.MAP = new AMap.Map('map-container', {
           zoom:11,//级别
           zooms:[4,14],
@@ -554,20 +583,14 @@
           }, 700));
         });  
         MAP.on('touchend', function(event) {
-          // 清除默认行为
-          // event.preventDefault();
           // 清除定时器
           util.clearTimeout(timer);
         }); 
         MAP.on('touchmove', function(event) {
-          // 清除默认行为
-          // event.preventDefault();
           // 清除定时器
           util.clearTimeout(timer);
         }); 
         MAP.on('zoomstart', function(event) {
-          // 清除默认行为
-          // event.preventDefault();
           // 清除定时器
           util.clearTimeout(timer);
         });         
