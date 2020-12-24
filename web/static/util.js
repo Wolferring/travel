@@ -92,6 +92,47 @@ window.util = (()=>{
       toastList.push(node)
       document.body.appendChild(node)
     },
+    confirm:(content,options={})=>{
+      let node = util.createDom(`<div class="confirm-container"> <div class="confirm-content">  <p class="confirm-text">${content}</p><div class="confirm-control"><button class="button button-confirm">确认</button><button class="button button-default button-cancel">取消</button></div></div></div></div>`)
+      if(options.type){
+        node.classList.add({"error":"toast-danger","success":"toast-primary"}[options.type])
+      }
+      let pr = new Promise((resolve,reject)=>{
+        node.querySelector(".button-cancel").addEventListener("click",()=>{
+          node.classList.remove("show")
+          setTimeout(()=>{
+            node.remove()
+          },200)
+          reject()
+        })
+        node.querySelector(".button-confirm").addEventListener("click",()=>{
+          node.classList.remove("show")
+          setTimeout(()=>{
+            node.remove()
+          },200)          
+          resolve()
+        })      
+      })
+      console.log( node.querySelector(".confirm-content").offsetWidth)
+      if(options.fitEl){
+        let content = node.querySelector(".confirm-content")
+        content.style.position = "absolute"
+        let bouding = options.fitEl.getBoundingClientRect()
+
+        if(document.body.clientWidth - bouding.right -5 > 200){
+          content.style.left = (bouding.right+5)+"px"
+        }else if(bouding.left -5 > 200){
+          content.style.left = (bouding.left - 200 - 5)+"px"
+        }
+        content.style.top = (bouding.top)+"px"
+      }
+      document.body.appendChild(node)
+      setTimeout(()=>{
+        node.classList.add("show")
+      },0)      
+
+      return pr
+    },    
     clearTimeout:(tm)=>{
       tm.forEach(item=>{
         clearTimeout(item)
