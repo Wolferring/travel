@@ -333,10 +333,10 @@
               imgIndicatorDom.querySelector(".preview-indicator.active").classList.remove("active")
               indicator.classList.add("active")
               let img = new Image()
-              img.src = item.url
-              img.onload = ()=>{
+              img.addEventListener('load', function() {
                 imgListDom.querySelector("img").src = item.url
-              }
+              }, false);
+              img.src = item.url
               
             })
             imgIndicatorDom.appendChild(indicator)
