@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>旅途记录-去过的地方和读过的书，构成独一无二的我.Via Whimsy</title>
+  <title>途纪-去过的地方和读过的书，构成独一无二的我.Via Whimsy</title>
   <link rel="shortcut icon" href="./favicon.ico">
   <meta name="viewport" content="user-scalable=no">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
@@ -304,20 +304,26 @@
             })
           }          
         }
-    })();    
-
+    })();
     const PREVIEW = (()=>{
-      let dom = util.createDom(`<div class="full-preview-container"><div class="full-preview-list"> <img></div><div class="full-preview-indicator"></div>`);
+      let dom = util.createDom(`<div class="full-preview-container">
+        <div class="full-preview-close"></div><div class="full-preview-list"> <img></div><div class="full-preview-indicator"></div>`);
       let imgListDom = dom.querySelector(".full-preview-list")
       let imgIndicatorDom = dom.querySelector(".full-preview-indicator")
       dom.addEventListener("click",(e)=>{
         if(e.target==dom){
-          dom.remove()
+          fns.closePreview()
         }
       })
-      return {
+      dom.querySelector(".full-preview-close").addEventListener("click",()=>{
+        fns.closePreview()
+      })
+      var fns = {
         closePreview:()=>{
-          dom.remove()
+          dom.classList.remove("show")
+          setTimeout(()=>{
+            dom.remove()
+          },200)
         },
         previewImages:(imgs,index)=>{
           imgIndicatorDom.innerHTML = ""
@@ -337,8 +343,12 @@
           })
           imgListDom.querySelector("img").src = imgs[index].url
           document.body.appendChild(dom)
+          setTimeout(()=>{
+            dom.classList.add("show")
+          },0)
         }
       }
+      return fns
     })()
   </script>
   <script>
@@ -385,8 +395,6 @@
          
       });      
     }
-
-
     USER.refresh()
     .then(()=>{
       initApplication()

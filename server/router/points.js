@@ -6,7 +6,6 @@ const config = require("../store/config.js")
 const path = require('path')
 
 const resolveImages = (imageStr)=>{
-    console.log("["+(imageStr).replace(/'/g, '"')+"]")
     let images = JSON.parse("["+(imageStr).replace(/'/g, '"').replace(/\\/g, '\/')+"]")
     images.forEach(item=>{
         item.url = config.host+item.url
