@@ -69,8 +69,8 @@ const saveFile = async (file,ctx)=>{
         'whimys-travel-images'
       )
       resolve({
-        url:result.url,
-        thumb:result.url.replace(`/${ctx.state.user.id}/`+fileName,`/${ctx.state.user.id}/thumb_`+fileName)
+        url:`/${ctx.state.user.id}/`+fileName,
+        thumb:`/${ctx.state.user.id}/thumb_`+fileName
       })  
       // fs.mkdir(dest_Dir, {recursive:true}, (err)=>{
       //    if (err) {

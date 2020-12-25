@@ -8,12 +8,14 @@ const PATH_EXP = new RegExp(/http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/)
 const resolveImages = (imageStr)=>{
     let images = JSON.parse("["+(imageStr).replace(/'/g, '"').replace(/\\/g, '\/')+"]")
     images.forEach(item=>{
-        if(!PATH_EXP.test(item.url)){
-            item.url = config.host+item.url
-        }
-        if(!PATH_EXP.test(item.thumb)){
-            item.thumb = config.host+item.thumb
-        }
+        item.url = "https://whimys-travel-images.oss-cn-chengdu.aliyuncs.com"+item.url
+        item.thumb = "https://whimys-travel-images.oss-cn-chengdu.aliyuncs.com"+item.thumb
+
+        // if(!PATH_EXP.test(item.url)){
+        // }
+        // if(!PATH_EXP.test(item.thumb)){
+        //     item.thumb = config.host+item.thumb
+        // }
     })
     return images
 }
