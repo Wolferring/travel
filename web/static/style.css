@@ -484,7 +484,7 @@ img{
   left: 50%;
   transform: translate(-50%, -50%);
   color: #fff;
-  /* z-index: 9; */
+  z-index: 9;
 }
 .full-preview-container.loading .full-preview-list{
   filter: brightness(0.3);
@@ -616,6 +616,33 @@ img{
   font-size: 14px;
   line-height: 2;
   word-break: break-all;
+  transition: top .2s;
+  animation: fadeIn .2s;
+}
+.toast-item.fade-out{
+  animation: fadeOut .2s;
+  animation-fill-mode:forwards;
+}
+@keyframes fadeOut {
+  0%{
+    opacity: 1;
+    transform: translate(-50%,0);
+  }
+  100%{
+    opacity: 0;
+    transform: translate(-50%,-30px);
+    display: none;
+  }
+}
+@keyframes fadeIn {
+  0%{
+    opacity: 0;
+    transform: translate(-50%,-30px);
+  }
+  100%{
+    opacity: 1;
+    transform: translate(-50%,0);
+  }
 }
 .toast-item.toast-danger{
   background-color: var(--danger-color);

@@ -20,6 +20,7 @@ mysql.createTable(points)
 let findPoints = async (uid)=>{
   let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,",'thumb':'",img.thumb,"'}") as images  from points as p left join images as img on img.pid = p.id where p.uid = ${uid} AND p.status = "ACTIVE"  group by p.id;`
   let result = await mysql.query( _sql )
+  if(!result) return []
   if(Object.prototype.toString.call(result)==="[object Array]"){
     return result
   }else{

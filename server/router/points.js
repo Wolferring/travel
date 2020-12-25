@@ -4,12 +4,16 @@ const pointModel = require('../store/points.js');
 const imageModel = require('../store/image.js');
 const config = require("../store/config.js")
 const path = require('path')
-
+const PATH_EXP = new RegExp(/http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/);
 const resolveImages = (imageStr)=>{
     let images = JSON.parse("["+(imageStr).replace(/'/g, '"').replace(/\\/g, '\/')+"]")
     images.forEach(item=>{
-        item.url = config.host+item.url
-        item.thumb = config.host+item.thumb
+        if(!PATH_EXP.test(item.url)){
+            item.url = config.host+item.url
+        }
+        if(!PATH_EXP.test(item.thumb)){
+            item.thumb = config.host+item.thumb
+        }
     })
     return images
 }
@@ -17,6 +21,7 @@ const resolveImages = (imageStr)=>{
 route
 .get("/points",async (ctx,next)=>{
     let ps = await pointModel.findPoints(ctx.state.user.id)
+    console.log(ps)
     if(ps&&ps.length){
         ps.forEach(poi=>{
             if(poi.images){

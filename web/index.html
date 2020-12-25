@@ -222,9 +222,11 @@
             util.confirm("确认退出登录",{
               fitEl:e.target||null
             })
-            .then(()=>{
-              window.localStorage.removeItem("AUTH")
-              window.location.reload()
+            .then((confirm)=>{
+              if(confirm){
+                window.localStorage.removeItem("AUTH")
+                window.location.reload()
+              }
             })
           }
         }
@@ -295,10 +297,14 @@
             }
             dom.classList.remove("active")
           },
-
           submit:()=>{
             if(!util.valid("#point-form")) return false
-
+            if(upload.uploading){
+              util.toast("正在上传文件，请勿重复提交",{
+                type:"error"
+              })
+              return false
+            }
             upload.upload()
             .then(images=>{
               let formData = new FormData(form),
@@ -314,6 +320,7 @@
               api.createPoint(params)
               .then(res=>{
                 createMarkers(res.data)
+                util.toast("创建足迹成功",{type:"success"})
                 FORM.close()
               })            
             })
@@ -478,13 +485,15 @@
     const removeMarker = (poi,markerIndex) =>{
       //需要增加删除确认
       util.confirm("确认删除？")
-      .then(()=>{
-        api.removePoint(poi.id)
-        .then(res=>{
-          MARKERS[markerIndex-1].setMap(null)
-          MAP.clearInfoWindow()
-          BUS.emit("marker:remove")
-        })
+      .then((confirm)=>{
+        if(confirm){
+          api.removePoint(poi.id)
+          .then(res=>{
+            MARKERS[markerIndex-1].setMap(null)
+            MAP.clearInfoWindow()
+            BUS.emit("marker:remove")
+          })
+        }
       })
     }
     const markerClick = (e) => {
@@ -530,7 +539,7 @@
               imageSize: new AMap.Size(25, 34),
               position: contextMenuPositon,
               map: MAP,
-              offset:new AMap.Pixel(-13, -30),
+              offset:new AMap.Pixel(-16, -32),
               icon:"./static/image/point-temp.png"
 
             });
@@ -547,7 +556,7 @@
               var marker = new AMap.Marker({
                   position: types[i]['lnglat'].split(","),
                   map: MAP,
-                  offset:new AMap.Pixel(-13, -30),
+                  offset:new AMap.Pixel(-16, -30),
                   icon:NormalIcon
               });
               MARKERS.push(marker)
@@ -559,7 +568,7 @@
           var marker = new AMap.Marker({
               position: types['lnglat'].split(","),
               map: MAP,
-              offset:new AMap.Pixel(-13, -30),  
+              offset:new AMap.Pixel(-16, -30),  
               icon:NormalIcon
           });
           MARKERS.push(marker)
@@ -673,12 +682,15 @@
       .addEventListener("click",(e)=>{
         MAP.setFitView();
       })
+
       document
       .querySelector("#map-control-location")
       .addEventListener("click",(e)=>{
         location.getCurrentPosition(function(status,result){
             if(status=='complete'){
               MAP.setZoomAndCenter(14,result.position)
+              contextMenuPositon = result.position
+              createMarkers("temp")
             }else{
                 
             }
