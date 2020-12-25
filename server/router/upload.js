@@ -12,7 +12,7 @@ let client = new OSS({
   accessKeySecret: config.ali.accessKeySecret,
   bucket: 'whimys-travel-images',
   secure:true,
-  endpoint:"oss-cn-chengdu.aliyuncs.com"
+  endpoint:config.ali.endpoint
 });
 
 // const Client = require('@alicloud/imageaudit-2019-12-30')
@@ -97,7 +97,6 @@ const saveFile = async (file,ctx)=>{
 
 }
 const insertImages = async(query)=>{
-  console.log(query)
   return images.insertImages(query)
 }
 route
@@ -122,8 +121,8 @@ route
           if(res){
             urls.push({
               real_url:res.url,
-              url:config.host+res.url,
-              thumb:config.host+res.thumb,
+              url:res.url,
+              thumb:res.thumb,
             })
             query.push([res.url,res.thumb,user.id])
           }
@@ -148,8 +147,8 @@ route
               data:[{
                 id:result.insertId,
                 real_url:res.url,
-                url:config.host+res.url,
-                thumb:config.host+res.thumb,
+                url:res.url,
+                thumb:res.thumb,
               }]
             }
           }
