@@ -6,6 +6,14 @@ const path = require('path')
 const bcrypt = require("bcrypt")
 const images = require('../store/image.js')
 const sharp = require('sharp')
+let OSS = require('ali-oss');
+let client = new OSS({
+  accessKeyId: config.ali.accessKeyId,
+  accessKeySecret: config.ali.accessKeySecret,
+  bucket: 'whimys-travel-images',
+  secure:true,
+  endpoint:config.ali.endpoint
+});
 
 // const Client = require('@alicloud/imageaudit-2019-12-30')
 // 创建实例
@@ -44,41 +52,51 @@ const genName = (name)=>{
   }  
   return (new Date().getTime())+pwd+`.${name.split(".").pop()}`
 }
-const saveFile = (file,ctx)=>{
-    let fileName = genName(file.name)
+const saveFile = async (file,ctx)=>{
+    let fileName = genName(file.name,ctx.state.user.id)
     let destPath = path.join(__dirname,'../public/upload/'+ctx.state.user.id) + `/${fileName}`;
     let destThumbnailPath = path.join(__dirname,'../public/upload/'+ctx.state.user.id) + `/thumb_${fileName}`;
     let dest_Dir = path.join(__dirname,'../public/upload/'+ctx.state.user.id);  
     let finalPath = path.join('/public/upload/'+ctx.state.user.id) + `/${fileName}`;
     let finalThumbPath = path.join('/public/upload/'+ctx.state.user.id) + `/thumb_${fileName}`;
     const reader = fs.createReadStream(file.path);
-    return new Promise((resolve,reject)=>{
-      fs.mkdir(dest_Dir, {recursive:true}, (err)=>{
-         if (err) {
-            reject(err)
-         } else {
-            const upStream = fs.createWriteStream(destPath);
-            const upThumbStream = fs.createWriteStream(destThumbnailPath);
-            // 可读流通过管道写入可写流
-            var rotator = sharp()
-            .rotate();
-            var thumb = sharp()
-            .rotate()
-            .resize({width:400});
-            reader.pipe(rotator).pipe(upStream)  
-            reader.pipe(thumb).pipe(upThumbStream)  
-            resolve({
-              url:finalPath,
-              thumb:finalThumbPath
-            })            
-         }
-      })
+    return new Promise(async (resolve,reject)=>{
+      let result = await client.putStream(`/${ctx.state.user.id}/`+fileName, reader)
+      let thumb = await client.processObjectSave(
+        `/${ctx.state.user.id}/`+fileName,
+        `/${ctx.state.user.id}/thumb_`+fileName,
+        "image/auto-orient,1/resize,m_lfit,w_300/quality,Q_100",
+        'whimys-travel-images'
+      )
+      resolve({
+        url:`/${ctx.state.user.id}/`+fileName,
+        thumb:`/${ctx.state.user.id}/thumb_`+fileName
+      })  
+      // fs.mkdir(dest_Dir, {recursive:true}, (err)=>{
+      //    if (err) {
+      //       reject(err)
+      //    } else {
+      //       const upStream = fs.createWriteStream(destPath);
+      //       const upThumbStream = fs.createWriteStream(destThumbnailPath);
+      //       // 可读流通过管道写入可写流
+      //       var rotator = sharp()
+      //       .rotate();
+      //       var thumb = sharp()
+      //       .rotate()
+      //       .resize({width:400});
+      //       reader.pipe(rotator).pipe(upStream)  
+      //       reader.pipe(thumb).pipe(upThumbStream)  
+      //       resolve({
+      //         url:finalPath,
+      //         thumb:finalThumbPath
+      //       })            
+      //    }
+      // })
     })
     // console.log(filePath)
 
 }
 const insertImages = async(query)=>{
-  console.log(query)
   return images.insertImages(query)
 }
 route
@@ -103,8 +121,8 @@ route
           if(res){
             urls.push({
               real_url:res.url,
-              url:config.host+res.url,
-              thumb:config.host+res.thumb,
+              url:res.url,
+              thumb:res.thumb,
             })
             query.push([res.url,res.thumb,user.id])
           }
@@ -129,8 +147,8 @@ route
               data:[{
                 id:result.insertId,
                 real_url:res.url,
-                url:config.host+res.url,
-                thumb:config.host+res.thumb,
+                url:res.url,
+                thumb:res.thumb,
               }]
             }
           }

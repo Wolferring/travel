@@ -3,6 +3,7 @@ class Upload{
     this.$el = document.querySelector(el)
     this.fileList = []
     this.options = options
+    this.uploading = false
     this._init()
   }
   _init(){
@@ -94,6 +95,7 @@ class Upload{
 
     let self = this,
         totalSize = 0;
+    self.uploading = true
     self.fileList.forEach(file=>{
       totalSize+=file.size
     })   
@@ -152,6 +154,9 @@ class Upload{
         .catch(e=>{
           finalReject(e)
         })
+        .finally(e=>{
+          self.uploading = false
+        })
         //所有请求完成后，resolve整体
       })      
       //这里有个算法组合的问题，已知最单次请求最大不超过50M，文件大小[2,10,32,10,33,23]，如何组合才能实现最少请求次数
@@ -169,6 +174,16 @@ class Upload{
         api.upload(formData)
         .then(res=>{
           resolve(res.data)
+        })
+        .catch(e=>{
+          if(e.msg){
+            util.toast(msg,{
+              type:"error"
+            })
+          }
+        })
+        .finally(e=>{
+          self.uploading = false
         })
       })
     }

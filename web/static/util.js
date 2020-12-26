@@ -2,8 +2,11 @@ window.util = (()=>{
   const realType = (val)=>{
     return Object.prototype.toString.call(val)
   }
+  // HTMLElement.prototype.loading = (state)=>{
+  //   alert("loading")
+  // }
   Date.prototype.format = function(fmt)   
-  { //author: meizz   
+  {   
     var o = {   
       "M+" : this.getMonth()+1,                 //月份   
       "d+" : this.getDate(),                    //日   
@@ -50,9 +53,9 @@ window.util = (()=>{
     isArray:(val)=>{
       return realType(val)==="[object Array]"
     },
-    valid:(el)=>{
+    valid:(selector)=>{
       let valid = true
-      let inputs = document.querySelector(el).querySelectorAll(".form-control[name]")
+      let inputs = document.querySelector(selector).querySelectorAll(".form-control[name]")
       inputs.forEach(input=>{
         input.classList.remove("invalid")
         let value = input.value
@@ -75,23 +78,75 @@ window.util = (()=>{
       return valid
     },    
     toast:(content,options={})=>{
-      let node = util.createDom(`<div class="toast-item">${content}</div>`)
+      let t = {
+        el:util.createDom(`<div class="toast-item">${content}</div>`),
+        height:0,
+        bottom:0
+      }
       let top = 10
+      if(options.type){
+        t.el.classList.add({"error":"toast-danger","success":"toast-primary"}[options.type])
+      }
+      if(toastList.length){
+        top = document.querySelector(".toast-item:last-of-type").getBoundingClientRect().bottom+10
+      }
+      t.el.style.top = top+"px"
+      toastList.push(t)
+      document.body.appendChild(t.el)
+      t.height = t.el.offsetHeight    
+      setTimeout(()=>{
+        t.el.classList.add('fade-out')
+        setTimeout(()=>{
+          t.el.remove()
+        },200)
+        toastList.splice(0,1)
+        toastList.forEach(item=>{
+          item.el.style.top = (parseInt(item.el.style.top,10) - t.height - 10)+"px"
+        })   
+      },2000)
+
+
+    },
+    confirm:(content,options={})=>{
+      let node = util.createDom(`<div class="confirm-container"> <div class="confirm-content">  <p class="confirm-text">${content}</p><div class="confirm-control"><button class="button button-confirm">确认</button><button class="button button-default button-cancel">取消</button></div></div></div></div>`)
       if(options.type){
         node.classList.add({"error":"toast-danger","success":"toast-primary"}[options.type])
       }
-      toastList.forEach(item=>{
-        top += item.offsetHeight+10
+      let pr = new Promise((resolve,reject)=>{
+        node.querySelector(".button-cancel").addEventListener("click",()=>{
+          node.classList.remove("show")
+          setTimeout(()=>{
+            node.remove()
+          },200)
+          resolve(false)
+        })
+        node.querySelector(".button-confirm").addEventListener("click",()=>{
+          node.classList.remove("show")
+          setTimeout(()=>{
+            node.remove()
+          },200)          
+          resolve(true)
+        })      
       })
-      node.style.top = top+"px"
-      let index = toastList.length-1
-      setTimeout(()=>{
-        toastList.splice(index,1)
-        node.remove()
-      },5000)
-      toastList.push(node)
+      if(options.fitEl){
+        let content = node.querySelector(".confirm-content")
+        content.style.position = "absolute"
+        let bouding = options.fitEl.getBoundingClientRect()
+
+        if(document.body.clientWidth - bouding.right -5 > 200){
+          content.style.left = (bouding.right+5)+"px"
+        }else if(bouding.left -5 > 200){
+          content.style.left = (bouding.left - 200 - 5)+"px"
+        }
+        content.style.top = (bouding.top)+"px"
+      }
       document.body.appendChild(node)
-    },
+      setTimeout(()=>{
+        node.classList.add("show")
+      },0)      
+
+      return pr
+    },    
     clearTimeout:(tm)=>{
       tm.forEach(item=>{
         clearTimeout(item)
