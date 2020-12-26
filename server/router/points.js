@@ -8,8 +8,8 @@ const PATH_EXP = new RegExp(/http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/)
 const resolveImages = (imageStr)=>{
     let images = JSON.parse("["+(imageStr).replace(/'/g, '"').replace(/\\/g, '\/')+"]")
     images.forEach(item=>{
-        item.url = "https://whimys-travel-images.oss-cn-chengdu.aliyuncs.com"+item.url
-        item.thumb = "https://whimys-travel-images.oss-cn-chengdu.aliyuncs.com"+item.thumb
+        item.url = "//cdn.whimsylove.cn"+item.url
+        item.thumb = "//cdn.whimsylove.cn"+item.thumb
 
         // if(!PATH_EXP.test(item.url)){
         // }
