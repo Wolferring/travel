@@ -1,4 +1,6 @@
 const merge = require('webpack-merge');
+const path = require('path');
+
 const TerserPlugin = require("terser-webpack-plugin");
 const common = require('./webpack.common.js');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -40,7 +42,21 @@ module.exports = merge(common, {
       {
         test: /\.css$/i,
         use: [MiniCssExtractPlugin.loader,{ loader: "css-loader" }],
-      },
+      },          
+      {
+        test: /\.less$/i,
+        use: [
+        MiniCssExtractPlugin.loader,
+        'css-loader',
+        'less-loader',
+        {
+          loader: 'style-resources-loader',
+          options: {
+            patterns: [
+                path.resolve(__dirname, 'src/styles/var.less')
+            ]}
+        }],
+      },      
     ],
   }  
 });
