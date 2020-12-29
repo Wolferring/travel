@@ -2,7 +2,7 @@
 node_modules
 server/public/upload
 server/store/config.js
-dist
+web/dist
 
 
 # local env files
