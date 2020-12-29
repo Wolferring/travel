@@ -1,0 +1,29 @@
+body{
+  background-color:#f6f6f6;
+  overflow-y:auto;
+}
+.card{
+  margin-bottom: 10px;
+  background: #fff;
+  overflow: hidden;
+  border-radius: 5px;
+  box-shadow: @widget-boxshadow;
+}
+.user-basic{
+
+}
+.user-cover{
+  height:240px;
+  .user-cover-image{
+    height:100%;
+    width:100%;
+    object-fit: cover;
+    user-select:none;
+    filter:brightness(0.5);
+  }
+}
+.user-statistic{
+  .card{
+    flex:1;
+  }
+}

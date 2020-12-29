@@ -1,4 +1,4 @@
-window.util = (()=>{
+const util = (()=>{
   const realType = (val)=>{
     return Object.prototype.toString.call(val)
   }
@@ -154,3 +154,7 @@ window.util = (()=>{
     }
   }
 })()
+// if(window){
+// window.util = util
+// }
+export default util

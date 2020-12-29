@@ -1,6 +1,8 @@
-window.api = (()=>{
+import axios from 'axios'
 
-  let apiurl = "//192.168.0.117:3000";
+const api = (()=>{
+
+  let apiurl = "//192.168.50.74:3000";
 
   if( (location.host).indexOf("travel")!=-1){
       apiurl ="//travel.whimsylove.cn/api";
@@ -8,7 +10,7 @@ window.api = (()=>{
 
   const service = axios.create({//设置全局配置
       baseURL:`${apiurl}`, //请求路径
-      timeout: 0, // 请求超时时间
+      timeout: 15000, // 请求超时时间
   })
   // 请求拦截器
   service.interceptors.request.use(
@@ -99,4 +101,4 @@ window.api = (()=>{
     }    
   } 
 })()
-
+export default api

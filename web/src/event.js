@@ -35,3 +35,5 @@ class EventBus{
     })
   }
 }
+const GLOBAL_EVENT = new EventBus()
+export {EventBus,GLOBAL_EVENT}

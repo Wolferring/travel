@@ -1,3 +1,5 @@
+import util from './util.js'
+import api from './fetch.js'
 class Upload{
   constructor(el,options = {maxSize:50*1024}){
     this.$el = document.querySelector(el)
@@ -189,3 +191,4 @@ class Upload{
     }
   }  
 }
+export default Upload

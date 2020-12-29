@@ -29,6 +29,8 @@
   },
   "devDependencies": {
     "glob": "^7.1.6",
-    "nodemon": "^2.0.6"
+    "nodemon": "^2.0.6",
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "webpack-merge": "^5.7.3"
   }
 }

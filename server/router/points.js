@@ -10,12 +10,6 @@ const resolveImages = (imageStr)=>{
     images.forEach(item=>{
         item.url = "//cdn.whimsylove.cn"+item.url
         item.thumb = "//cdn.whimsylove.cn"+item.thumb
-
-        // if(!PATH_EXP.test(item.url)){
-        // }
-        // if(!PATH_EXP.test(item.thumb)){
-        //     item.thumb = config.host+item.thumb
-        // }
     })
     return images
 }
