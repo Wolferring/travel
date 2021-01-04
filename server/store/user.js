@@ -20,9 +20,26 @@ let insertUser = function(user) {
   avatar=?;`
   return mysql.query( _sql, user )
 }
+let updateUser = function(id,query){
+  let query_string = [],
+      values = []
+  for(let item in query){
+    if(item=="password") continue
+    query_string.push(`${item} = ? `)
+    values.push(query[item])
+  }
+  let _sql = `update user set ${query_string.join(",")} where id=${id};`
+  console.log(_sql)
+  return mysql.query( _sql, values )
+}
+let updateUserPassword = function(id,pass){
+
+}
 module.exports = {
   findUserById,
+  updateUserPassword,
   findRawUserByName,
   findUserByName,
+  updateUser,
   insertUser
 }

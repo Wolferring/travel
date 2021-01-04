@@ -86,11 +86,18 @@ const api = (()=>{
     },
     upload(obj){
       return service({
-            url:`/upload`,
-            headers:{'Content-Type':'multipart/form-data'},
-            method:'POST',
-            data: obj        
+        url:`/upload`,
+        headers:{'Content-Type':'multipart/form-data'},
+        method:'POST',
+        data: obj        
       })
+    },
+    updateUser(obj){
+      return service({
+          url:`/user`,
+          method:'POST',
+          data: obj
+      })       
     },
     register(obj){ 
         return service({

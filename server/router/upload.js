@@ -6,7 +6,9 @@ const path = require('path')
 const bcrypt = require("bcrypt")
 const images = require('../store/image.js')
 const sharp = require('sharp')
-let OSS = require('ali-oss');
+let OSS = require('ali-oss'); 
+const util = require("../util/util.js")
+
 let client = new OSS({
   accessKeyId: config.ali.accessKeyId,
   accessKeySecret: config.ali.accessKeySecret,
@@ -131,6 +133,8 @@ route
       let result = await insertImages(query)
       urls.map((item,index)=>{
         item["id"] = result.insertId+index
+        item["url"] = util.resolveImagePath(item.url)
+        item["thumb"] = util.resolveImagePath(item.thumb)      
       })
       ctx.body = {
         status:1,
@@ -147,8 +151,8 @@ route
               data:[{
                 id:result.insertId,
                 real_url:res.url,
-                url:res.url,
-                thumb:res.thumb,
+                url:util.resolveImagePath(res.url),
+                thumb:util.resolveImagePath(res.thumb),
               }]
             }
           }

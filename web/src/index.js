@@ -37,7 +37,7 @@ window.onload = ()=>{
     })     
 }
 
-var USER = (()=>{
+window.USER = (()=>{
   let loginForm = document.querySelector("#login-form"),
       registerForm = document.querySelector("#register-form"),
       dom = document.querySelector("#login-form-container"),
@@ -101,20 +101,26 @@ var USER = (()=>{
       formData.forEach((v,k)=>{
         params[k] = v
       })
-      return api.login(params)
-      .then(res=>{
-        try{
-          window.localStorage.setItem("AUTH",res.data.token)
-        }catch(e){}
-        userDetail = res.data
-        USER.refresh()
-        USER.close()
-      }) 
-      .catch(e=>{
-          util.toast(e.data.msg,{
-            type:"error"
-          })
-      })             
+      return new Promise((resolve,reject)=>{
+        api.login(params)
+        .then(res=>{
+
+          try{
+            window.localStorage.setItem("AUTH",res.data.token)
+          }catch(e){}
+          userDetail = res.data
+          resolve()
+          USER.refresh()
+          USER.close()
+        }) 
+        .catch(e=>{
+            util.toast(e.data.msg,{
+              type:"error"
+            })
+            reject()
+        })             
+      })
+
     },
     logout:(e)=>{
       util.confirm("确认退出登录",{
@@ -155,8 +161,11 @@ var STATISTIC_WIDGET = (()=>{
         api.getPointsStatistic()
         .then(res=>{
           let html = `
-          <div class="flex">
-            <div>
+          <div class="flex-start">
+            <div class="avatar ${USER.info("avatar")?"":"hidden"}">
+              <img src="${USER.info("avatar")}"  alt="用户头像"/>
+            </div>
+            <div class="info">
               <h4>${USER.info('nickname')}</h4>  
               <p>${USER.info('username')}</p>
               <p>${new Date(USER.info('create_time')).format("yyyy-MM-dd")}加入</p>

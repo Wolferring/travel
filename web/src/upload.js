@@ -1,7 +1,10 @@
 import util from './util.js'
 import api from './fetch.js'
 class Upload{
-  constructor(el,options = {maxSize:50*1024}){
+  constructor(el,options = {
+    maxSize:50*1024,
+    multiple:true
+  }){
     this.$el = document.querySelector(el)
     this.fileList = []
     this.options = options
@@ -14,7 +17,7 @@ class Upload{
     self.$el.appendChild(util.createDom(`
           <div class="upload-preview">
             <div class="upload-card">
-              <input class="form-control upload-control" multiple type="file"  accept="image/*" ">
+              <input class="form-control upload-control" ${self.options.multiple?"multiple":""} type="file"  accept="image/*" ">
             </div>
           </div> 
       `))
@@ -28,11 +31,7 @@ class Upload{
       self.$input.click()
     })
     self.$preview.addEventListener("click",(e)=>{
-      if(e.srcElement.classList.contains('upload-preview-image-remove')){
-        let index = Array.from(self.$preview.querySelectorAll('.upload-preview-image')).indexOf(e.srcElement.parentNode)
-        self.fileList.splice(index,1)
-        e.srcElement.parentNode.remove()
-      }
+      self.previewRemove(e)
     })
     if(self.options.drag){
       self.$el.addEventListener('dragleave', function(e) {
@@ -55,6 +54,17 @@ class Upload{
       });      
     }
   }
+  previewRemove(e){
+    let self = this
+    if(e&&e.srcElement.classList.contains('upload-preview-image-remove')){
+      let index = Array.from(self.$preview.querySelectorAll('.upload-preview-image')).indexOf(e.srcElement.parentNode)
+      self.fileList.splice(index,1)
+      e.srcElement.parentNode.remove()
+    }
+    if(!self.options.multiple&&self.fileList.length==0){
+      self.$card.style.display = "block"
+    }    
+  }
   filePreviewReset(){
     let self = this
     self.fileList = []
@@ -63,6 +73,43 @@ class Upload{
     .forEach(item=>{
       item.remove()
     })            
+  }
+  singleFilePreview(files){
+    let file = files[0],
+        self = this;
+    if(file.size/1024>self.options.maxSize){
+      util.toast(`【${file.name}】文件过大，单个文件小于${self.options.maxSize/1024}M`,{
+        type:"error"
+      })        
+      return false;
+    }
+    self.fileList = [file]
+    let container = util.createDom(`<div class="upload-single-container">
+    <div class="upload-single-preview">
+      <div class="upload-single-image">
+        <img src="${window.URL.createObjectURL(file)}" alt="">
+      </div>
+      <div class="upload-single-control">
+        <button class="button button-default upload-single-cancel">取消</button>
+        <button class="button upload-single-upload">确认上传</button>
+      </div>
+    </div>
+    </div>`)
+    document.body.appendChild(container)
+    container.querySelector(".upload-single-cancel").addEventListener("click",()=>{
+      container.remove()
+    })
+    container.querySelector(".upload-single-upload").addEventListener("click",()=>{
+      self.upload()
+      .then(res=>{
+        container.remove()
+        if(util.realType(self.options.success)=="[object Function]"){
+
+          self.options.success(res[0])
+        }
+
+      })
+    })    
   }
   filePreview(files){
     let self = this
@@ -74,6 +121,10 @@ class Upload{
           type:"error"
         })        
         continue;
+      }
+      if(!self.options.multiple){
+        self.fileList = []
+        self.$card.style.display = "none"
       }
       self.fileList.push(file)
       html = `<div class="upload-preview-image">
@@ -89,12 +140,14 @@ class Upload{
   fileChange(img){
     let images = img.files,
         self = this;
-    if(images.length){
+    if(images.length&&self.options.multiple){
       self.filePreview(images)
     }
+    if(images.length&&!self.options.multiple){
+      self.singleFilePreview(images)
+    }    
   } 
   upload(){
-
     let self = this,
         totalSize = 0;
     self.uploading = true

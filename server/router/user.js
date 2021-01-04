@@ -4,11 +4,12 @@ const config = require('../store/config.js')
 const userModel = require('../store/user.js')
 const token = require('../util/token.js')
 const crypt = require('../util/crypt.js')
-
+const util = require("../util/util.js")
 route
 .get("/user",async (ctx,next)=>{
     let user = await userModel.findUserById(ctx.state.user.id)
     if(user){
+        user.avatar = util.resolveImagePath(user.avatar)
         ctx.body={
             status:1,
             data:user
@@ -71,6 +72,15 @@ route
         }
     })
 
+})
+.post("/user",async (ctx,next)=>{
+    await userModel.updateUser(ctx.state.user.id,ctx.request.body)
+    .then(async(res)=>{
+        ctx.body={
+            status:1,
+            data:{}
+        }    
+    })
 })
 .delete("/user/:id",async (ctx,next)=>{
     // await pointModel.removePointsById(ctx.params.id)

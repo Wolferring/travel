@@ -25,6 +25,9 @@ const util = (()=>{
   }    
   let toastList = []
   return {
+    realType:(val)=>{
+      return Object.prototype.toString.call(val)
+    },
     createDom:(str)=>{
       let div = document.createElement("div")
       div.innerHTML  = str
@@ -77,7 +80,7 @@ const util = (()=>{
       })
       return valid
     },    
-    toast:(content,options={})=>{
+    toast:(content,options={duration:3000})=>{
       let t = {
         el:util.createDom(`<div class="toast-item">${content}</div>`),
         height:0,
@@ -103,11 +106,11 @@ const util = (()=>{
         toastList.forEach(item=>{
           item.el.style.top = (parseInt(item.el.style.top,10) - t.height - 10)+"px"
         })   
-      },2000)
+      },3000)
 
 
     },
-    confirm:(content,options={})=>{
+    confirm:(content,options={fitEl:false})=>{
       let node = util.createDom(`<div class="confirm-container"> <div class="confirm-content">  <p class="confirm-text">${content}</p><div class="confirm-control"><button class="button button-confirm">确认</button><button class="button button-default button-cancel">取消</button></div></div></div></div>`)
       if(options.type){
         node.classList.add({"error":"toast-danger","success":"toast-primary"}[options.type])
