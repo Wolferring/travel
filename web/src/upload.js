@@ -1,13 +1,13 @@
 import util from './util.js'
 import api from './fetch.js'
 class Upload{
-  constructor(el,options = {
-    maxSize:50*1024,
-    multiple:true
-  }){
+  constructor(el,options){
     this.$el = document.querySelector(el)
     this.fileList = []
-    this.options = options
+    this.options = Object.assign({
+      maxSize:50*1024,
+      multiple:true
+    },options)
     this.uploading = false
     this._init()
   }
