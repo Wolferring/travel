@@ -435,7 +435,7 @@ var initMap = (AMap,interestPoints)=>{
     geocoder.getAddress(position, function(status, result) {
       if (status === 'complete'&&result.regeocode) {
           var address = result.regeocode;
-          window.contextMenuAddress = address
+          contextMenuAddress = address
           createSelect(address.pois,document.querySelector("#point-form-container select[name='address']"))
           var marker = createMarkers("temp")
           FORM.open()               
