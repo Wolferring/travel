@@ -162,15 +162,12 @@ var STATISTIC_WIDGET = (()=>{
         .then(res=>{
           let html = `
           <div class="flex-start">
-            <div class="avatar ${USER.info("avatar")?"":"hidden"}">
-              <img src="${USER.info("avatar")}"  alt="用户头像"/>
-            </div>
-            <div class="info">
+            <a href="/user.html" class="info">
               <h4>${USER.info('nickname')}</h4>  
               <p>${USER.info('username')}</p>
               <p>${new Date(USER.info('create_time')).format("yyyy-MM-dd")}加入</p>
               
-            </div>
+            </a>
             <div>
               <button class="button button-mini" onclick="USER.logout(event)">注销</button>
             </div>
@@ -186,7 +183,7 @@ var STATISTIC_WIDGET = (()=>{
       }
     }
 })()
-var FORM = (()=>{
+window.FORM = (()=>{
     let dom = document.querySelector("#point-form-container"),
         form = document.querySelector("#point-form");
     let upload = new Upload("#upload-test",{

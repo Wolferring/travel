@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const api = (()=>{
 
-  let apiurl = "//192.168.50.74:3000";
+  let apiurl = "//192.168.50.38:3000";
 
   if( (location.host).indexOf("travel")!=-1){
       apiurl ="//travel.whimsylove.cn/api";
@@ -51,6 +51,20 @@ const api = (()=>{
             method:'GET',
             params: query
         })
+    },
+    getPointsByCity(query){
+      return service({
+          url:`/points/city`,
+          method:'GET',
+          params: query
+      })
+    },    
+    getPointsByTime(query){
+      return service({
+        url:`/points/recent`,
+        method:'GET',
+        params: query
+      })      
     },
     getPointsStatistic(){
         return service({

@@ -5,8 +5,7 @@ const util = (()=>{
   // HTMLElement.prototype.loading = (state)=>{
   //   alert("loading")
   // }
-  Date.prototype.format = function(fmt)   
-  {   
+  Date.prototype.format = function(fmt){   
     var o = {   
       "M+" : this.getMonth()+1,                 //月份   
       "d+" : this.getDate(),                    //日   
@@ -46,6 +45,9 @@ const util = (()=>{
       let str = `_${width}x${height}`
       let replace = url.replace(/(.*\/)*([^.]+).*/ig,"$2")
       return url.replace(replace,replace+str)
+    },
+    isNaN:(val)=>{
+      return Number.isNaN(val)
     },
     isNull:(val)=>{
       return realType(val)==="[object Null]"
@@ -157,7 +159,5 @@ const util = (()=>{
     }
   }
 })()
-// if(window){
-// window.util = util
-// }
+
 export default util

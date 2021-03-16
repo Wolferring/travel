@@ -5,8 +5,13 @@ const imageModel = require('../store/image.js');
 const config = require("../store/config.js")
 const path = require('path')
 const PATH_EXP = new RegExp(/http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/);
+const util  = require("../util/util.js")
 const resolveImages = (imageStr)=>{
-    let images = JSON.parse("["+(imageStr).replace(/'/g, '"').replace(/\\/g, '\/')+"]")
+    let isString = util.realType(imageStr)==="[object String]"
+    let images = imageStr
+    if(isString){
+        images = JSON.parse("["+(imageStr).replace(/'/g, '"').replace(/\\/g, '\/')+"]")
+    }
     images.forEach(item=>{
         item.url = "//cdn.whimsylove.cn"+item.url
         item.thumb = "//cdn.whimsylove.cn"+item.thumb
@@ -17,7 +22,39 @@ const resolveImages = (imageStr)=>{
 route
 .get("/points",async (ctx,next)=>{
     let ps = await pointModel.findPoints(ctx.state.user.id)
-    console.log(ps)
+    if(ps&&ps.length){
+        ps.forEach(poi=>{
+            if(poi.images){
+                poi.images = resolveImages(poi.images)
+            }
+        })    
+    }
+    ctx.body={
+        status:1,
+        data:{
+            points:ps
+        }
+    }    
+})
+.get("/points/city",async (ctx,next)=>{
+    let ps = await pointModel.findPointsGroupByCity(ctx.state.user.id)
+
+    if(ps&&ps.length){
+        ps.forEach(poi=>{
+            if(poi.images){
+                poi.images = resolveImages(poi.images)
+            }
+        })    
+    }
+    ctx.body={
+        status:1,
+        data:{
+            points:ps
+        }
+    }    
+})
+.get("/points/recent",async (ctx,next)=>{
+    let ps = await pointModel.findPointsByTime(ctx.state.user.id)
     if(ps&&ps.length){
         ps.forEach(poi=>{
             if(poi.images){
