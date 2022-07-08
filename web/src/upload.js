@@ -148,6 +148,7 @@ class Upload{
     }    
   } 
   upload(){
+    if(!this.fileList.length) return Promise.resolve()
     let self = this,
         totalSize = 0;
     self.uploading = true

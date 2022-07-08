@@ -25,7 +25,7 @@ class EventBus{
     }
     return false
   }
-  emit(){
+  emit(eventName,e){
     let self = this
     let ev = [].shift.call(arguments),
         fns = [...self.eventsList[ev]];

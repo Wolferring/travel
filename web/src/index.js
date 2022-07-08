@@ -1,16 +1,16 @@
 import "./styles/style.less"
-import {EventBus} from "./event.js"
+import {EventBus,GLOBAL_EVENT} from "./event.js"
 import util from "./util.js"
 import Upload from "./upload.js"
 import api from "./fetch.js"
 import PREVIEW from './preview.js'
-
+import AUTH from './auth.js'
 import point_icon from "./image/point.png"
 import point_temp_icon from "./image/point-temp.png"
 
 const BUS = new EventBus();
 window.onload = ()=>{
-    USER.refresh()
+    AUTH.refresh()
     .then(()=>{
       initApplication()
     })    
@@ -19,122 +19,111 @@ window.onload = ()=>{
     .addEventListener("click",(e)=>{
       FORM.submit()
     })
-    document
-    .querySelector("#login-form-submit")
-    .addEventListener("click",(e)=>{
-      USER.login()
-      .then(res=>{
-        initApplication()
-      })
-    }) 
-    document
-    .querySelector("#register-form-submit")
-    .addEventListener("click",(e)=>{
-      USER.register()
-      .then(res=>{
-        initApplication()
-      })
-    })     
+    GLOBAL_EVENT.on("auth:login",()=>{
+      initApplication()
+    })
+
+     
 }
 
-window.USER = (()=>{
-  let loginForm = document.querySelector("#login-form"),
-      registerForm = document.querySelector("#register-form"),
-      dom = document.querySelector("#login-form-container"),
-      userDetail = {}
-  return {
-    refresh:()=>{
-      return new Promise((resolve,reject)=>{
-        api.getUserInfo()
-        .then(res=>{
-            userDetail = res.data
-            USER.close()
-            resolve(userDetail)
-        })
-        .catch(e=>{
-          if(e.status==-1){
-            USER.open()
-          }
-          reject(e)
-        })            
+// window.USER = (()=>{
+//   let loginForm = document.querySelector("#login-form"),
+//       registerForm = document.querySelector("#register-form"),
+//       dom = document.querySelector("#login-form-container"),
+//       userDetail = {}
+//   return {
+//     refresh:()=>{
+//       return new Promise((resolve,reject)=>{
+//         api.getUserInfo()
+//         .then(res=>{
+//             userDetail = res.data
+//             USER.close()
+//             resolve(userDetail)
+//         })
+//         .catch(e=>{
+//           if(e.status==-1){
+//             USER.open()
+//           }
+//           reject(e)
+//         })            
         
-      })
-    },
-    open:()=>{
-      dom.classList.add("active")
-    },
-    close:()=>{
-      loginForm.reset()
-      dom.classList.remove("active")
-    },
-    switch:()=>{
-      dom.classList.toggle("register")
-    },
-    info:(key)=>{
-      if(key&&Object.prototype.hasOwnProperty.call(userDetail,key)) 
-        return userDetail[key]
-      return userDetail
-    },
-    register:()=>{
-      if(!util.valid("#register-form")) return Promise.reject("表单验证失败")
+//       })
+//     },
+//     open:()=>{
+//       dom.classList.add("active")
+//     },
+//     close:()=>{
+//       loginForm.reset()
+//       dom.classList.remove("active")
+//     },
+//     switch:()=>{
+//       dom.classList.toggle("register")
+//     },
+//     info:(key)=>{
+//       if(key&&Object.prototype.hasOwnProperty.call(userDetail,key)) 
+//         return userDetail[key]
+//       return userDetail
+//     },
+//     register:()=>{
+//       if(!util.valid("#register-form")) return Promise.reject("表单验证失败")
 
-      let formData = new FormData(registerForm),
-          params = {};
-      formData.forEach((v,k)=>{
-        params[k] = v
-      })
-      return api.register(params)
-      .then(res=>{
-          try{
-            window.localStorage.setItem("AUTH",res.data.token)
-          }catch(e){}
-          userDetail = res.data
-          USER.refresh()
-          USER.close()
-      })             
-    },
-    login:()=>{
-      if(!util.valid("#login-form")) return Promise.reject("表单验证失败")
+//       let formData = new FormData(registerForm),
+//           params = {};
+//       formData.forEach((v,k)=>{
+//         params[k] = v
+//       })
+//       return api.register(params)
+//       .then(res=>{
+//           try{
+//             window.localStorage.setItem("AUTH",res.data.token)
+//           }catch(e){}
+//           userDetail = res.data
+//           USER.refresh()
+//           USER.close()
+//       })             
+//     },
+//     login:()=>{
+//       if(!util.valid("#login-form")) return Promise.reject("表单验证失败")
 
-      let formData = new FormData(loginForm),
-          params = {};
-      formData.forEach((v,k)=>{
-        params[k] = v
-      })
-      return new Promise((resolve,reject)=>{
-        api.login(params)
-        .then(res=>{
+//       let formData = new FormData(loginForm),
+//           params = {};
+//       formData.forEach((v,k)=>{
+//         params[k] = v
+//       })
+//       return new Promise((resolve,reject)=>{
+//         api.login(params)
+//         .then(res=>{
 
-          try{
-            window.localStorage.setItem("AUTH",res.data.token)
-          }catch(e){}
-          userDetail = res.data
-          resolve()
-          USER.refresh()
-          USER.close()
-        }) 
-        .catch(e=>{
-            util.toast(e.data.msg,{
-              type:"error"
-            })
-            reject()
-        })             
-      })
+//           try{
+//             window.localStorage.setItem("AUTH",res.data.token)
+//           }catch(e){}
+//           userDetail = res.data
+//           resolve()
+//           USER.refresh()
+//           USER.close()
+//         }) 
+//         .catch(e=>{
+//             util.toast(e.data.msg,{
+//               type:"error"
+//             })
+//             reject()
+//         })             
+//       })
 
-    },
-    logout:(e)=>{
-      util.confirm("确认退出登录",{
-        fitEl:e.target||null
-      })
-      .then((confirm)=>{
-        if(confirm){
-          window.localStorage.removeItem("AUTH")
-          window.location.reload()
-        }
-      })
-    }
-  }
-})()
+//     },
+//     logout:(e)=>{
+//       util.confirm("确认退出登录",{
+//         fitEl:e.target||null
+//       })
+//       .then((confirm)=>{
+//         if(confirm){
+//           window.localStorage.removeItem("AUTH")
+//           window.location.reload()
+//         }
+//       })
+//     }
+//   }
+// })()
 
 var USER_WIDGET = (()=>{
     let dom = document.querySelector("#user-widget-container")
@@ -160,24 +149,28 @@ var STATISTIC_WIDGET = (()=>{
       refresh:()=>{
         api.getPointsStatistic()
         .then(res=>{
-          let html = `
+          let html = util.createDom(`
           <div class="flex-start">
             <a href="/user.html" class="info">
-              <h4>${USER.info('nickname')}</h4>  
-              <p>${USER.info('username')}</p>
-              <p>${new Date(USER.info('create_time')).format("yyyy-MM-dd")}加入</p>
+              <h4>${AUTH.info('nickname')}</h4>  
+              <p>${AUTH.info('username')}</p>
+              <p>${new Date(AUTH.info('create_time')).format("yyyy-MM-dd")}加入</p>
               
             </a>
             <div>
-              <button class="button button-mini" onclick="USER.logout(event)">注销</button>
+              <button class="button button-logout button-mini">注销</button>
             </div>
           </div> 
           <div class="items" onclick="STATISTIC.open()">
             <span><b>${res.data.total||0}</b>个地点</span>  
             <span><b>${res.data.province.length}</b>个省</span>
             <span><b>${res.data.city.length}</b>个城市</span>
-          </div>`
-          dom.innerHTML = html
+          </div>`)
+          html.querySelector(".button.button-logout").onclick = (ev)=>{
+            GLOBAL_EVENT.emit('auth:logout',ev)
+          }
+          dom.innerHTML = ""
+          dom.appendChild(html)
           USER_WIDGET.show()
         })
       }
@@ -385,6 +378,7 @@ var createMarkers = (types)=>{
 }
 var initMap = (AMap,interestPoints)=>{
   window.MAP = new AMap.Map('map-container', {
+      mapStyle:util.isDarkMode?"amap://styles/dark":"amap://styles/normal",
       zoom:11,//级别
       zooms:[4,14],
       doubleClickZoom:false,

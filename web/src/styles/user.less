@@ -1,25 +1,84 @@
 body{
   background-color:#f6f6f6;
-  overflow-y:auto;
+  transition: background-color ease .2s;
 }
 .card{
   margin-bottom: 10px;
   background: #fff;
   overflow: hidden;
-  border-radius: 5px;
+  border-radius: 10px;
   box-shadow: @widget-boxshadow;
 }
 .user-basic{
-
+  position: relative;
+  overflow: hidden; 
+  height: 230px;
+}
+.user-info{
+  color: #fff;
+  height: 100%;
+  width: 100%;
+  padding: 15px 10px;
+  position: relative;
+  z-index: 10;
+  background: linear-gradient(225deg, #707070, transparent);  
+  .info{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-end;
+    h3{
+      font-size: 24px;
+      font-weight: 500;
+      color: #eee;
+    }
+    p{
+      color:#cecece;
+    }
+  }
+}
+.user-cover-container{
+  position: absolute;
+  top: 0px;
+  left: 0px;  
+  height: 100%;
+  width: 100%;
+  z-index: 9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.user-cover-attach{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  display: flex;
+  align-items: bottom;
+  justify-content: center;
+  img{
+    height: 100%;
+    vertical-align: bottom;
+  }
 }
 .user-cover{
-  height:240px;
+  background-color: rgba(0,0,0,.5);
+  position: relative;
+  z-index: 9;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   .user-cover-image{
-    height:100%;
-    width:100%;
-    object-fit: cover;
+    width: 130%;
     user-select:none;
     filter:brightness(0.5);
+    transition: all .1s ease;
   }
 }
 .user-avatar{
@@ -27,7 +86,7 @@ body{
   width:120px;
   height:120px;
   overflow:hidden;
-  border-radius:5px;
+  border-radius:10px;
   .avatar-upload{
     position:absolute;
     top:0;
@@ -58,6 +117,18 @@ body{
     }
   }
 
+}
+.huge-title{
+  margin-top: 20px;
+  user-select: none;
+  h3{
+    font-size: 32px;
+    font-weight: normal;
+    font-family: "PingFangSC-Thin";
+    color: #999;
+    line-height: 1;
+    text-shadow: 1px 1px 1px #fefefe;
+  }
 }
 .poi-container{
   display: grid;
@@ -100,6 +171,7 @@ body{
       color: #fff;
       font-size: 60px;
       overflow: hidden;
+      cursor: zoom-in;
     }
 
     img{
@@ -110,7 +182,35 @@ body{
     }
   }
 }
+.poi-container .poi-image.grid-mode-x{
+  grid-template-columns: initial;
+
+}
+.grid-mode-1 .picture:last-of-type{ 
+  grid-column: 1 / span 2;
+  grid-row: 1 / span 1;      
+}
 .grid-mode-3 .picture:last-of-type{ 
   grid-column: 1 / span 2;
   grid-row: 1 / span 2;      
+}
+
+
+@media (prefers-color-scheme: dark) {
+  .card{
+    background-color: #000;
+  }
+  .huge-title h3{
+    color:@dark-text ;
+    text-shadow: none;
+  }
+  .poi-container .poi-content p{
+    color:@dark-text;
+  }
+  .poi-container .poi-content h4{
+    color: @dark-text-grey;
+  }
+  .user-info{
+    background: linear-gradient(225deg, #111, transparent);
+  }
 }

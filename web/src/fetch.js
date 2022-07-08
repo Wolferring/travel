@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const api = (()=>{
 
-  let apiurl = "//192.168.50.38:3000";
+  let apiurl = "https://travel.whimsylove.cn/api";
 
   if( (location.host).indexOf("travel")!=-1){
       apiurl ="//travel.whimsylove.cn/api";
@@ -31,6 +31,9 @@ const api = (()=>{
         if(response.status==200&&response.data.status==1){
           return response.data
         }else if(response.data.status==-1){
+          if(window.location.pathname!="/"){
+            window.location.href="/"
+          }
           return Promise.reject(response.data);
         }
         else{
@@ -38,9 +41,8 @@ const api = (()=>{
         }
       },
       error => {
-          // if(error.response.data.status == '-1'){
-          //     //需要登录
-          // }
+          if(error.response.data.status == '-1'){
+          }
           return error;   
       }
   );  
@@ -119,7 +121,25 @@ const api = (()=>{
             method:'POST',
             data: obj
         })   
-    }    
+    },
+    getBing(){
+      return axios.get(
+        "https://api.vvhan.com/api/bing?type=json"
+      )
+      
+    }, 
+    getOneWord(){
+      return axios.get(
+        "http://api.tianapi.com/one/index",
+        {
+          params:{
+            key:"f7c94591ae5c169ff470d8fb64cda300",
+            rand:"1"
+          }
+        }
+      )
+      
+    },        
   } 
 })()
 export default api

@@ -28,7 +28,6 @@ module.exports = {
   ],
   module: {
     rules: [
-
       {
         test: /\.less$/,
         use: [
@@ -39,7 +38,7 @@ module.exports = {
           loader: 'style-resources-loader',
           options: {
             patterns: [
-                path.resolve(__dirname, 'src/styles/var.less')
+                path.resolve(__dirname, './src/styles/var.less')
             ]}
         }]     
       }      
