@@ -1,0 +1,31 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/logs/logs",
+    "pages/login/login",
+    "pages/mine/mine"
+  ],
+  "tabBar": {
+    "color":"#999",
+    "selectedColor": "#45a1e2",
+    "list": [{
+      "pagePath": "pages/index/index",
+      "text": "时间线",
+      "iconPath": "./src/images/timeline-line.png",
+      "selectedIconPath": "./src/images/timeline-line-active.png"
+    },{
+      "pagePath": "pages/mine/mine",
+      "text": "统计",
+      "iconPath": "./src/images/mine.png",
+      "selectedIconPath": "./src/images/mine-active.png"
+    }]
+  },
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "Weixin",
+    "navigationBarTextStyle": "black"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

@@ -8,7 +8,8 @@ import AUTH from './auth.js'
 import point_icon from "./image/point.png"
 import point_temp_icon from "./image/point-temp.png"
 
-const BUS = new EventBus();
+const BUS = new EventBus()
+
 window.onload = ()=>{
     AUTH.refresh()
     .then(()=>{
@@ -25,105 +26,6 @@ window.onload = ()=>{
 
      
 }
-
-// window.USER = (()=>{
-//   let loginForm = document.querySelector("#login-form"),
-//       registerForm = document.querySelector("#register-form"),
-//       dom = document.querySelector("#login-form-container"),
-//       userDetail = {}
-//   return {
-//     refresh:()=>{
-//       return new Promise((resolve,reject)=>{
-//         api.getUserInfo()
-//         .then(res=>{
-//             userDetail = res.data
-//             USER.close()
-//             resolve(userDetail)
-//         })
-//         .catch(e=>{
-//           if(e.status==-1){
-//             USER.open()
-//           }
-//           reject(e)
-//         })            
-        
-//       })
-//     },
-//     open:()=>{
-//       dom.classList.add("active")
-//     },
-//     close:()=>{
-//       loginForm.reset()
-//       dom.classList.remove("active")
-//     },
-//     switch:()=>{
-//       dom.classList.toggle("register")
-//     },
-//     info:(key)=>{
-//       if(key&&Object.prototype.hasOwnProperty.call(userDetail,key)) 
-//         return userDetail[key]
-//       return userDetail
-//     },
-//     register:()=>{
-//       if(!util.valid("#register-form")) return Promise.reject("表单验证失败")
-
-//       let formData = new FormData(registerForm),
-//           params = {};
-//       formData.forEach((v,k)=>{
-//         params[k] = v
-//       })
-//       return api.register(params)
-//       .then(res=>{
-//           try{
-//             window.localStorage.setItem("AUTH",res.data.token)
-//           }catch(e){}
-//           userDetail = res.data
-//           USER.refresh()
-//           USER.close()
-//       })             
-//     },
-//     login:()=>{
-//       if(!util.valid("#login-form")) return Promise.reject("表单验证失败")
-
-//       let formData = new FormData(loginForm),
-//           params = {};
-//       formData.forEach((v,k)=>{
-//         params[k] = v
-//       })
-//       return new Promise((resolve,reject)=>{
-//         api.login(params)
-//         .then(res=>{
-
-//           try{
-//             window.localStorage.setItem("AUTH",res.data.token)
-//           }catch(e){}
-//           userDetail = res.data
-//           resolve()
-//           USER.refresh()
-//           USER.close()
-//         }) 
-//         .catch(e=>{
-//             util.toast(e.data.msg,{
-//               type:"error"
-//             })
-//             reject()
-//         })             
-//       })
-
-//     },
-//     logout:(e)=>{
-//       util.confirm("确认退出登录",{
-//         fitEl:e.target||null
-//       })
-//       .then((confirm)=>{
-//         if(confirm){
-//           window.localStorage.removeItem("AUTH")
-//           window.location.reload()
-//         }
-//       })
-//     }
-//   }
-// })()
 
 var USER_WIDGET = (()=>{
     let dom = document.querySelector("#user-widget-container")
@@ -161,7 +63,7 @@ var STATISTIC_WIDGET = (()=>{
               <button class="button button-logout button-mini">注销</button>
             </div>
           </div> 
-          <div class="items" onclick="STATISTIC.open()">
+          <div class="items">
             <span><b>${res.data.total||0}</b>个地点</span>  
             <span><b>${res.data.province.length}</b>个省</span>
             <span><b>${res.data.city.length}</b>个城市</span>
@@ -376,6 +278,7 @@ var createMarkers = (types)=>{
   BUS.emit("marker:create")
 
 }
+
 var initMap = (AMap,interestPoints)=>{
   window.MAP = new AMap.Map('map-container', {
       mapStyle:util.isDarkMode?"amap://styles/dark":"amap://styles/normal",
@@ -393,22 +296,87 @@ var initMap = (AMap,interestPoints)=>{
   const locator = new AMap.Geolocation({
       enableHighAccuracy: true,//是否使用高精度定位，默认:true
       timeout: 10000         //超过10秒后停止定位，默认：5
-  });
+  })
+  
   createMarkers(interestPoints)
   //创建点标
   //创建搜索
-  var poiSearch = new AMap.AutoComplete({
-    input:"poi-search-input",
-    city:"成都"
-  })
-  poiSearch.on("select", (e)=>{
-    if(e.poi.location){
-      
-      MAP.setZoomAndCenter(13, [e.poi.location.lng,e.poi.location.lat]);
-      contextMenuPositon = e.poi.location
-      handlePointCreate(contextMenuPositon)
+  // var poiSearch = new AMap.AutoComplete({
+  //   input:"poi-search-input",
+  //   city:"成都"
+  // })
+  // poiSearch.on("select", (e)=>{
+  //   if(e.poi.location){
+  //     MAP.setZoomAndCenter(13, [e.poi.location.lng,e.poi.location.lat]);
+  //     contextMenuPositon = e.poi.location
+  //     handlePointCreate(contextMenuPositon)
+  //   }
+  // })
+  var createSearch = ()=>{
+    const searchResultDom = document.querySelector("#search-result")
+    const GDSearch= new AMap.AutoComplete();
+    // 根据关键字进行搜索
+    const HWSearch= new HWMapJsSDK.HWSiteService();
+    const renderResult = (result)=>{
+      searchResultDom.innerHTML = ""
+      result.forEach(item=>{
+        let resultItemDom = util.createDom(`<div class="search-item">${item.name}</div>`)
+  
+        searchResultDom.appendChild(resultItemDom)
+        resultItemDom.addEventListener("click",()=>{
+          MAP.setZoomAndCenter(13, [item.location.lng,item.location.lat]);
+          contextMenuPositon = item.location
+          handlePointCreate(contextMenuPositon)        
+        })      
+      })
     }
-  })
+    let timer = null
+    document.querySelector("#poi-search-input").addEventListener("keydown",function(){
+      clearTimeout(timer)
+    })
+    document.querySelector("#poi-search-input").addEventListener("input",function(ev){
+      timer = setTimeout(function(){
+        let words = ev.target.value
+        let result = []
+        HWSearch.querySuggestion({
+          query:words
+        },function(e){
+          if(e.sites&&e.sites.length){
+            e.sites.forEach(item=>{
+              let tp = {
+                address:item.formatAddress,
+                location:new AMap.LngLat(item.location.lng, item.location.lat),
+                name:`${item.name} - ${item.address.country}`,
+                poi:item.poi,
+                platform:"HW"
+              }
+              result.push(tp)
+            })
+            renderResult(result)
+          }
+        })
+        GDSearch.search(words, function(status, res) {
+          // 搜索成功时，result即是对应的匹配数据
+          if(res.tips.length){
+            res.tips.forEach(item=>{
+              if(!item.location) return
+              let tp = {
+                address:item.address,
+                location:new AMap.LngLat(item.location.lng, item.location.lat),
+                name:`${item.name} - ${item.address.country}`,
+                poi:item.poi,
+                platform:"GD"
+              }          
+              result.push(item)
+            })
+            renderResult(result)        
+          }
+        })          
+      },500)
+   
+    })
+  }  
+  createSearch()
   //创建地图右键菜单
   var contextMenu = new AMap.ContextMenu()
   //右键添加Marker标记
@@ -424,6 +392,7 @@ var initMap = (AMap,interestPoints)=>{
     }
     dom.innerHTML = html
   }
+  const HWMap = new HWMapJsSDK.HWSiteService();
   //地图绑定鼠标右击事件——弹出右键菜单
   var handlePointCreate = (position)=>{
     geocoder.getAddress(position, function(status, result) {
@@ -438,7 +407,30 @@ var initMap = (AMap,interestPoints)=>{
           // }else{
           // }
       }else{
-          util.toast('根据经纬度查询地址失败')
+        try{
+          var request = {
+            location: {
+                lat: position.lat,
+                lng: position.lng
+              }
+          };          
+          HWMap.reverseGeocode(request, function (result, status) {
+            console.log(result)
+            var address = result.sites[0].address;
+            contextMenuAddress = {
+              addressComponent:{
+                city:address.city,
+                province:address.country
+              }
+            }
+            createSelect(result.sites,document.querySelector("#point-form-container select[name='address']"))
+            var marker = createMarkers("temp")
+            FORM.open()              
+          })
+        }catch(e){
+          console.log(e)
+        }
+        util.toast('根据经纬度查询地址失败')
       }
     });           
   }

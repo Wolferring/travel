@@ -30,32 +30,33 @@ const userLoader = {
     auth.refresh()
     .then(()=>{
       render()
-    })   
-    // api.getOneWord()   
+    })      
+    this.loadBackground()
+  },
+  asyncLoadBackground(){
+    // api.getRandomCover()
     // .then(res=>{
-
-    //   if(res.data.code==200){
-    //     let url = res.data.newslist[0].imgurl
-    //     util.getImageBrightness(url,(e)=>{
+    //   if(res.status==1){
+    //     let url = res.data.url,
+    //         thumb = res.data.thumb
+    //     util.getImageColorSchema(thumb,e=>{
+    //       document.body.style.backgroundColor = `rgba(${e.r},${e.g},${e.b},${util.isDarkMode?"1":"0.25"})`
+    //     })
+    //     util.getImageBrightness(thumb,(e)=>{
     //       document.querySelector(".user-cover-image").src = url
     //       if(e<110){
     //         document.querySelector(".user-cover-image").style.filter = "brightness(1)"
     //       }
     //     })
-        
+    //     window.localStorage.setItem("USER_BACKGROUND",url)        
     //   }
-    // })    
+    // })
     api.getBing()
     .then(res=>{
-      console.log(res)
       if(res.data.success){
         let url = res.data.imgurl
         util.getImageColorSchema(url,e=>{
-
           document.body.style.backgroundColor = `rgba(${e.r},${e.g},${e.b},${util.isDarkMode?"1":"0.25"})`
-          // document.querySelectorAll(".card").forEach(item=>{
-          //   item.style.boxShadow = `rgba(${e.r},${e.g},${e.b},0.45) 0 4px 44px 5px`
-          // })
         })
         util.getImageBrightness(url,(e)=>{
           document.querySelector(".user-cover-image").src = url
@@ -63,10 +64,30 @@ const userLoader = {
             document.querySelector(".user-cover-image").style.filter = "brightness(1)"
           }
         })
+        window.localStorage.setItem("USER_BACKGROUND",url)
         
       }
     })
-    
+    .catch(e=>{
+      util.toast("背景图加载失败")
+    })
+  },
+  loadBackground(need_refresh = false){
+    let USER_BACKGROUND = window.localStorage.getItem("USER_BACKGROUND")
+    if(need_refresh||!USER_BACKGROUND){
+      this.asyncLoadBackground()
+      return false;
+    }
+    util.getImageColorSchema(USER_BACKGROUND,e=>{
+      document.body.style.backgroundColor = `rgba(${e.r},${e.g},${e.b},${util.isDarkMode?"1":"0.25"})`
+    })
+    util.getImageBrightness(USER_BACKGROUND,(e)=>{
+      document.querySelector(".user-cover-image").src = USER_BACKGROUND
+      if(e<110){
+        document.querySelector(".user-cover-image").style.filter = "brightness(1)"
+      }
+    }) 
+
   },
   render(){
     let dom = document.querySelector("#user-info"),
@@ -77,22 +98,16 @@ const userLoader = {
     <h3>${auth.info("nickname")}</h3>
     <p>@${auth.info("username")}</p>
     <br>
+    <div class="flex" style="width:100%;">
+    <button class="button button-default" id="user-cover-refresh">更换背景</button>
     <a class="button" href="/">返回地图</a>
+    </div>
     </div>`)
-    
-    // el.querySelector("#share")
-    // .addEventListener("click",()=>{
-    //   let node = document.querySelector("#recent-poi")
-    //   domtoimage.toPng(node)
-    //   .then(function (dataUrl) {
-    //       var img = new Image();
-    //       img.src = dataUrl;
-    //       document.body.appendChild(img);
-    //   })
-    //   .catch(function (error) {
-    //       console.error('oops, something went wrong!', error);
-    //   });
-    // })    
+  
+    el.querySelector("#user-cover-refresh")
+    .addEventListener("click",function(){
+      userLoader.loadBackground(true)
+    })
     dom.appendChild(el)
     let basicWidth = basic.offsetWidth/2,
         basicHeight= basic.offsetHeight/2,
@@ -121,7 +136,9 @@ const userLoader = {
 const cityLoader = {
   refresh(){
     let render = this.render
-    api.getPointsByCity()
+    api.getPointsByCity({
+      limit:5
+    })
     .then(res=>{
       if(res.data.points){
         render(res.data.points)
@@ -172,7 +189,9 @@ const cityLoader = {
 const recentLoader = {
   refresh(){
     let _render = this.render
-    api.getPointsByTime()
+    api.getPointsByTime({
+      limit:8
+    })
     .then(res=>{
       if(res.data.points){
         _render(res.data.points)

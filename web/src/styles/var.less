@@ -3,6 +3,7 @@
 @grey-color: #939597;
 @dark-text: #eeeeee;
 @dark-text-grey:#9e9e9e;
+@dark-background:#000;
 @widget-boxshadow:0 2px 6px 0 rgba(0,0,0,.2);
 *{margin: 0;padding:0;box-sizing: border-box;}
 input,textarea,select{
@@ -450,17 +451,89 @@ img{
   object-fit: cover;
   z-index: -1;
 }
-
+// form
+.form-heading{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #aaa;
+  color: #fff;
+  margin-bottom: 14px;
+  padding: 8px 0; 
+}
+.form-heading .button{
+  flex:0;
+}
+.form-heading h3{
+  font-size: 28px;
+  padding: 6px 0;
+  flex: 1;
+}
+.form-group{
+  margin-bottom: 15px;
+}
+.form-group:last-of-type{
+  margin-bottom: 0;
+}
+.form-group label{
+  display: block;
+}
+.form-group .form-control{
+  display: block;
+  width: 100%;
+  font-size:14px;
+  padding-left: 10px;
+  line-height: 32px;
+  min-height: 32px;
+  border-radius: 4px;
+  border: 1px solid #dfdfdf;
+  background-color: #fff;
+  -webkit-appearance: none;
+}
+.form-group .form-control.invalid{
+  border-color: var(--danger-color);
+}    
+.form-group input.form-control{
+}
+.form-group label{
+  font-size: 14px;
+  color: #fff;
+  margin-bottom: 10px;
+}
 
 @media (prefers-color-scheme: dark) {
   html body{
     background-color: rgba(0,0,0,1);
     color:@dark-text;
   }
-  html{
-    background-color: rgba(0,0,0,1);
+  html,
+  .amap-container,
+  .amap-sug-result,
+  .amap-info-content,
+  .toast-item,
+  .form-group .form-control{
+    background-color: @dark-background;
   }
-  .amap-container{
-    background-color: rgba(0,0,0,1);
+  .bottom-center .amap-info-sharp{
+    border-top-color: @dark-background;
+  }
+  div.point-detail h3{
+    color: @dark-text;
+  }
+  div.point-detail pre{
+    color: @dark-text-grey;
+  }
+  div.point-image{
+    border-color: @dark-text-grey;
+  }
+  div.amap-sug-result .auto-item,
+  .form-group .form-control{
+    color: @dark-text;
+  }
+  .toast-item{
+    box-shadow: 0 0 10px #666;
+  }
+  .amap-sug-result .auto-item:hover{
+    background-color: lighten(@dark-background,20%);
   }
 }

@@ -1,0 +1,52 @@
+<!--index.wxml-->
+<wxs src="../../utils/util.wxs" module="util" />
+
+<view class="container">
+  <view class="poi-container">
+    <view wx:for="{{points}}" class="card" data-poi="{{item}}" >
+      <view>
+        <swiper indicator-dots="{{item.images.length>1}}" indicator-color="rgba(100,100,100,0.3)"	indicator-active-color="#45a1e2">
+          <block wx:for="{{item.images}}" wx:for-item="img" wx:for-key="imgIndex">
+            <swiper-item>
+              <image bindtap="openPreview" data-current="{{img.url}}" data-src="{{item.images}}" src="{{img.url}}" mode="aspectFill"></image>
+            </swiper-item>
+          </block>
+        </swiper>
+      </view>
+      
+      <!-- <view class="poi-image grid-mode-{{ item.images.length>1?(item.images.length%4):'x' }}">
+        <view wx:for="{{item.images}}" wx:for-item="img" class="picture">
+          <image src="{{img.thumb}}" mode="aspectFill"></image>
+        </view>
+      </view> -->
+      <view class="poi-content" bindlongpress="openEditAction" data-poi="{{item}}">
+        <view><text class="h3">{{item.title}}</text></view>
+        <view class="flex">
+          <text class="h4">{{item.address}}</text>
+          <text class="h4">{{util.formatTime(item.dateTime,"yyyy-MM-dd")}}</text>
+        </view>
+        <view></view>
+        <view><text class="p">{{item.remark}}</text></view>
+      </view>
+
+      
+    </view>
+  </view>
+  <view class="poi-edit-container"  wx:if="{{isEditShow}}"> 
+    <view class="poi-edit">
+      <form catchsubmit="formSubmit" catchreset="formReset">
+        <view class="page-section">
+          <textarea name="remark" fixed	 value="{{current_poi.remark}}" maxlength="-1"></textarea>
+        </view>      
+
+        <view class="flex">
+          <button type="default" bindtap="closeEdit">取消</button>
+          <button type="primary" formType="submit">确认更新</button>
+        </view>
+      </form>
+    </view>
+  </view>
+  <view wx:if="{{!isLogin}}" class="login-container">
+    <button type="primary" bindtap="openLogin">登录</button>
+  </view>
+</view>

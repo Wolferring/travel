@@ -46,8 +46,16 @@ body{
 } 
 
 
-
-
+.amap-info-content{
+  padding:18px 26px 20px 20px;
+}
+.amap-info-close{
+  right: 10px;
+  top: 10px;
+}
+.amap-info-outer, .amap-menu-outer{
+  border-radius: 10px;
+}
 .point-detail{
   max-width: 400px;
 }
@@ -87,61 +95,15 @@ body{
   margin-right: 5px;
   margin-bottom: 5px;
   background-color: rgba(0,0,0,0.1);
-  border: 1px solid #dedede;      
+  border: 1px solid #dedede;   
+  cursor: zoom-in;   
 }
 .point-image img{
     width: 100%;
     height: 100%;
     object-fit: cover;      
 }    
-.form-heading{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #aaa;
-  color: #fff;
-  margin-bottom: 14px;
-  padding: 8px 0; 
-}
-.form-heading .button{
-  flex:0;
-}
-.form-heading h3{
-  font-size: 28px;
-  padding: 6px 0;
-  flex: 1;
-}
-.form-group{
-  margin-bottom: 15px;
-}
-.form-group:last-of-type{
-  margin-bottom: 0;
-}
-.form-group label{
-  display: block;
-}
-.form-group .form-control{
-  display: block;
-  width: 100%;
-  font-size:14px;
-  padding-left: 10px;
-  line-height: 32px;
-  min-height: 32px;
-  border-radius: 4px;
-  border: 1px solid #dfdfdf;
-  background-color: #fff;
-  -webkit-appearance: none;
-}
-.form-group .form-control.invalid{
-  border-color: var(--danger-color);
-}    
-.form-group input.form-control{
-}
-.form-group label{
-  font-size: 14px;
-  color: #fff;
-  margin-bottom: 10px;
-}
+
   
 #public-widget-container{
   position: fixed;
@@ -190,7 +152,7 @@ body{
   transform: scale(1.1);
 }
 .public-widget-item .widget-control:hover svg *{
-  fill:var(--primary-color);
+  fill:@primary-color;
 }
 #user-widget-container{
   position: fixed;
@@ -216,6 +178,30 @@ body{
   user-select: none;
   margin: 5px 0;
 }
+.search-widget{
+  position: relative;
+  .search-result{
+    position: absolute;
+    top:calc(100% + 15px);
+    left: 0;
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    background-color: rgba(255,255,255,0.9);
+    border-radius: 5px;
+    box-shadow: var(--widget-boxshadow);
+    text-align: left;
+    overflow-y: auto;
+    .search-item{
+      padding: 10px 10px;
+      cursor: pointer;
+      &:hover{
+        background-color: rgba(155,155,155,0.9);
+      }
+    }
+  }
+}
+
 #statistic{
   text-align: left;
   min-width:280px;
@@ -282,7 +268,7 @@ body{
   -webkit-backface-visibility: hidden;
   visibility:visible;  
   min-width: 300px;
-  background-color: var(--grey-color);
+  background-color: @grey-color;
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0px 0px 20px #999;
@@ -359,4 +345,16 @@ body{
   #login-form-container{
     background-color: rgba(0,0,0,1);
   }
+  .user-widget-item{
+    background-color: @dark-background;
+  }
+  .public-widget-item .widget-control{
+    background-color: @dark-background;
+  }
+  .search-widget{
+    .search-result{
+      background-color: @dark-background;
+    }
+  }
+
 }

@@ -28,6 +28,8 @@
     "sharp": "^0.27.0"
   },
   "devDependencies": {
+    "cache-content-type": "^1.0.1",
+    "content-disposition": "^0.5.4",
     "glob": "^7.1.6",
     "nodemon": "^2.0.6",
     "uglifyjs-webpack-plugin": "^2.2.0",

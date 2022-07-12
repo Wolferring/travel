@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const api = (()=>{
 
-  let apiurl = "https://travel.whimsylove.cn/api";
+  let apiurl = "http://localhost:3000";
 
   if( (location.host).indexOf("travel")!=-1){
       apiurl ="//travel.whimsylove.cn/api";
@@ -47,12 +47,25 @@ const api = (()=>{
       }
   );  
   return {
+    reverseGeoCoding(lnglat){
+      return axios.get(
+        "https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode",
+        {
+          params:{
+            f:"json",
+            langCode:"zh",
+            token:"AAPK8fb82079931f489586f1bacda03e2ca4Us-N4qm8_7RjWhMNznqEuY1bwq-zuQ2BD5b4YX4rwcvmwgLuEGgzfgMNuSLN4aov",
+            location:lnglat
+          }
+        }
+      )    
+    },
     getPoints(query){
-        return service({
-            url:`/points`,
-            method:'GET',
-            params: query
-        })
+      return service({
+          url:`/points`,
+          method:'GET',
+          params: query
+      })
     },
     getPointsByCity(query){
       return service({
@@ -121,6 +134,12 @@ const api = (()=>{
             method:'POST',
             data: obj
         })   
+    },
+    getRandomCover(query){
+      return service({
+        url:`/points/rand`,
+        method:'GET'
+      })         
     },
     getBing(){
       return axios.get(

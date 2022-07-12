@@ -1,0 +1,27 @@
+
+<view class="container">
+  <view class="page-body">
+    <form catchsubmit="formSubmit" catchreset="formReset">
+
+      <view class="page-section">
+        <view class="weui-cell weui-cell_input">
+            <view class="weui-cell__bd" style="margin: 30rpx 0" >
+              <input class="weui-input" name="username" placeholder="用户名" />
+            </view>
+          </view>
+      </view>
+      <view class="page-section">
+        <view class="weui-cell weui-cell_input">
+            <view class="weui-cell__bd" style="margin: 30rpx 0" >
+              <input class="weui-input" 	confirm-type="done" password name="password" placeholder="密码" />
+            </view>
+          </view>
+      </view>      
+
+      <view class="btn-area">
+        <button style="margin: 30rpx 0" type="primary" formType="submit">登录</button>
+      </view>
+    </form>
+  </view>
+
+</view>

@@ -136,7 +136,6 @@ const AUTH = (()=>{
           }catch(e){}
           userDetail = res.data
           console.log(_this)
-          debugger
           _this.refresh()
           _this.close()
           resolve()

@@ -1,0 +1,10 @@
+/**app.wxss**/
+.container {
+  padding: 10rpx 10rpx;
+  box-sizing: border-box;
+} 
+.flex{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

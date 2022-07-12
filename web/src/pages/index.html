@@ -9,14 +9,22 @@
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
   <link href="https://cdn.bootcdn.net/ajax/libs/normalize/8.0.1/normalize.css" rel="stylesheet">
   <script src="https://webapi.amap.com/loader.js"></script> 
+  <script>
+    var initHWMap = function(){
+      
+    }
+  </script>
+  <script src="https://mapapi.cloud.huawei.com/mapjs/v1/api/js?callback=initHWMap&key=DAEDACuEcjn8TUxsP9nT9C1JBKWuQ3Stml1IByUw9QOSGqLw%2FckL3PDgs808JoqMdKCHxZBWNFsOI4jfKTa8uMbSU%2Bb0OGQgHH8Kyw%3D%3D"></script>
 </head>
 <body>
   <div id="map-container" ></div>
   <div id="user-widget-container">
     <div id="statistic" class="user-widget-item hidden-mobile"></div>
-    <div id="search-widget" class="user-widget-item">
+    <div id="search-widget" class="user-widget-item search-widget">
       <div class="form-group">
         <input type="text" placeholder="搜索地点" class="form-control" id="poi-search-input">
+      </div>
+      <div class="search-result" id="search-result">
       </div>
     </div>
   </div>
