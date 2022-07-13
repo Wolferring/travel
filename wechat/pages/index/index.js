@@ -9,13 +9,13 @@ Page({
     points:[],
     current_poi:{
       id:null,
+      title:"",
       remark:"",
       address:"",
       dateTime:""
     }
   },
   formatTime(t){
-    console.log(new Date(t).format("yyyy-MM-dd"))
     return new Date(t).format("yyyy-MM-dd")
   },
   onLoad() {
@@ -41,7 +41,9 @@ Page({
     this.setData({
       current_poi:{
         id:poi.id,
+        title:poi.title,
         address:poi.address,
+        dateTime:poi.dateTime,
         remark:poi.remark
       }
     })
@@ -84,7 +86,23 @@ Page({
       isEditShow:false
     })
   },
-  formSubmit(){
-
+  formSubmit(e){
+    let current = this.data.current_poi,
+        _this = this;
+        console.log(current)
+    api.updatePoint(current.id,{
+      title:current.title,
+      remark:e.detail.value.remark,
+      dateTime:new Date(current.dateTime).toISOString().slice(0, 19).replace('T', ' ')
+    })
+    .then(res=>{
+      wx.showToast({
+        title: '修改成功',
+      })
+      _this.setData({
+        isEditShow:false,
+        current_poi:null
+      })
+    })
   }
 })

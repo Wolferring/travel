@@ -82,6 +82,13 @@ const api = (()=>{
             method:'DELETE'
         })        
     },
+    updatePoint(id,data){
+      return service({
+          url:`/points/${id}`,
+          method:'put',
+          data:data
+      })        
+    },    
     getUserInfo(){
         return service({
             url:`/user`,

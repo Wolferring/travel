@@ -172,7 +172,13 @@ route
         point.dateTime 
     ],
     ctx.params.id,
-    ctx.state.user.id)     
+    ctx.state.user.id)  
+    .then(async(res)=>{
+        ctx.body={
+            status:1,
+            data:{}
+        }    
+    })       
 })
 .delete("/points/:id",async (ctx,next)=>{
     await pointModel.removePointsById(ctx.params.id,ctx.state.user.id)

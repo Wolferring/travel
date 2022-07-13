@@ -3,7 +3,12 @@
 
 <view class="container">
   <view class="poi-container">
-    <view wx:for="{{points}}" class="card" data-poi="{{item}}" >
+    <block wx:for="{{points}}" >
+    <view class="poi-heading">
+      <text class="h1">{{util.formatTime(item.dateTime,"yyyy-MM-dd")}}</text>
+    </view>
+    <view class="card" data-poi="{{item}}">
+
       <view>
         <swiper indicator-dots="{{item.images.length>1}}" indicator-color="rgba(100,100,100,0.3)"	indicator-active-color="#45a1e2">
           <block wx:for="{{item.images}}" wx:for-item="img" wx:for-key="imgIndex">
@@ -29,11 +34,11 @@
         <view><text class="p">{{item.remark}}</text></view>
       </view>
 
-      
     </view>
+    </block>
   </view>
   <view class="poi-edit-container"  wx:if="{{isEditShow}}"> 
-    <view class="poi-edit">
+    <view class="poi-edit" >
       <form catchsubmit="formSubmit" catchreset="formReset">
         <view class="page-section">
           <textarea name="remark" fixed	 value="{{current_poi.remark}}" maxlength="-1"></textarea>

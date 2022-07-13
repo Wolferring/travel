@@ -39,13 +39,59 @@ image{
   color: #666;
 }
 .poi-container{
-  padding: 10rpx 30rpx;
+  padding: 40rpx 20rpx;
+  padding-left: 50rpx;
+  position: relative;
+}
+.poi-container::after{
+  content: ' ';
+  position: absolute;
+  display: block;
+  width: 2rpx;
+  height: 100%;
+  background-color: #cecece;
+  left: 20rpx;
+  top: 0;
+}
+.poi-heading{
+  margin-bottom: 20rpx;
+  padding-top: 20rpx;
+  padding-bottom: 20rpx;
+  position: relative;
+}
+.poi-heading::after{
+  content: ' ';
+  position: absolute;
+  display: block;
+  width: 60%;
+  height: 2rpx;
+  background-color: #cecece;
+  left: -30rpx;
+  bottom: 0;
+}
+.poi-heading::before{
+  content: ' ';
+  position: absolute;
+  display: block;
+  width: 30rpx;
+  height: 30rpx;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAA7ZJREFUWEfNVzuM1EYY/r/x3l1BDREkBUikQzrP2AtbhpQckIsQkUIFUpQHJOKVpABFXISgQDxFyANFIhWREkUhAVImVy6s7fFJdCBxRR4K1Cnu4fmjseyTMbZ3l0OApS3W83//fJ7/9Q1oyCeKopUA2saYVUS0MoM/FEI8YOaeUurhMC4xiHG3231pbGxshzFmC4CJJgwz3xRC/DY3N/dTp9P5t5//RgJBEIwIIT4iIvtb289ZaX2WiC4aYy76vr9Qh60lEATBJIDPAKgK8DQR/UNEf2dra4hoNRG9VrZl5oiZj/u+f62KRCUBrfUBZj5XBDDzHSHE1wCuua77V5WzOI5fZuZJY8z7ADYUbQAclFKeL+MeIxDH8VZjzPXS5kdbrdaF8fHx/wYJw8zMzIrFxcX9AE4U7YUQ21zXvfEIseKfOI43GmNulZi/JaX8cZCNyzZa653M/EOJxCbXdW/n75ZOwCYcgG4x5kqpgaqkH7koiji3yXKikyfm0gZRFB0iojO5YZIkm9rt9hLTfps0rfd6vY2O4xRP9rBS6qzFpARsnY+OjnbzUmPmo57nnVzOpmVsGIZHCjkxOz8/37F9IiUQhuFBACkjm+2tVqszaMINSjJLTBvitDqY+ZDneedSAlEU/ZHXMIADUsoLTY5tpTDzNmZ+PT1G4HcA18sZXpGU+5k5L8VppdRmBEGwWgiRNxTrbJ2U0naxykdrfYyZp6oWAUxJKT9vwK5l5vv5ujFmDbTWW2z/zl6mrOocRFHkE1Gvz7G3lVJBg4/iaU8gDMPdAK5kgO+VUrsavuAKM+9uIgDgOynlngYCV4no7SwP9lgCnwA4lQHOKKU+bgDb4+s3lGaVUusafJwmosMZgU+HJXCXiNb3CcE9pdSrwxAYJgTfMPO7fUJwWUr53sAhGCYJqwZVeaOqgVO0KZX8BKzEIqIHuZEQ4pW6cWttwjCcAnDsScrQjmtjzJ8F7Kq8E97IpRaAD6WUl5qO2ZYjgH3MnAoQANPMfKmp/Kyd1tpivsgS8KbneVtTAlrrvdZBtvBMWrH9ACnlly/GMLJfXh7HAJ5YiJTDVyFMHh3HFvDcBUlGYlII8XPxC5YjTCqECBlj3iwq5MckV40ifiqitEoZV2q+GmVsZfm3RPRL3bjWWts58YYx5p2yLK9rULWi0yrkJEm+ehoXE8dxPigq4WKIX9yrWZGlFa0jIyO7AGyvun6Vys52xV8XFhauLvtyWtWOrYRzHEdWXc+TJNG+79s748DP/1SAK+9wozRyAAAAAElFTkSuQmCC");
+  background-position: center;
+  background-size: cover;
+  left: -45rpx;
+  background-color: #fff;
+  bottom: -15rpx;
+  z-index: 99;
+}
+.poi-heading .h1{
+  font-size: 40rpx;
+  font-weight: bold;
 }
 .card{
   background: #fff;
   border-radius: 20rpx;
   box-shadow: 0 0rpx 28rpx rgb(0 0 0 / 20%);
-  margin-bottom: 40rpx;
+  margin: 20rpx 0;
   overflow: hidden;  
 }
 .poi-content{
