@@ -107,6 +107,7 @@ body{
   
 #public-widget-container{
   position: fixed;
+  z-index: 99;
   right: 20px;
   bottom: 20px;
   display: flex;
@@ -155,6 +156,7 @@ body{
   fill:@primary-color;
 }
 #user-widget-container{
+  z-index: 99;;
   position: fixed;
   left: 0px;
   padding-left: 20px;
@@ -177,6 +179,9 @@ body{
   text-align: center;
   user-select: none;
   margin: 5px 0;
+}
+.tangram-suggestion-main{
+  z-index: 99;
 }
 .search-widget{
   position: relative;

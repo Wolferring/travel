@@ -4,7 +4,8 @@ const webpack = require('webpack');
 module.exports = {
   entry:{
     index:"./src/index.js",
-    user:"./src/user.js"
+    user:"./src/user.js",
+    map:"./src/map.js",
   },
   output: {
     filename: '[name].[hash].js',
@@ -24,7 +25,13 @@ module.exports = {
       template: './src/pages/user.html',
       chunks:['user'],
       favicon: './favicon.ico',
-    })  
+    }),
+    new HtmlWebpackPlugin({
+      filename:"map.html",
+      template: './src/pages/map.html',
+      chunks:['map'],
+      favicon: './favicon.ico',
+    })      
   ],
   module: {
     rules: [

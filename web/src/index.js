@@ -174,7 +174,7 @@ var createMarkerContent = (poi)=>{
     })
     container.appendChild(images)
   }
-  let button = util.createDom("<button class='point-remove button button-mini'>删除</button")
+  let button = util.createDom("<button class='point-remove button button-mini'>删除</button>")
   button.addEventListener("click",()=>{
     removeMarker(poi,index)
   })

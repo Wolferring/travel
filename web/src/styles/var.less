@@ -48,6 +48,7 @@ img{
   align-items: center;
   opacity: 0;
   transition: all .3s ease;
+  z-index: 99;
   /* z-index: 99999; */
 }
 .confirm-container.show{
@@ -505,6 +506,16 @@ img{
   html body{
     background-color: rgba(0,0,0,1);
     color:@dark-text;
+  }
+  .tangram-suggestion-current{
+    background-color: lighten(@dark-background,20%)!important;
+  }
+  div.tangram-suggestion table tr td{
+    color:@dark-text;
+  }
+  .tangram-suggestion,
+  .BMap_bubble_pop{
+    background-color: @dark-background!important;
   }
   html,
   .amap-container,
