@@ -2,6 +2,7 @@ const config = require("./config.js")
 const mysql = require('mysql')
 
 var pool  = mysql.createPool({
+  timezone: 'Asia/Shanghai',
   host     : config.database.HOST,
   user     : config.database.USERNAME,
   password : config.database.PASSWORD,
