@@ -31,6 +31,10 @@ let findPointById = function(value,uid) {
   let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,",'thumb':'",img.thumb,"'}") as images  from points as p left join images as img on img.pid = p.id where p.id=${value} AND p.uid = ${uid} AND p.status = "ACTIVE"  group by p.id;`
   return mysql.query( _sql )
 }
+let findSharedPointById = function(value,d) {
+  let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,",'thumb':'",img.thumb,"'}") as images  from points as p left join images as img on img.pid = p.id where p.id=${value} AND p.status = "ACTIVE"  group by p.id;`
+  return mysql.query( _sql )
+}
 let findPointByRandom = function(uid) {
 
   let _sql = `SELECT * from images where uid=${uid} order by rand() limit 1`;
@@ -96,6 +100,7 @@ let updatePoint = function(value,pid,uid) {
 module.exports = {
     findPoints,
     findPointById,
+    findSharedPointById,
     removePointsById,
     findPointsGroupByCity,
     findPointsGroupByProvince,

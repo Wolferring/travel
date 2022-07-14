@@ -1,6 +1,4 @@
-// pages/login/login.js
-const api = require("../../utils/fetch")
-const app = getApp()
+// pages/register/register.js
 Page({
 
   /**
@@ -9,18 +7,7 @@ Page({
   data: {
 
   },
-  formSubmit(e){
-    api.login(e.detail.value)
-    .then(res=>{
-      if(res.data.token){
-        app.globalData.USER.isLogin = true
-        wx.setStorageSync('AUTH', res.data.token)
-        wx.switchTab({
-          url: '/pages/index/index',
-        })
-      }
-    })
-  },
+
   /**
    * 生命周期函数--监听页面加载
    */

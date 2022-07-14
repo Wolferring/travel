@@ -1,0 +1,25 @@
+<!--pages/detail/detail.wxml-->
+<wxs src="../../utils/util.wxs" module="util" />
+<swiper indicator-dots="{{poi.images.length>1}}" indicator-color="rgba(100,100,100,0.3)"	indicator-active-color="#45a1e2">
+  <block wx:for="{{poi.images}}" wx:for-item="img" wx:for-key="imgIndex">
+    <swiper-item>
+      <image bindtap="openPreview" data-current="{{img.url}}" data-src="{{poi.images}}" src="{{img.url}}" mode="aspectFill"></image>
+    </swiper-item>
+  </block>
+</swiper>
+<view class="container">
+  <view class="poi-content" bindtap="openDetail" bindlongpress="openEditAction" data-poi="{{poi}}">
+        <view><text class="h3" style="font-size: {{titleFontSize}}px;">{{poi.title}}</text></view>
+        <view class="flex" style="margin:10rpx 0;">
+          <text class="h4">{{poi.address}}</text>
+          <text class="h4">{{util.formatTime(poi.dateTime,"yyyy-MM-dd")}}</text>
+        </view>
+        <view><text class="p">{{poi.remark}}</text></view>
+  </view>
+  <view>
+    <view class="flex">
+      <button wx:if="{{poi.owned}}">删除</button>
+      <button type="primary" open-type="share">分享</button>
+    </view>
+  </view>
+</view>

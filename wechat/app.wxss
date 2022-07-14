@@ -1,4 +1,7 @@
 /**app.wxss**/
+text{
+  color: #333;
+}
 .container {
   padding: 10rpx 10rpx;
   box-sizing: border-box;

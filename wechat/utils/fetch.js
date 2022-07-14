@@ -68,7 +68,13 @@ const api = (()=>{
             url:`/statistic`,
             method:'GET'
         })
-    },    
+    },  
+    getSharedPoint(id){
+      return service({
+          url:`/points/${id}`,
+          method:'get'
+      })        
+    },       
     createPoint(obj){
         return service({
             url:`/points`,
@@ -130,12 +136,6 @@ const api = (()=>{
         method:'GET'
       })         
     },
-    getBing(){
-      return axios.get(
-        "https://api.vvhan.com/api/bing?type=json"
-      )
-      
-    }, 
     getOneWord(){
       return axios.get(
         "http://api.tianapi.com/one/index",

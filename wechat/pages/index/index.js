@@ -7,6 +7,7 @@ Page({
     isLogin:false,
     isEditShow:false,
     points:[],
+    keyboardHeight:0,
     current_poi:{
       id:null,
       title:"",
@@ -18,22 +19,40 @@ Page({
   formatTime(t){
     return new Date(t).format("yyyy-MM-dd")
   },
-  onLoad() {
+  onLoad(){
     let _this = this
     app.makeWatcher('USER.isLogin', app.globalData, function(newValue) {
       _this.setData({
           isLogin: newValue
         })
-    })  
+    })      
+  },
+  onShow() {
+    let _this = this
     api.getPointsByTime({
-      limit:10
+      limit:16
     })
     .then(res=>{
       _this.setData({
         points:res.data.points
       })
-      console.log(res)
     })
+  },
+  openDetail(e){
+    let poi = e.currentTarget.dataset.poi
+    wx.navigateTo({
+      url: '/pages/detail/detail',
+      events: {
+        someEvent: function(data) {
+          console.log(data)
+        }
+
+      },
+      success: function(res) {
+        // 通过 eventChannel 向被打开页面传送数据
+        res.eventChannel.emit('sendPoiDetail', poi)
+      }
+    })    
   },
   openEditAction(e){
     let _this = this
@@ -83,24 +102,44 @@ Page({
   },
   closeEdit(){
     this.setData({
-      isEditShow:false
+      isEditShow:false,
+      keyboardHeight:0
     })
   },
+  poiEditFocus(e){
+    let safe = wx.getDeviceInfo().platform=="ios"?66:0
+    console.log()
+    this.setData({
+      keyboardHeight:e.detail.height - safe
+    })
+  },
+  poiEditBlur(e){
+    this.setData({
+      keyboardHeight:0
+    })
+  },  
   formSubmit(e){
     let current = this.data.current_poi,
-        _this = this;
-        console.log(current)
+        _this = this,
+        newRemark = e.detail.value.remark;
     api.updatePoint(current.id,{
       title:current.title,
-      remark:e.detail.value.remark,
+      remark:newRemark,
       dateTime:new Date(current.dateTime).toISOString().slice(0, 19).replace('T', ' ')
     })
     .then(res=>{
       wx.showToast({
         title: '修改成功',
       })
+      let pois = _this.data.points
+      pois.forEach(item=>{
+        if(item.id==current.id){
+          item.remark = newRemark
+        }
+      })
       _this.setData({
         isEditShow:false,
+        points:pois,
         current_poi:null
       })
     })

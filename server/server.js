@@ -69,7 +69,7 @@ app.use(async (ctx, next) => {
 });
 app.use(koajwt({ secret: config.secret }).unless({
   // 登录接口不需要验证
-  path: [/^\/login/,/^\/register/,/^\/test/]
+  path: [/^\/login/,/^\/register/,/^\/test/,/^\/points\/shared\/\d{1,}/]
 }));
 app.use(registerRouter())
 app.use(staticFiles(path.join(__dirname + './public/')))

@@ -1,1 +1,33 @@
 /* pages/login/login.wxss */
+.container{
+  height: 100vh;
+  padding: 20rpx 64rpx;
+}
+.page-body{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 100rpx;
+}
+.page-section{
+  width: 100%;
+  
+}
+view.page-section button{
+
+}
+.input-cell{
+  border-bottom: 1rpx solid #eee;
+}
+.input-cell .input-label{
+  flex: 0 0 100rpx;
+  text-align: left;
+}
+.input-cell .weui-cell__bd{
+  flex: 1;
+  padding-left: 48rpx;
+}
+.input-cell{
+  padding: 30rpx 0;
+}

@@ -4,6 +4,7 @@ const pointModel = require('../store/points.js');
 const imageModel = require('../store/image.js');
 const config = require("../store/config.js")
 const path = require('path')
+const token = require('../util/token.js')
 const PATH_EXP = new RegExp(/http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/);
 const util  = require("../util/util.js")
 const resolveImages = (imageStr)=>{
@@ -159,6 +160,24 @@ route
     if(ps&&ps.images){
         ps.images = resolveImages(ps.images)
     }
+    ctx.body={
+        status:1,
+        data:ps
+    }    
+})
+.get("/points/shared/:id",async (ctx,next)=>{
+    let ps = await pointModel.findSharedPointById(ctx.params.id)
+    if(ps&&ps.images){
+        ps.images = resolveImages(ps.images)
+    }
+    let owned = false
+    if(ctx.request.header&&ctx.request.header.authorization){
+        let user = await token.verify(ctx.request.header.authorization)
+        if(user.id==ps.uid){
+            owned = true
+        }
+    }
+    ps.owned = owned
     ctx.body={
         status:1,
         data:ps

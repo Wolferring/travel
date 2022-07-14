@@ -1,0 +1,32 @@
+/* pages/detail/detail.wxss */
+swiper{
+  height: 480rpx;
+  width: 100%;
+  overflow:hidden;
+  transform: translateY(0);
+}
+swiper image{
+  height: 100%;
+  width: 100%;
+}
+.poi-content{
+  padding: 20rpx 20rpx;
+}
+.poi-content .h3{
+  line-height: 1.4;
+  font-weight: 500;
+  font-size: 100rpx;
+  color:rgba(0,102,204,0.6);
+  text-shadow:1px 3px 6px #fff,0 0 0 #000;
+}
+.poi-content .h4{
+  line-height: 2;
+  color: #333;
+  font-weight: normal;
+  font-size: 32rpx;
+}
+.poi-content .p{
+  color: #666;
+  line-height: 2;
+  font-size: 30rpx;
+}

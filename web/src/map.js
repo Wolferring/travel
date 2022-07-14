@@ -300,13 +300,17 @@ var initMap = (interestPoints)=>{
     minZoom:3,
     maxZoom:15
   })
-  // BDMAP.centerAndZoom(new BMapGL.Point(116.404, 39.915), 10);  
   BDMAP.enableScrollWheelZoom(true)
   if(util.isDarkMode){
     BDMAP.setMapStyleV2({     
       styleId: '7ef7a482d4981a02b419e8d91ccaf185'
     })
   }
+  BDMAP.loadMapStyleFiles(()=>{
+    // alert(1)
+  })  
+  // BDMAP.centerAndZoom(new BMapGL.Point(116.404, 39.915), 10);  
+
 
     
   window.MAP = BDMAP
