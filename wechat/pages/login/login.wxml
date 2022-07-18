@@ -1,20 +1,34 @@
-
+<view class="login-heading">
+    <view class="logo">
+      <image animation="{{logoAnimation}}" src="/src/images/icon-blue.png" mode="aspectFill"></image>
+    </view>
+    <view class="content" animation="{{contentAnimation}}">
+      <text class="h4">途纪</text>
+      <text class="p">去过的地方和读过的书，构成独一无二的你</text>
+    </view>
+  </view>
 <view class="container">
+
     <form catchsubmit="formSubmit" catchreset="formReset">
       <view class="page-body">
         <view class="page-section">
-          <view class="input-cell flex">
-              <text class="input-label">用户名</text>
+          <view class="input-cell">
+              <!-- <text class="input-label">用户名</text> -->
               <view class="weui-cell__bd">
-                <input class="weui-input" name="username" placeholder="注册时填写的用户名" />
+                <input value="{{savedUsername}}" class="weui-input" name="username" placeholder="注册时填写的用户名" />
               </view>
             </view>
         </view>
         <view class="page-section">
           <view class="input-cell flex">
-              <text class="input-label">密码</text>
-              <view class="weui-cell__bd" >
-                <input class="weui-input" confirm-type="done" password name="password" placeholder="密码" />
+              <!-- <text class="input-label">密码</text> -->
+              <view class="weui-cell__bd flex"  >
+                <input class="weui-input" value="{{savedPass}}" confirm-type="done" password name="password" placeholder="密码" />
+                <view>
+                  <text style="font-size: 24rpx;color: #999;">保存密码 </text>
+                  <switch type="switch" checked="{{isSavedPassword}}" bindchange="savePasswordChange"/>
+                </view>
+                
               </view>
             </view>
         </view>      

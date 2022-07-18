@@ -1,13 +1,15 @@
 <!--pages/detail/detail.wxml-->
 <wxs src="../../utils/util.wxs" module="util" />
-<swiper indicator-dots="{{poi.images.length>1}}" indicator-color="rgba(100,100,100,0.3)"	indicator-active-color="#45a1e2">
+<swiper wx:if="{{poi.images.length}}" indicator-dots="{{poi.images.length>1}}" indicator-color="rgba(100,100,100,0.3)"	indicator-active-color="#45a1e2">
   <block wx:for="{{poi.images}}" wx:for-item="img" wx:for-key="imgIndex">
     <swiper-item>
       <image bindtap="openPreview" data-current="{{img.url}}" data-src="{{poi.images}}" src="{{img.url}}" mode="aspectFill"></image>
     </swiper-item>
   </block>
 </swiper>
-<view class="container">
+
+<scroll-view class="container" enhanced scroll-y="{{true}}" enable-back-to-top="{{true}}" style="height: {{contentHeight}}px;" id="scroll-content">
+
   <view class="poi-content" bindtap="openDetail" bindlongpress="openEditAction" data-poi="{{poi}}">
         <view><text class="h3" style="font-size: {{titleFontSize}}px;">{{poi.title}}</text></view>
         <view class="flex" style="margin:10rpx 0;">
@@ -16,10 +18,39 @@
         </view>
         <view><text class="p">{{poi.remark}}</text></view>
   </view>
-  <view>
-    <view class="flex">
-      <button wx:if="{{poi.owned}}">删除</button>
-      <button type="primary" open-type="share">分享</button>
+
+</scroll-view>
+<view wx:if="{{poi.owned}}" >
+    <view class="detail-control flex" >
+      <view class="button-icon" bindtap="openDelete">
+        <image src="/src/images/delete.png" alt=""/>
+        <text>删除</text>
+      </view>
+      <view class="button-icon" bindtap="openEdit">
+        <image src="/src/images/edit.png" alt=""/>
+        <text>编辑</text>
+      </view>
+      <view class="button-icon">
+        <image src="/src/images/share.png" alt=""/>
+        <text>分享</text>
+        <button size="mini" type="primary" open-type="share"></button>
+      </view>            
     </view>
   </view>
-</view>
+
+
+
+  <view class="poi-edit-container" animation="{{editContainerAnimation}}"  wx:if="{{isEditShow}}"> 
+    <view class="poi-edit" animation="{{editContentAnimation}}" style="bottom:{{keyboardHeight}}px">
+      <form catchsubmit="formSubmit" catchreset="formReset">
+        <view class="page-section">
+          <textarea name="remark" cursor-spacing="100" fixed	 value="{{poi.remark}}" maxlength="-1" bindblur="poiEditBlur" bindfocus="poiEditFocus" adjust-position="{{false}}" show-confirm-bar="{{false}}"></textarea>
+        </view>      
+
+        <view class="flex">
+          <button type="default" bindtap="closeEdit">取消</button>
+          <button type="primary" formType="submit">确认更新</button>
+        </view>
+      </form>
+    </view>
+  </view>

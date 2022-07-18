@@ -1,5 +1,6 @@
 const mysql = require('./mysql.js')
 let cols = "id,username,nickname,avatar,create_time,update_time"
+
 let findUserByName = function(username) {
   let _sql = `select ${cols} from user where username = '${username}';`
   return mysql.query( _sql )

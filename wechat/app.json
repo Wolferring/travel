@@ -5,8 +5,14 @@
     "pages/login/login",
     "pages/mine/mine",
     "pages/detail/detail",
-    "pages/register/register"
+    "pages/register/register",
+    "pages/create/create"
   ],
+  "permission": {
+    "scope.userLocation": {
+      "desc": "位置信息用于添加记录时快速定位"
+    }
+  },  
   "tabBar": {
     "color": "#999",
     "selectedColor": "#45a1e2",

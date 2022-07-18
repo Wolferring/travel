@@ -1,21 +1,39 @@
 <view class="container">
   <view class="section">
     <view class="section-heading">
-      <text>城市</text>
+      <text>{{user.nickname}}</text>
+    </view>  
+  </view>
+  <view class="section" wx:if="{{sta.total==0}}">
+    <view class="section-content poi-item" >
+      <view>
+        <text>还没去过任何地方～</text>
+      </view>
     </view>
-    <view class="section-content">
-      <view wx:for="{{sta.city}}" >{{item}}</view>
+  </view>  
+  <view class="section" wx:if="{{sta.city.length}}">
+    <view class="section-heading flex">
+      <text>城市</text>
+      <text>{{sta.city.length}}个</text>
+    </view>
+    <view class="section-content poi-item" >
+      <view wx:for="{{sta.city}}" >
+        <text>{{item}}</text>
+      </view>
     </view>
   </view>
-  <view class="section">
-    <view class="section-heading">
+  <view class="section" wx:if="{{sta.province.length}}">
+    <view class="section-heading flex">
       <text>省份</text>
+      <text>{{sta.province.length}}个</text>
     </view>
-    <view class="section-content">
-      <view wx:for="{{sta.province}}" >{{item}}</view>
+    <view class="section-content poi-item" >
+      <view wx:for="{{sta.province}}" >
+        <text>{{item}}</text>
+      </view>
     </view>
   </view>  
   <view class="section" wx:if="{{isLogin}}">
-    <button bindtap="logout">退出登录</button>
+    <button type="default" plain bindtap="logout">退出登录</button>
   </view>
 </view>

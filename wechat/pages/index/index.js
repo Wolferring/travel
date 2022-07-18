@@ -33,6 +33,7 @@ Page({
       limit:16
     })
     .then(res=>{
+      console.log(res)
       _this.setData({
         points:res.data.points
       })
@@ -118,6 +119,12 @@ Page({
       keyboardHeight:0
     })
   },  
+  openCreate(){
+    wx.navigateTo({
+      url: '/pages/create/create',
+    })
+  },
+  //编辑
   formSubmit(e){
     let current = this.data.current_poi,
         _this = this,
@@ -143,5 +150,14 @@ Page({
         current_poi:null
       })
     })
-  }
+  },
+  onPullDownRefresh(){
+    wx.stopPullDownRefresh({
+      success: (res) => {
+        wx.navigateTo({
+          url: '/pages/create/create',
+        })
+      },
+    })
+  },
 })

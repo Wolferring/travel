@@ -27,6 +27,9 @@ const resolveImages = (imageStr)=>{
 route
 .get("/points",async (ctx,next)=>{
     let ps = await pointModel.findPoints(ctx.state.user.id)
+    if(Object.prototype.toString.call(ps)=="[object Object]"){
+        ps = [ps]
+    }    
     if(ps&&ps.length){
         ps.forEach(poi=>{
             if(poi.images){
@@ -55,7 +58,9 @@ route
 .get("/points/city",async (ctx,next)=>{
     let limit = ctx.request.query.limit||4
     let ps = await pointModel.findPointsGroupByCity(ctx.state.user.id,limit)
-
+    if(Object.prototype.toString.call(ps)=="[object Object]"){
+        ps = [ps]
+    }
     if(ps&&ps.length){
         ps.forEach(poi=>{
             if(poi.images){
@@ -73,6 +78,9 @@ route
 .get("/points/province",async (ctx,next)=>{
     let limit = ctx.request.query.limit||4
     let ps = await pointModel.findPointsGroupByProvince(ctx.state.user.id,limit)
+    if(Object.prototype.toString.call(ps)=="[object Object]"){
+        ps = [ps]
+    }    
     if(ps&&ps.length){
         ps.forEach(poi=>{
             if(poi.images){
@@ -90,6 +98,9 @@ route
 .get("/points/recent",async (ctx,next)=>{
     let limit = ctx.request.query.limit||4
     let ps = await pointModel.findPointsByTime(ctx.state.user.id,limit)
+    if(Object.prototype.toString.call(ps)=="[object Object]"){
+        ps = [ps]
+    }    
     if(ps&&ps.length){
         ps.forEach(poi=>{
             if(poi.images){

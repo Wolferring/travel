@@ -1,5 +1,6 @@
 {
   "usingComponents": {},
   "navigationBarTitleText": "途纪-时间线",
-  "visualEffectInBackground":"hidden"
+  "visualEffectInBackground":"hidden",
+  "enablePullDownRefresh": true
 }

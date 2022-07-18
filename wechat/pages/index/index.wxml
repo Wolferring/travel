@@ -2,7 +2,14 @@
 <wxs src="../../utils/util.wxs" module="util" />
 
 <view class="container">
-  <view class="poi-container">
+  <view wx:if="{{!points.length&&isLogin}}" class="no-content">
+    <view style="margin-bottom: 40rpx;">
+      <text>还没有任何足迹，快来添加你的第一条纪录</text>
+    </view>
+    <button type="primary" bindtap="openCreate">创建足迹</button>
+  </view>
+  
+  <view class="poi-container" wx:if="{{points.length}}">
     <block wx:for="{{points}}" >
     <view class="poi-heading flex">
       <text class="h1">{{util.formatTime(item.dateTime,"yyyy-MM-dd")}}</text>
@@ -11,7 +18,7 @@
     <view class="card" data-poi="{{item}}">
 
       <view>
-        <swiper indicator-dots="{{item.images.length>1}}" indicator-color="rgba(100,100,100,0.3)"	indicator-active-color="#45a1e2">
+        <swiper wx:if="{{item.images.length}}" indicator-dots="{{item.images.length>1}}" indicator-color="rgba(100,100,100,0.3)"	indicator-active-color="#45a1e2">
           <block wx:for="{{item.images}}" wx:for-item="img" wx:for-key="imgIndex">
             <swiper-item>
               <image bindtap="openPreview" data-current="{{img.url}}" data-src="{{item.images}}" src="{{img.url}}" mode="aspectFill"></image>
@@ -19,12 +26,6 @@
           </block>
         </swiper>
       </view>
-      
-      <!-- <view class="poi-image grid-mode-{{ item.images.length>1?(item.images.length%4):'x' }}">
-        <view wx:for="{{item.images}}" wx:for-item="img" class="picture">
-          <image src="{{img.thumb}}" mode="aspectFill"></image>
-        </view>
-      </view> -->
       <view class="poi-content" bindtap="openDetail" bindlongpress="openEditAction" data-poi="{{item}}">
         <view><text class="h3">{{item.title}}</text></view>
         <view class="flex">
@@ -32,7 +33,7 @@
           <text class="h4">{{util.formatTime(item.dateTime,"yyyy-MM-dd")}}</text>
         </view>
         <view></view>
-        <view><text class="p">{{item.remark}}</text></view>
+        <view><text class="p">{{util.shortRemark(item.remark)}}</text></view>
       </view>
 
     </view>

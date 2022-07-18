@@ -1,3 +1,5 @@
+const util = require("./util")
+
 const api = (()=>{
 
   let apiurl = "https://travel.whimsylove.cn/api";
@@ -13,22 +15,22 @@ const api = (()=>{
     );
   };
   const service = (config)=>{
-    var AUTH = wx.getStorageSync("AUTH")
+    let AUTH = wx.getStorageSync("AUTH")
+    let header = {}
+    if(AUTH&&AUTH.length){
+      header["Authorization"] = "Bearer "+ AUTH
+    }
     return new Promise(function(resolve,reject){
       wx.request({
         url: `${apiurl}${config.url}`,
         data:config.data||config.params,
         method:config.method||"get",
-        header:{
-          "Authorization":"Bearer "+ AUTH
-        },
+        header:header,
         success:function(res){
           if(res.statusCode=="200"&res.data.status==1){
             resolve(res.data)
           }else if(res.data.status==-1){
-            wx.navigateTo({
-              url: '/pages/login/login',
-            })
+            util.openLogin()
             reject(res.data);
           }else{
             reject(res.data);
@@ -71,7 +73,7 @@ const api = (()=>{
     },  
     getSharedPoint(id){
       return service({
-          url:`/points/${id}`,
+          url:`/points/shared/${id}`,
           method:'get'
       })        
     },       
@@ -107,6 +109,9 @@ const api = (()=>{
             method:'POST',
             data: obj
         })   
+    },
+    uploadPath(){
+      return apiurl+"/upload"
     },
     upload(obj){
       return service({

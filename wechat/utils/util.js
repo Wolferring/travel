@@ -8,12 +8,24 @@ const formatTime = date => {
 
   return `${[year, month, day].map(formatNumber).join('/')} ${[hour, minute, second].map(formatNumber).join(':')}`
 }
+const openLogin = ()=>{
+  let current = getCurrentPages()
+  var hasLoginOpen = current.some(function (currentValue) {
+    return currentValue.route == 'pages/login/login';
+  })
+  if(!hasLoginOpen){
+    wx.navigateTo({
+      url: '/pages/login/login',
+    })
+  }
 
+}
 const formatNumber = n => {
   n = n.toString()
   return n[1] ? n : `0${n}`
 }
 
 module.exports = {
-  formatTime
+  formatTime,
+  openLogin
 }

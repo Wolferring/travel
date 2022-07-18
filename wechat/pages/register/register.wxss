@@ -1,1 +1,56 @@
-/* pages/register/register.wxss */
+/* pages/login/login.wxss */
+.container{
+  padding: 20rpx 64rpx;
+}
+.login-heading{
+  border-bottom: 1rpx solid #dedede;
+  padding-bottom: 40rpx;
+}
+.login-heading .logo image{
+  transform: rotate(90deg);
+  width: 200rpx;
+  height: 200rpx;
+}
+.login-heading .logo{
+  display: flex;
+  justify-content: center;
+}
+.login-heading .content{
+  opacity: 0;
+  transform: translateY(100rpx);
+  text-align: center;
+}
+.login-heading .content text{
+  display:block;
+}
+.login-heading .content .h4{
+  font-size: 42rpx;
+  margin-bottom: 20rpx;
+}
+.login-heading .content .p{
+  font-size: 26rpx;
+  color: #999;
+}
+.page-body{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+.page-section{
+  width: 100%;
+}
+.input-cell{
+  border-bottom: 1rpx solid #eee;
+}
+.input-cell .input-label{
+  flex: 0 0 100rpx;
+  text-align: left;
+}
+.input-cell .weui-cell__bd{
+  flex: 1;
+  padding-left: 0rpx;
+}
+.input-cell{
+  padding: 30rpx 0;
+}

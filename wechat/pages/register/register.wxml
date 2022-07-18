@@ -1,2 +1,55 @@
-<!--pages/register/register.wxml-->
-<text>pages/register/register.wxml</text>
+<view class="login-heading">
+    <view class="logo">
+      <image animation="{{logoAnimation}}" src="/src/images/icon-blue.png" mode="aspectFill"></image>
+    </view>
+    <view class="content" animation="{{contentAnimation}}">
+      <text class="h4">途纪</text>
+      <text class="p">去过的地方和读过的书，构成独一无二的你</text>
+    </view>
+  </view>
+<view class="container">
+  <!-- <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+    <image class="avatar" src="{{avatarUrl}}"></image>
+  </button>  -->
+    <form catchsubmit="formSubmit" catchreset="formReset">
+      <view class="page-body">
+        <view class="page-section">
+          <view class="input-cell flex">
+              <!-- <text class="input-label">用户名</text> -->
+              <view class="weui-cell__bd">
+                <input  class="weui-input" name="username" placeholder="登录用户名" />
+              </view>
+            </view>
+            <view class="input-cell flex">
+              <!-- <text class="input-label">用户名</text> -->
+              <view class="weui-cell__bd">
+                <input  class="weui-input" type="nickname" name="nickname" placeholder="显示用的昵称" />
+              </view>
+            </view>            
+        </view>
+        <view class="page-section">
+          <view class="input-cell flex">
+              <!-- <text class="input-label">密码</text> -->
+              <view class="weui-cell__bd flex"  >
+                <input class="weui-input"  confirm-type="done" name="password" placeholder="密码" />
+              </view>
+            </view>
+            <view class="input-cell flex">
+              <!-- <text class="input-label">密码</text> -->
+              <view class="weui-cell__bd flex"  >
+                <input class="weui-input"  confirm-type="done" name="valid_password" placeholder="确认密码" />
+              </view>
+            </view>            
+        </view>      
+
+        <view class="page-section flex" style="margin: 30rpx 0;">
+          <button type="primary" style="width: 100%;" formType="submit">注册</button>
+        </view>
+      </view>
+
+    </form>
+    <view class="flex-center">
+      <navigator style="text-align: center;color: #999;" open-type="navigateBack" url="/pages/login/login">已有账号？登录</navigator>
+    </view>
+
+</view>

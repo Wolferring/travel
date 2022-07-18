@@ -1,4 +1,8 @@
 /* pages/detail/detail.wxss */
+page{
+  overflow-y: hidden;
+  height: 100%;
+}
 swiper{
   height: 480rpx;
   width: 100%;
@@ -29,4 +33,76 @@ swiper image{
   color: #666;
   line-height: 2;
   font-size: 30rpx;
+}
+
+#scroll-content{
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.button-icon{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 88rpx;
+  position: relative;
+  overflow: hidden;
+}
+.button-icon image{
+  width: 48rpx;
+  height: 48rpx;
+}
+.button-icon text{
+  color: #333;
+  font-size: 24rpx;
+  margin-top: 6rpx;
+}
+.button-icon button{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+.detail-control{
+  box-sizing: border-box;
+  justify-content: space-around;
+  padding: 10rpx 0;
+  /* border-top: 1rpx solid #dedede; */
+  box-shadow: 0 -10px 10px #eee;
+  padding-bottom: 0rpx;
+}
+
+.poi-edit-container{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,.7);
+  z-index: 999;
+  opacity: 0;
+}
+.poi-edit{
+  box-sizing: border-box;
+  position: absolute;
+  bottom: 0;
+  background-color: #fff;
+  padding: 20rpx 10rpx;
+  padding-bottom: 44rpx;
+  width: 100%;
+  transition: bottom .3s ease;
+  transform: translateY(100%);
+}
+
+.poi-edit textarea{
+  box-sizing: border-box;
+  border: 1rpx solid #ddd;
+  border-radius: 10rpx;
+  width: 100%;
+  padding: 20rpx;
+  margin-bottom: 30rpx;
+  line-height: 2;
+  font-size: 26rpx;
+  color: #666;
 }
