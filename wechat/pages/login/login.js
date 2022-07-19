@@ -85,11 +85,15 @@ Page({
     })
   },
   formSubmit(e){
-    if(!e.detail.value.password||!e.detail.value.username){
+    if(!e.detail.value.password1||!e.detail.value.username1){
       return false
     }
+    let query = {
+      username:e.detail.value.username1,
+      password:e.detail.value.password1
+    }
     let _this = this
-    api.login(e.detail.value)
+    api.login(query)
     .then(res=>{
       if(res.data.token){
         app.globalData.USER.isLogin = true
@@ -106,9 +110,6 @@ Page({
         wx.navigateBack({
           delta: 0,
         })   
-        // wx.switchTab({
-        //   url: '/pages/index/index',
-        // })
       }
     })
     .catch(err=>{

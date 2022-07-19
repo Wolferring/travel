@@ -8,13 +8,13 @@
           <view class="input-cell flex">
               <view class="search-input flex">
                 <input value="{{savedUsername}}" bindconfirm="searchFormSubmit" confirm-type="search" class="weui-input" name="query" placeholder="搜索地点" />
-                <button type="default" formType="submit">搜索</button>
+                <button type="default" size="mini" formType="submit">搜索</button>
               </view>
             </view>
         </view>
         <scroll-view scroll-y wx:if="{{pois.length}}"	 class="page-section search-result">
           <view class="search-item" wx:for="{{pois}}" data-poi="{{item}}" bindtap="poiSelect">
-            <text>{{item.name}} - {{item.city}} - {{item.province}}</text>             
+            <text>{{item.name}} /{{item.city}}/{{item.province}}</text>             
           </view>
        
         </scroll-view>
@@ -24,21 +24,21 @@
  
 </view>
 
-<view class="container" style="">
+<view class="container" >
 
 <form catchsubmit="createFormSubmit">
     <view class="page-body">
       <view class="page-section">
         <view class="input-cell">
             <view class="weui-cell__bd">
-              <input disabled class="weui-input" value="{{create.address}}" name="address" placeholder="地点" />
+              <input disabled class="weui-input" value="{{create.address}}" name="address" placeholder="地点(搜索后自动填充)" />
             </view>
         </view>      
         <view class="input-cell">
             <view class="weui-cell__bd">
               <picker name="dateTime" bindchange="dateTimeChange" mode="date" class="input flex">
-                <view class="flex" style="height: 80rpx;line-height: 80rpx;">
-                  <text wx:if="{{!create.dateTime}}" style="color: #777;">去的时间</text>
+                <view class="flex" style="height: 80rpx;line-height: 80rpx;width:700rpx;">
+                  <text wx:if="{{!create.dateTime}}" style="color: #808080;">去的时间</text>
                   <text style="clear: #000;">{{create.dateTime}}</text>              
                 </view>
               </picker>
@@ -52,7 +52,7 @@
         </view>
         <view class="input-cell">
             <view class="weui-cell__bd">
-              <textarea class="weui-input" name="remark" placeholder="备注" ></textarea>
+              <textarea disable-default-padding	 class="weui-input" name="remark" placeholder="故事" ></textarea>
             </view>
         </view> 
 
@@ -67,10 +67,21 @@
               <view class="imagePreviewItem" bindtap="chooseImages">选择照片</view>
             </view>        
 
-        </view>                 
+        </view>        
+        <view class="input-cell">
+            <view class="weui-cell__bd">
+              <picker name="dateTime" bindchange="scopeChange" mode="selector" range="{{scopeType}}" range-key="desc" value="{{scopeIndex}}" class="input flex">
+                <view class="flex" style="height: 80rpx;line-height: 80rpx;width:700rpx;">
+                  <text style="color: #808080;">谁可以看</text>
+                  <text style="clear: #000;">{{scopeType[scopeIndex]['desc']}}</text>              
+                </view>
+              </picker>
+              
+            </view>
+        </view>                   
       </view>
       <view class="page-section flex" style="margin: 30rpx 0;">
-        <button type="primary" style="width: 100%;" formType="submit">创建足迹</button>
+        <button type="primary" disabled="{{creating}}" style="width: 100%;" formType="submit">创建足迹</button>
       </view>
     </view>
 

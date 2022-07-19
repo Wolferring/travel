@@ -8,6 +8,7 @@ Page({
     isEditShow:false,
     points:[],
     keyboardHeight:0,
+    triggered:false,
     current_poi:{
       id:null,
       title:"",
@@ -33,11 +34,16 @@ Page({
       limit:16
     })
     .then(res=>{
-      console.log(res)
       _this.setData({
         points:res.data.points
       })
     })
+    if(app.globalData.USER){
+      this.setData({
+        user:app.globalData.USER.userInfo,
+        isLogin:app.globalData.USER.isLogin
+      }) 
+    }    
   },
   openDetail(e){
     let poi = e.currentTarget.dataset.poi
@@ -120,8 +126,8 @@ Page({
     })
   },  
   openCreate(){
-    wx.navigateTo({
-      url: '/pages/create/create',
+    this.setData({
+      triggered:true
     })
   },
   //编辑
@@ -151,13 +157,15 @@ Page({
       })
     })
   },
-  onPullDownRefresh(){
-    wx.stopPullDownRefresh({
-      success: (res) => {
-        wx.navigateTo({
-          url: '/pages/create/create',
-        })
-      },
+  onRefresh(){
+    let _this = this
+    wx.navigateTo({
+      url: '/pages/create/create',
     })
-  },
+    setTimeout(function(){
+      _this.setData({
+        triggered:false
+      })
+    },800)
+  }
 })

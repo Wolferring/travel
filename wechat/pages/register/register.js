@@ -63,13 +63,37 @@ Page({
     let hasEmptyValue = Object.keys(e.detail.value).some((item=>{
       return e.detail.value[item]==""
     }))
+    let usernameNotAllow = e.detail.value.username.length<5
     let passwordNotEqual = (e.detail.value.password!=e.detail.value.valid_password)
-    if(hasEmptyValue||passwordNotEqual){
-      wx.showToast({
-        title: '信息填写有误',
-        icon:'error'
-      })
-      return false
+    let passwordNotAllow = e.detail.value.password.length<8
+    let message = {
+      hasEmptyValue:{
+        invalid:hasEmptyValue,
+        msg:"请完善表单",
+      },
+      usernameNotAllow:{
+        invalid:usernameNotAllow,
+        msg:"登录账户不符合规范"
+      },
+      passwordNotEqual:{
+        invalid:passwordNotEqual,
+        msg:"两次密码不符"
+      },
+      passwordNotAllow:{
+        invalid:passwordNotAllow,
+        msg:"密码不符合规范"
+      },
+    }
+    let keys = Object.keys(message)
+    for(let m of keys){
+      
+      if(message[m].invalid){
+        wx.showToast({
+          title: message[m].msg,
+          icon:'error'
+        })
+        return false
+      }
     }
     let _this = this
     api.register(e.detail.value)

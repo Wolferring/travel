@@ -10,8 +10,11 @@
 
 <scroll-view class="container" enhanced scroll-y="{{true}}" enable-back-to-top="{{true}}" style="height: {{contentHeight}}px;" id="scroll-content">
 
-  <view class="poi-content" bindtap="openDetail" bindlongpress="openEditAction" data-poi="{{poi}}">
+  <view class="poi-content" bindlongpress="openEditAction" data-poi="{{poi}}">
         <view><text class="h3" style="font-size: {{titleFontSize}}px;">{{poi.title}}</text></view>
+        <view wx:if="{{author&&!poi.owned}}">
+          <text class="p">来自 <text style="color: #06ae56;font-weight: bold;">「{{author}}」</text>的分享</text>
+        </view>
         <view class="flex" style="margin:10rpx 0;">
           <text class="h4">{{poi.address}}</text>
           <text class="h4">{{util.formatTime(poi.dateTime,"yyyy-MM-dd")}}</text>
@@ -30,11 +33,11 @@
         <image src="/src/images/edit.png" alt=""/>
         <text>编辑</text>
       </view>
-      <view class="button-icon">
+      <view class="button-icon" wx:if="{{poi.scope=='public'}}">
         <image src="/src/images/share.png" alt=""/>
         <text>分享</text>
         <button size="mini" type="primary" open-type="share"></button>
-      </view>            
+      </view>                 
     </view>
   </view>
 
@@ -43,8 +46,19 @@
   <view class="poi-edit-container" animation="{{editContainerAnimation}}"  wx:if="{{isEditShow}}"> 
     <view class="poi-edit" animation="{{editContentAnimation}}" style="bottom:{{keyboardHeight}}px">
       <form catchsubmit="formSubmit" catchreset="formReset">
-        <view class="page-section">
-          <textarea name="remark" cursor-spacing="100" fixed	 value="{{poi.remark}}" maxlength="-1" bindblur="poiEditBlur" bindfocus="poiEditFocus" adjust-position="{{false}}" show-confirm-bar="{{false}}"></textarea>
+        <view class="input-cell" style="border-bottom: 1rpx solid #dedede;">
+            <view class="weui-cell__bd">
+              <picker name="dateTime" bindchange="scopeChange" mode="selector" range="{{scopeType}}" range-key="desc" value="{{scopeIndex}}" class="input flex">
+                <view class="flex" style="height: 90rpx;line-height: 90rpx;width:730rpx;">
+                  <text style="color: #808080;">谁可以看</text>
+                  <text style="clear: #000;">{{scopeType[scopeIndex]['desc']}}</text>              
+                </view>
+              </picker>
+              
+            </view>
+        </view>            
+        <view class="input-cell">
+          <textarea disable-default-padding	 name="remark" cursor-spacing="100" fixed	 value="{{poi.remark}}" maxlength="-1" bindblur="poiEditBlur" bindfocus="poiEditFocus" adjust-position="{{false}}" show-confirm-bar="{{false}}"></textarea>
         </view>      
 
         <view class="flex">

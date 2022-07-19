@@ -1,12 +1,33 @@
 <!--index.wxml-->
 <wxs src="../../utils/util.wxs" module="util" />
-
+<scroll-view
+  enhanced
+  enable-back-to-top	
+  scroll-y style="width: 100%;"
+  refresher-enabled="{{true}}"
+  refresher-threshold="{{120}}"
+  refresher-default-style="none"
+  refresher-triggered="{{triggered}}"
+  bindrefresherrefresh="onRefresh"
+  class="main-scroll"
+>
+  <view slot="refresher" class="refresh-container"
+    style=" width: 100%; height: 80rpx;display: flex; align-items: center;"
+  >
+    <view class="flex" style="justify-content: center;width: 100%;">
+      <image src="../../src/images/round_add.png" mode="aspectFit" style="width: 40rpx;height: 40rpx;"></image> 
+      <text style="color: #999;">下拉新建足迹</text>
+    </view>
+  </view>
 <view class="container">
   <view wx:if="{{!points.length&&isLogin}}" class="no-content">
-    <view style="margin-bottom: 40rpx;">
+    <view style="margin-bottom: 40rpx;display: flex;flex-direction: column;">
       <text>还没有任何足迹，快来添加你的第一条纪录</text>
+      <text>你也可以通过 <text style="color: #06ae56;font-weight: bold;"> 「下拉页面」</text>来快速创建</text>
+
     </view>
-    <button type="primary" bindtap="openCreate">创建足迹</button>
+    <button type="default" bindtap="openCreate">
+     创建足迹</button>
   </view>
   
   <view class="poi-container" wx:if="{{points.length}}">
@@ -26,7 +47,7 @@
           </block>
         </swiper>
       </view>
-      <view class="poi-content" bindtap="openDetail" bindlongpress="openEditAction" data-poi="{{item}}">
+      <view class="poi-content" bindtap="openDetail" data-poi="{{item}}">
         <view><text class="h3">{{item.title}}</text></view>
         <view class="flex">
           <text class="h4">{{item.address}}</text>
@@ -57,3 +78,4 @@
     <button type="primary" bindtap="openLogin">登录</button>
   </view>
 </view>
+</scroll-view>

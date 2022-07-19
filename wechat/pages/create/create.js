@@ -1,24 +1,35 @@
-var bmap = require('../../libs/bmap.js'); 
-const { upload } = require('../../utils/fetch.js');
+const bmap = require('../../libs/bmap.js'); 
 const api = require('../../utils/fetch.js');
-var wxMarkerData = []; 
 Page({ 
     data: { 
         pois: [], 
         MAP:null,
+        scopeIndex:0,
+        scopeType:[
+          {
+            desc:"公开（可分享）",
+            value:"public"
+          },
+          {
+            desc:"仅自己可见",
+            value:"private"
+          }
+        ],
         create:{
           dateTime:"",
           lnglat:"",
           images:[],
           address:"",
           city:"",
-          province:""
+          province:"",
+          scope:"public"
         },
         latitude: '', 
         longitude: '', 
         tempImages:[],
         uploadedImageIds:[],
-        placeData: {} 
+        placeData: {},
+        creating:false
     }, 
     onLoad: function() { 
         var that = this; 
@@ -33,8 +44,13 @@ Page({
         // this.poiSuggestion("兴隆湖")
     }, 
     searchFormSubmit(e){
+      console.log(e)
       if(e.detail.value.query){
         this.poiSuggestion(e.detail.value.query)
+      }
+      if(e.type=="confirm"&&e.detail.value){
+        this.poiSuggestion(e.detail.value)
+
       }
     },
     createFormSubmit(e){
@@ -61,11 +77,13 @@ Page({
         }
       })
       this.setData({
+        creating:true,
         create:form
       })
       this.uploadImages()
     },
     postCreateForm(images){
+      let _this = this
       if(images.length){
         let form = this.data.create
         form.images = images
@@ -80,6 +98,11 @@ Page({
             })
           },2000)
 
+        })
+        .finally(res=>{
+          _this.setData({
+            creating:false
+          })
         })
       }
     },
@@ -127,14 +150,29 @@ Page({
         create:form
       })
     },
-    mapClick(e){
-
+    scopeChange(e){
+      let create = this.data.create
+      create.scope = this.data.scopeType[e.detail.value]['value']
+      this.setData({
+        scopeIndex:e.detail.value,
+        create:create
+      })
     },
     async uploadImages(){
       let uploadedImages = []
       let images = this.data.tempImages,
           _this = this;
-      let imagesCount = this.data.tempImages.length;
+      let imagesCount = images.length;
+      if(imagesCount==0){
+        wx.showToast({
+          title: '请选择照片',
+          icon:'error'
+        })
+        this.setData({
+          creating:false
+        })
+        return false
+      }
       images.forEach(item=>{
         wx.uploadFile({
           url: api.uploadPath(), //仅为示例，非真实的接口地址
@@ -143,6 +181,15 @@ Page({
             "Authorization":"Bearer "+wx.getStorageSync('AUTH')
           },
           name: 'files',
+          fail(){
+            wx.showToast({
+              title: '上传图片失败',
+              icon:'error'
+            })
+            this.setData({
+              creating:false
+            })            
+          },
           success (res){
             let result = JSON.parse(res.data)
             imagesCount--

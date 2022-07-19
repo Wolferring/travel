@@ -13,17 +13,20 @@
       <view class="page-body">
         <view class="page-section">
           <view class="input-cell">
-              <!-- <text class="input-label">用户名</text> -->
               <view class="weui-cell__bd">
-                <input value="{{savedUsername}}" class="weui-input" name="username" placeholder="注册时填写的用户名" />
+                <input value="{{savedUsername}}" class="weui-input" name="username1" placeholder="登录账户" />
+                
               </view>
             </view>
         </view>
+        
+        <input class="fake-input" name="username" />
+        <input class="fake-input" name="password" />
         <view class="page-section">
           <view class="input-cell flex">
-              <!-- <text class="input-label">密码</text> -->
               <view class="weui-cell__bd flex"  >
-                <input class="weui-input" value="{{savedPass}}" confirm-type="done" password name="password" placeholder="密码" />
+                
+                <input class="weui-input" value="{{savedPass}}" name="password1"  placeholder="密码" password />
                 <view>
                   <text style="font-size: 24rpx;color: #999;">保存密码 </text>
                   <switch type="switch" checked="{{isSavedPassword}}" bindchange="savePasswordChange"/>

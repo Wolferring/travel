@@ -32,7 +32,7 @@ let findPointById = function(value,uid) {
   return mysql.query( _sql )
 }
 let findSharedPointById = function(value,d) {
-  let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,",'thumb':'",img.thumb,"'}") as images  from points as p left join images as img on img.pid = p.id where p.id=${value} AND p.status = "ACTIVE"  group by p.id;`
+  let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,",'thumb':'",img.thumb,"'}") as images  from points as p left join images as img on img.pid = p.id where p.id=${value} AND p.status = "ACTIVE" AND p.scope = "public"  group by p.id;`
   return mysql.query( _sql )
 }
 let findPointByRandom = function(uid) {
@@ -85,6 +85,7 @@ let insertPoint = function(value,uid) {
   dateTime=?,
   province=?,
   city=?,
+  scope=?,
   uid=?;`
   return mysql.query( _sql, value )
 }
@@ -92,7 +93,8 @@ let updatePoint = function(value,pid,uid) {
   let _sql = `update points 
   set title=?,
   remark=?,
-  dateTime=? 
+  dateTime=?,
+  scope=? 
   where id=${pid} and uid = ${uid};`
   return mysql.query( _sql, value )
 }

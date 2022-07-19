@@ -149,6 +149,7 @@ route
         point.dateTime,
         point.province||point.city,
         point.city||point.province,
+        point.scope||"public",
         ctx.state.user.id   
     ],ctx.state.user.id) 
     .then(async(res)=>{
@@ -199,7 +200,8 @@ route
     await pointModel.updatePoint([
         point.title,
         point.remark,
-        point.dateTime 
+        point.dateTime,
+        point.scope
     ],
     ctx.params.id,
     ctx.state.user.id)  

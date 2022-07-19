@@ -59,3 +59,9 @@
   /* padding: 30rpx 0; */
   height: 120rpx;
 }
+.fake-input{
+  min-height: 1rpx;
+  height: 1rpx;
+  width: 1rpx;
+  position: absolute;
+}

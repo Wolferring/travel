@@ -7,7 +7,19 @@ Page({
    * 页面的初始数据
    */
   data: {
+    author:null,
     poi:{},
+    scopeIndex:0,
+    scopeType:[
+      {
+        desc:"公开（可分享）",
+        value:"public"
+      },
+      {
+        desc:"仅自己可见",
+        value:"private"
+      }
+    ],    
     isEditShow:false,
     editContainerAnimation:null,
     editContentAnimation:null,
@@ -20,14 +32,19 @@ Page({
    * 生命周期函数--监听页面加载
    */
   render(poi){
-    
-    let window = wx.getWindowInfo(),
-        _this = this,
-        windowWidth = window.windowWidth - 40,
-        windowHeight = window.windowHeight,
-        w = windowWidth/(poi.title.length+1);
+    let window = wx.getSystemInfoSync(),
+        windowWidth = 0,
+        windowHeight = 0,
+        w = 0,
+        _this = this;
+    if(window){
+        windowWidth = window.windowWidth - 40
+        windowHeight = window.windowHeight
+        w = windowWidth/(poi.title.length+1)
+    }
     _this.setData({
       poi:poi,
+      scopeIndex:{'private':1,'public':0}[poi.scope],
       titleFontSize:w>32?32:w
     })        
     let scrollContent = wx.createSelectorQuery()
@@ -55,21 +72,27 @@ Page({
   },
   onLoad(option) {
     const _this = this
-    const eventChannel = this.getOpenerEventChannel()
+    if(option.author){
+      this.setData({
+        author:option.author
+      })
+    }      
     if(option&&option.id){
       api.getSharedPoint(option.id)
       .then(res=>{
         _this.render(res.data)
-      })
+        
+      })      
+
+      return false
     }
+  
+    const eventChannel = this.getOpenerEventChannel()
     if(eventChannel&&!option.id){
       eventChannel.on('sendPoiDetail', function(data) {
         _this.render({owned:true,...data})
       })
     }
-
-  },
-  onShow() {
 
   },
   openPreview(e){
@@ -89,14 +112,6 @@ Page({
     this.setData({
       keyboardHeight:e.detail.height - safe
     })
-    // let ani = wx.createAnimation({
-    //   timingFunction: 'ease',
-    //   duration:300
-    // })
-    // ani.translateY(-(e.detail.height - safe)).step()
-    // this.setData({
-    //   editContentAnimation:ani.export()
-    // })
   },
   poiEditBlur(e){
     this.setData({
@@ -160,6 +175,11 @@ Page({
       editContentAnimation:ani.export()
     })
   },
+  scopeChange(e){
+    this.setData({
+      scopeIndex:e.detail.value,
+    })
+  },  
   closeEdit(){
     let _this = this
     let ani = wx.createAnimation({
@@ -189,10 +209,12 @@ Page({
   formSubmit(e){
     let current = this.data.poi,
         _this = this,
+        scope = this.data.scopeType[this.data.scopeIndex]['value'], 
         newRemark = e.detail.value.remark;
     api.updatePoint(current.id,{
       title:current.title,
       remark:newRemark,
+      scope:scope,
       dateTime:new Date(current.dateTime).toISOString().slice(0, 19).replace('T', ' ')
     })
     .then(res=>{
@@ -210,9 +232,29 @@ Page({
    * 用户点击右上角分享
    */
   onShareAppMessage() {
+    let author = null
+    let query = `id=${this.data.poi.id}`
+    if(this.data.poi.owned){
+      const app = getApp()
+      author = app.globalData.USER.userInfo.nickname
+      query+=`&author=${author}`
+    }    
     return {
       title: `${this.data.poi.title}`,
-      path: '/pages/detail/detail?id='+this.data.poi.id 
+      path: '/pages/detail/detail?'+query
+    }
+  },
+  onShareTimeline(){
+    let author = null
+    let query = `id=${this.data.poi.id}`
+    if(this.data.poi.owned){
+      const app = getApp()
+      author = app.globalData.USER.userInfo.nickname
+      query+=`&author=${author}`
+    }
+    return {
+      title:this.data.poi.title,
+      query:query
     }
   }
 })
