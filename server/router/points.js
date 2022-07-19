@@ -179,6 +179,13 @@ route
 })
 .get("/points/shared/:id",async (ctx,next)=>{
     let ps = await pointModel.findSharedPointById(ctx.params.id)
+    if(!ps){
+        ctx.body={
+            status:404,
+            data:null
+        }    
+        return false     
+    }
     if(ps&&ps.images){
         ps.images = resolveImages(ps.images)
     }
