@@ -17,8 +17,24 @@ let points =
 
 mysql.createTable(points)
 
-let findPoints = async (uid)=>{
-  let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,",'thumb':'",img.thumb,"'}") as images  from points as p left join images as img on img.pid = p.id where p.uid = ${uid} AND p.status = "ACTIVE"  group by p.id;`
+let findPoints = async (uid,pageSize=8,pageNum=1)=>{
+  // let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,",'thumb':'",img.thumb,"'}") as images  from points as p left join images as img on img.pid = p.id where p.uid = ${uid} AND p.status = "ACTIVE"  group by p.id;`
+  let _sql = `
+  SELECT 
+  points.*,
+  JSON_ARRAYAGG(
+      JSON_OBJECT(
+          "id",images.id,
+          "url",images.url,
+          "thumb",images.thumb
+      )
+  ) as images
+  FROM points
+  INNER JOIN images ON images.pid = points.id
+  WHERE points.uid=${uid} AND points.status="ACTIVE"
+  GROUP BY points.id
+  ORDER BY points.dateTime DESC limit ${(pageNum-1)*pageSize},${pageSize};`
+
   let result = await mysql.query( _sql )
   if(!result) return []
   if(Object.prototype.toString.call(result)==="[object Array]"){
@@ -36,13 +52,41 @@ let findSharedPointById = function(value,d) {
   return mysql.query( _sql )
 }
 let findPointByRandom = function(uid) {
-
-  let _sql = `SELECT * from images where uid=${uid} order by rand() limit 1`;
+  let _sql = `
+  SELECT 
+  points.*,
+  JSON_ARRAYAGG(
+      JSON_OBJECT(
+          "id",images.id,
+          "url",images.url,
+          "thumb",images.thumb
+      )
+  ) as images
+  FROM points
+  INNER JOIN images ON images.pid = points.id
+  WHERE points.uid=${uid} AND points.status="ACTIVE"
+  GROUP BY points.id
+  ORDER BY rand() limit 1;`
+  // let _sql = `SELECT * from images where uid=${uid} order by rand() limit 1`;
 
   return mysql.query( _sql )
 }
 let findPointsByTime = function(uid,limit=4) {
-  let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,",'thumb':'",img.thumb,"'}") as images from points as p left join images as img on img.pid = p.id where p.uid = ${uid} AND p.status = "ACTIVE"  group by p.id ORDER BY p.dateTime DESC limit ${limit};`
+  let _sql = `
+  SELECT 
+  points.*,
+  JSON_ARRAYAGG(
+      JSON_OBJECT(
+          "id",images.id,
+          "url",images.url,
+          "thumb",images.thumb
+      )
+  ) as images
+  FROM points
+  INNER JOIN images ON images.pid = points.id
+  WHERE points.uid=${uid} AND points.status="ACTIVE"
+  GROUP BY points.id
+  ORDER BY points.dateTime DESC limit ${limit};`
   return mysql.query( _sql )
 }
 
@@ -55,7 +99,7 @@ let findPointsGroupByCity = async function(uid,limit=4) {
   // let _sql = `SELECT * FROM points WHERE status = 'ACTIVE' and uid = ${uid} GROUP BY city`
   if(pois.length){
     for(item of pois){
-      let img = await mysql.query(`SELECT url,thumb from images where pid in (${item.ids})`)
+      let img = await mysql.query(`SELECT id,pid,url,thumb from images where pid in (${item.ids})`)
       item["images"] = img      
     }
   }
@@ -66,7 +110,7 @@ let findPointsGroupByProvince = async function(uid,limit=4) {
   // let _sql = `SELECT * FROM points WHERE status = 'ACTIVE' and uid = ${uid} GROUP BY city`
   if(pois.length){
     for(item of pois){
-      let img = await mysql.query(`SELECT url,thumb from images where pid in (${item.ids})`)
+      let img = await mysql.query(`SELECT id,pid,url,thumb from images where pid in (${item.ids})`)
       item["images"] = img      
     }
   }

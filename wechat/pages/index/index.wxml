@@ -37,7 +37,6 @@
       <text class="h1">{{item.city}}</text>
     </view>
     <view class="card" data-poi="{{item}}">
-
       <view>
         <swiper wx:if="{{item.images.length}}" indicator-dots="{{item.images.length>1}}" indicator-color="rgba(100,100,100,0.3)"	indicator-active-color="#45a1e2">
           <block wx:for="{{item.images}}" wx:for-item="img" wx:for-key="imgIndex">
@@ -48,7 +47,10 @@
         </swiper>
       </view>
       <view class="poi-content" bindtap="openDetail" data-poi="{{item}}">
-        <view><text class="h3">{{item.title}}</text></view>
+        <view class="flex">
+          <text class="h3">{{item.title}}</text>
+          <image wx:if="{{item.scope=='private'}}" style="width: 40rpx;height: 40rpx;" src="../../src/images/lock.png" mode="aspectFill"></image>
+        </view>
         <view class="flex">
           <text class="h4">{{item.address}}</text>
           <text class="h4">{{util.formatTime(item.dateTime,"yyyy-MM-dd")}}</text>

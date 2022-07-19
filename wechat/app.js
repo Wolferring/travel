@@ -47,7 +47,7 @@ App({
     this.observe(this.globalData.USER)
     const _this = this
     let isLaunchShare = (options.path=="pages/detail/detail"&&options.query.id)
-    if(!isLaunchShare){
+    if(!isLaunchShare||wx.getStorageSync('AUTH')){
       api.getUserInfo()
       .then(res=>{
         _this.globalData.USER.userInfo  = res.data

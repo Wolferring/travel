@@ -1,5 +1,7 @@
 <!--pages/detail/detail.wxml-->
 <wxs src="../../utils/util.wxs" module="util" />
+<block wx:if="{{poi}}">
+
 <swiper wx:if="{{poi.images.length}}" indicator-dots="{{poi.images.length>1}}" indicator-color="rgba(100,100,100,0.3)"	indicator-active-color="#45a1e2">
   <block wx:for="{{poi.images}}" wx:for-item="img" wx:for-key="imgIndex">
     <swiper-item>
@@ -39,32 +41,43 @@
         <button size="mini" type="primary" open-type="share"></button>
       </view>                 
     </view>
+</view>
+
+
+
+<view class="poi-edit-container" animation="{{editContainerAnimation}}"  wx:if="{{isEditShow}}"> 
+  <view class="poi-edit" animation="{{editContentAnimation}}" style="bottom:{{keyboardHeight}}px">
+    <form catchsubmit="formSubmit" catchreset="formReset">
+      <view class="input-cell" style="border-bottom: 1rpx solid #dedede;">
+          <view class="weui-cell__bd">
+            <picker name="dateTime" bindchange="scopeChange" mode="selector" range="{{scopeType}}" range-key="desc" value="{{scopeIndex}}" class="input flex">
+              <view class="flex" style="height: 90rpx;line-height: 90rpx;width:730rpx;">
+                <text style="color: #808080;">谁可以看</text>
+                <text style="clear: #000;">{{scopeType[scopeIndex]['desc']}}</text>              
+              </view>
+            </picker>
+            
+          </view>
+      </view>            
+      <view class="input-cell">
+        <textarea disable-default-padding	 name="remark" cursor-spacing="100" fixed	 value="{{poi.remark}}" maxlength="-1" bindblur="poiEditBlur" bindfocus="poiEditFocus" adjust-position="{{false}}" show-confirm-bar="{{false}}"></textarea>
+      </view>      
+
+      <view class="flex">
+        <button type="default" bindtap="closeEdit">取消</button>
+        <button type="primary" formType="submit">确认更新</button>
+      </view>
+    </form>
   </view>
-
-
-
-  <view class="poi-edit-container" animation="{{editContainerAnimation}}"  wx:if="{{isEditShow}}"> 
-    <view class="poi-edit" animation="{{editContentAnimation}}" style="bottom:{{keyboardHeight}}px">
-      <form catchsubmit="formSubmit" catchreset="formReset">
-        <view class="input-cell" style="border-bottom: 1rpx solid #dedede;">
-            <view class="weui-cell__bd">
-              <picker name="dateTime" bindchange="scopeChange" mode="selector" range="{{scopeType}}" range-key="desc" value="{{scopeIndex}}" class="input flex">
-                <view class="flex" style="height: 90rpx;line-height: 90rpx;width:730rpx;">
-                  <text style="color: #808080;">谁可以看</text>
-                  <text style="clear: #000;">{{scopeType[scopeIndex]['desc']}}</text>              
-                </view>
-              </picker>
-              
-            </view>
-        </view>            
-        <view class="input-cell">
-          <textarea disable-default-padding	 name="remark" cursor-spacing="100" fixed	 value="{{poi.remark}}" maxlength="-1" bindblur="poiEditBlur" bindfocus="poiEditFocus" adjust-position="{{false}}" show-confirm-bar="{{false}}"></textarea>
-        </view>      
-
-        <view class="flex">
-          <button type="default" bindtap="closeEdit">取消</button>
-          <button type="primary" formType="submit">确认更新</button>
-        </view>
-      </form>
-    </view>
-  </view>
+</view>
+</block>
+<block wx:else>
+<view class="container flex" style="justify-content: center;padding-top: 200rpx;">
+  <text>您没有查看权限</text>
+</view>
+<view class="container flex" style="justify-content: center;">
+  <navigator open-type="switchTab" url="/pages/index/index">
+    <button type="primary">前往首页</button>
+  </navigator>
+</view>
+</block>

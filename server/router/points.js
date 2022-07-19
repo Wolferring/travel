@@ -10,13 +10,21 @@ const util  = require("../util/util.js")
 const resolveImages = (imageStr)=>{
     let isString = util.realType(imageStr)==="[object String]"
     let isObject = util.realType(imageStr)==="[object Object]"
+    let isArray = util.realType(imageStr)==="[object Array]"
     let images = imageStr
     if(isString){
-        images = JSON.parse("["+(imageStr).replace(/'/g, '"').replace(/\\/g, '\/')+"]")
+        let str = (imageStr).replace(/'/g, '"').replace(/\\/g, '\/')
+        if(!(/^\[[\w\W]*\]$/).test(str)){
+            str = "["+str+"]"
+        }
+        images = JSON.parse(str)
     }
     if(isObject){
         images =[images]
     }
+    if(isArray){
+        images =images
+    }    
     images.length&&images.forEach(item=>{
         item.url = "//cdn.whimsylove.cn"+item.url
         item.thumb = "//cdn.whimsylove.cn"+item.thumb
@@ -26,10 +34,9 @@ const resolveImages = (imageStr)=>{
 
 route
 .get("/points",async (ctx,next)=>{
-    let ps = await pointModel.findPoints(ctx.state.user.id)
-    if(Object.prototype.toString.call(ps)=="[object Object]"){
-        ps = [ps]
-    }    
+    let pageSize = ctx.request.query.pageSize||4
+    let pageNum = ctx.request.query.pageNum||1
+    let ps = await pointModel.findPoints(ctx.state.user.id,pageSize,pageNum)    
     if(ps&&ps.length){
         ps.forEach(poi=>{
             if(poi.images){
@@ -45,14 +52,13 @@ route
     }    
 })
 .get("/points/rand",async (ctx,next)=>{
-    console.log(ctx.state.user.id)
     let ps = await pointModel.findPointByRandom(ctx.state.user.id)
-    if(ps&&ps.id){
-        ps = resolveImages([ps])
+    if(ps&&ps.images){
+        ps.images = resolveImages(ps.images)
     }
     ctx.body={
         status:1,
-        data:ps[0]
+        data:ps
     }    
 })
 .get("/points/city",async (ctx,next)=>{

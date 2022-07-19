@@ -8,7 +8,7 @@ Page({
    */
   data: {
     author:null,
-    poi:{},
+    poi:null,
     scopeIndex:0,
     scopeType:[
       {
@@ -81,8 +81,10 @@ Page({
       api.getSharedPoint(option.id)
       .then(res=>{
         _this.render(res.data)
+      })
+      .catch(e=>{
         
-      })      
+      })   
 
       return false
     }
@@ -235,8 +237,9 @@ Page({
   onShareAppMessage() {
     let author = null
     let query = `id=${this.data.poi.id}`
-    if(this.data.poi.owned){
-      const app = getApp()
+    const app = getApp()
+    console.log(app.globalData.USER.userInfo)
+    if(this.data.poi.owned&&app.globalData.USER.userInfo){
       author = app.globalData.USER.userInfo.nickname
       query+=`&author=${author}`
     }    
@@ -248,12 +251,13 @@ Page({
   onShareTimeline(){
     let author = null
     let query = `id=${this.data.poi.id}`
-    if(this.data.poi.owned){
-      const app = getApp()
+    const app = getApp()
+    if(this.data.poi.owned&&app.globalData.USER.userInfo){
       author = app.globalData.USER.userInfo.nickname
       query+=`&author=${author}`
     }
     return {
+      imageUrl:'https:'+this.data.poi.images[0]['thumb'],
       title:this.data.poi.title,
       query:query
     }
