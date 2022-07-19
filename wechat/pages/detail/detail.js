@@ -222,6 +222,7 @@ Page({
         title: '修改成功',
       })
       current.remark = newRemark
+      current.scope = scope
       _this.setData({
         isEditShow:false,
         poi:current,

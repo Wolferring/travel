@@ -189,7 +189,9 @@ route
             owned = true
         }
     }
-    ps.owned = owned
+    if(util.realType(ps)=="[object Object]"){
+        ps.owned = owned
+    }
     ctx.body={
         status:1,
         data:ps
