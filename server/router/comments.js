@@ -67,7 +67,8 @@ route
     // })       
 })
 .delete("/comment/:id",async (ctx,next)=>{
-    let comment = commentModel.findCommentById(ctx.params.id)
+    let comment = await commentModel.findCommentById(ctx.params.id)
+    console.log(comment,ctx.state.user.id)
     if(comment&&comment.from_id==ctx.state.user.id){
         await commentModel.removeCommentById(ctx.params.id,ctx.state.user.id)
         .then(async(res)=>{

@@ -12,12 +12,7 @@ let findCommentsByPid = async (pid)=>{
 let findCommentById = async (id)=>{
   let _sql = `SELECT * from comments where id = ${id} ;`
   let result = await mysql.query( _sql)
-  if(!result) return []
-  if(Object.prototype.toString.call(result)==="[object Array]"){
-    return result
-  }else{
-    return [result]
-  }  
+  return result
 }
 let insertComment = async (value)=>{
   let _sql = `insert into comments 
