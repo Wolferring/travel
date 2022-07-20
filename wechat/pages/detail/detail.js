@@ -68,12 +68,16 @@ Page({
         menus: ['shareAppMessage', 'shareTimeline']
       })      
     }
-    api.getPointComments({
-      pid:poi.id
-    })
-    .then(res=>{
-      console.log(res)
-    })
+    const app = getApp()
+    if(app.globalData.USER.isLogin){
+      api.getPointComments({
+        pid:poi.id
+      })
+      .then(res=>{
+        console.log(res)
+      })
+    }     
+
     
 
   },
