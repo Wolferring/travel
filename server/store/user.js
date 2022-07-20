@@ -1,31 +1,43 @@
 const mysql = require('./mysql.js')
-let cols = "id,username,nickname,avatar,create_time,update_time"
+let cols = "id,phone,username,nickname,avatar,create_time,update_time"
 
-let findUserByName = function(username) {
-  let _sql = `select ${cols} from user where username = '${username}';`
+let findUserByPhone = function(phone) {
+  let _sql = `select ${cols} from user where phone = '${phone}';`
   return mysql.query( _sql )
 }
-let findRawUserByName = function(username){
-  let _sql = `select * from user where username = '${username}';`
+let findRawUserByPhone = function(username){
+  let _sql = `select * from user where username = '${username}' or phone = '${username}';`
   return mysql.query( _sql )
 }
 let findUserById = function(id) {
   let _sql = `select ${cols} from user where id = ${id};`
   return mysql.query( _sql )
 }
+let findSMSByPhone = function(phone) {
+  let _sql = `select * from sms where phone = ${phone} order by id desc limit 1;`
+  return mysql.query( _sql )
+}
 let insertUser = function(user) {
   let _sql = `insert into user 
-  set username=?,
+  set phone=?,
   password=?,
   nickname=?,
   avatar=?;`
   return mysql.query( _sql, user )
 }
+let insertSMS = function(sms) {
+  let _sql = `insert into sms 
+  set code=?,
+  phone=?,
+  type=?,
+  bizId=?;`
+  return mysql.query( _sql, sms )
+}
 let updateUser = function(id,query){
   let query_string = [],
       values = []
   for(let item in query){
-    if(item=="password") continue
+    if(["password","phone"].indexOf(item)>-1) continue
     query_string.push(`${item} = ? `)
     values.push(query[item])
   }
@@ -39,8 +51,10 @@ let updateUserPassword = function(id,pass){
 module.exports = {
   findUserById,
   updateUserPassword,
-  findRawUserByName,
-  findUserByName,
+  findSMSByPhone,
+  findRawUserByPhone,
+  findUserByPhone,
   updateUser,
-  insertUser
+  insertUser,
+  insertSMS
 }

@@ -10,7 +10,9 @@
   "author": "whimsy",
   "license": "ISC",
   "dependencies": {
+    "@alicloud/dysmsapi20170525": "^2.0.16",
     "@alicloud/imageaudit-2019-12-30": "^2.0.0",
+    "@alicloud/openapi-client": "^0.4.1",
     "@alicloud/pop-core": "^1.7.10",
     "ali-oss": "^6.12.0",
     "bcrypt": "^5.0.0",

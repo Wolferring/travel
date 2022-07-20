@@ -1,21 +1,21 @@
 const mysql = require('./mysql.js')
 
 
-let points =
-    `create table if not exists points(
-     id INT NOT NULL AUTO_INCREMENT,
-     title VARCHAR(400) NOT NULL,
-     province VARCHAR(40),
-     city VARCHAR(40),
-     address VARCHAR(400) NOT NULL,
-     remark VARCHAR(2000) NOT NULL,
-     lnglat CHAR(50) NOT NULL,
-     dateTime date NOT NULL,
-     status ENUM('ACTIVE','DELETE') DEFAULT 'ACTIVE',
-     PRIMARY KEY ( id )
-    );`
+// let points =
+//     `create table if not exists points(
+//      id INT NOT NULL AUTO_INCREMENT,
+//      title VARCHAR(400) NOT NULL,
+//      province VARCHAR(40),
+//      city VARCHAR(40),
+//      address VARCHAR(400) NOT NULL,
+//      remark VARCHAR(2000) NOT NULL,
+//      lnglat CHAR(50) NOT NULL,
+//      dateTime date NOT NULL,
+//      status ENUM('ACTIVE','DELETE') DEFAULT 'ACTIVE',
+//      PRIMARY KEY ( id )
+//     );`
 
-mysql.createTable(points)
+// mysql.createTable(points)
 
 let findPoints = async (uid,pageSize=8,pageNum=1)=>{
   // let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,",'thumb':'",img.thumb,"'}") as images  from points as p left join images as img on img.pid = p.id where p.uid = ${uid} AND p.status = "ACTIVE"  group by p.id;`
