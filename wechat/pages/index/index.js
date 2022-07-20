@@ -27,7 +27,7 @@ Page({
       _this.setData({
           isLogin: newValue
       })
-      if(newValue&&!_this.data.banner){
+      if(newValue){
         api.getPointByRand()
         .then(res=>{
           _this.setData({
@@ -35,7 +35,7 @@ Page({
           })      
         })           
       }
-    })   
+    })
     api.getPointByRand()
     .then(res=>{
       _this.setData({

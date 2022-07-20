@@ -96,6 +96,7 @@ Page({
     let _this = this 
     if(app.globalData.USER){
       this.setData({
+        isLogin:app.globalData.USER.isLogin,
         user:app.globalData.USER.userInfo
       }) 
     }    
@@ -103,7 +104,12 @@ Page({
       _this.setData({
           user: newValue
         })
-    })                   
+    })  
+    app.makeWatcher('USER.isLogin', app.globalData, function(newValue) {
+      _this.setData({
+          isLogin: newValue
+        })
+    })                       
   },
   onLoad(option) {
     const _this = this
@@ -264,15 +270,25 @@ Page({
     })
   },  
   openDeleteComment(e){
-    let comment = e.currentTarget.dataset.comment
+    let comment = e.currentTarget.dataset.comment,
+        _this = this;
     const app = getApp()
     if(comment.from_id==app.globalData.USER.userInfo.id){
       wx.showModal({
         title:"确认删除评论？",
         content:comment.content,
+        confirmText:"确认删除",
         success:(e)=>{
           if(e.confirm){
             api.removeComment(comment.id)
+            .then(res=>{
+              if(res.status==1){
+                wx.showToast({
+                  title: '删除评论成功'
+                })
+                _this.getComments(_this.data.poi.id)
+              }
+            })
           }
         }
       })

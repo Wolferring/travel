@@ -18,7 +18,7 @@ route
         return false        
     }
     let point = await pointModel.findPointStateById(ctx.request.query.pid) 
-    if(point&&point.scope!="public"){
+    if(point&&point.scope!="public"&&ctx.state.user.id!=point.uid){
         ctx.body={
             status:0,
             msg:"没有查看权限"

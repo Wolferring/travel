@@ -3,7 +3,7 @@
 <block wx:if="{{poi}}">
 
 <swiper wx:if="{{poi.images.length}}" indicator-dots="{{poi.images.length>1}}" indicator-color="rgba(100,100,100,0.3)"	indicator-active-color="#45a1e2">
-  <block wx:for="{{poi.images}}" wx:for-item="img" wx:for-key="imgIndex">
+  <block wx:for="{{poi.images}}" wx:key="id" wx:for-item="img" wx:for-key="imgIndex">
     <swiper-item>
       <image bindtap="openPreview" data-current="{{img.url}}" data-src="{{poi.images}}" src="{{img.url}}" mode="aspectFill"></image>
     </swiper-item>
@@ -25,16 +25,13 @@
   </view>
 
   <view class="comment-container" wx:if="{{isLogin}}">
-    <view class="comment-control" wx:if="{{!poi.owned}}">
-      <!-- <view class="comment-title">
-        <text class="h1">评论区</text>
-      </view> -->
+    <view class="comment-control">
       <view class="comment-input-cell flex" style="justify-content: flex-end;">
         <button type="primary" size="mini" style="margin:0;" bindtap="openComment">发表评论</button>
       </view>
     </view>
     <view class="comments-list" wx:if="{{comments.length}}">
-      <view class="comment-item" wx:for="{{comments}}">
+      <view class="comment-item" wx:for="{{comments}}" wx:key="id">
         <view class="flex">
           <text class="h2">{{item.nickname}} </text>
           <text class="d">{{util.formatTime(item.create_time,"MM月dd日 hh:mm")}}</text>

@@ -88,6 +88,12 @@ Page({
         title: '验证码已发送',
       })
     })
+    .catch(e=>{
+      wx.showToast({
+        title: e.msg,
+        icon:"error"
+      })
+    })
     .finally(res=>{
       _this.setData({
         smsLoading:false
