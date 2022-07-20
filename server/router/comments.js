@@ -67,13 +67,21 @@ route
     // })       
 })
 .delete("/comment/:id",async (ctx,next)=>{
-    // await pointModel.removePointsById(ctx.params.id,ctx.state.user.id)
-    // .then(async(res)=>{
-    //     ctx.body={
-    //         status:1,
-    //         data:{}
-    //     }    
-    // })
+    let comment = commentModel.findCommentById(ctx.params.id)
+    if(comment&&comment.from_id==ctx.state.user.id){
+        await commentModel.removeCommentById(ctx.params.id,ctx.state.user.id)
+        .then(async(res)=>{
+            ctx.body={
+                status:1,
+                data:{}
+            }    
+        })
+    }else{
+        ctx.body={
+            status:0,
+            msg:"没有操作权限"
+        }          
+    }
 
 })
 module.exports = route

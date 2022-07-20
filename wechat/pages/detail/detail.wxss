@@ -9,7 +9,7 @@ swiper{
   overflow:hidden;
   transform: translateY(0);
 }
-swiper image{
+image{
   height: 100%;
   width: 100%;
 }
@@ -104,4 +104,51 @@ swiper image{
   line-height: 1.6;
   font-size: 32rpx;
   color: #666;
+}
+.comment-container{
+  padding: 0 20rpx;
+  padding-bottom: 40rpx;
+  border-top: 1rpx solid #dedede;
+}
+.comment-control{
+  padding: 20rpx 0;
+}
+.comment-title{
+  font-size: 36rpx;
+  padding: 10rpx 0;
+  border-bottom: 1rpx solid #dedede;
+}
+.comment-item{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 10rpx 0;
+  border-bottom: 1rpx solid #dedede;
+}
+.comment-item:last-of-type{
+  border-bottom: none;
+}
+.comment-item .p{
+  font-size: 28rpx;
+  color: #777;
+  line-height: 1.8;
+}
+.comment-item .h2{
+  font-size: 28rpx;
+  line-height: 2;
+  font-weight: 500;
+  color: #305eae;
+}
+.comment-item .d{
+  font-size: 24rpx;
+  color: #999;
+}
+.comment-item .remove{
+  width: 30rpx;
+  height: 30rpx;
+  padding: 10rpx;
+  padding-right: 0;
+  position: absolute;
+  right: 0;
+  bottom: 10rpx;
 }

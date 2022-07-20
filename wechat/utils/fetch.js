@@ -14,7 +14,8 @@ const api = (()=>{
         })
     );
   };
-  const service = (config)=>{
+  const service = (c)=>{
+    let config = Object.assign({auth:true},c)
     let AUTH = wx.getStorageSync("AUTH")
     let header = {}
     if(AUTH&&AUTH.length){
@@ -29,9 +30,8 @@ const api = (()=>{
         success:function(res){
           if(res.statusCode=="200"&res.data.status==1){
             resolve(res.data)
-          }else if(res.data.status==-1){
+          }else if(res.data.status==-1&&config.auth){
             util.openLogin()
-            reject(res.data);
           }else{
             reject(res.data);
           }
@@ -88,9 +88,23 @@ const api = (()=>{
       return service({
         url:`/comments`,
         method:'GET',
-        params: query
+        params: query,
+        auth:false
       })        
     },    
+    createComment(obj){
+      return service({
+          url:`/comment`,
+          method:'POST',
+          data: obj
+      })        
+    },    
+    removeComment(id){
+      return service({
+        url:`/comment/${id}`,
+        method:'DELETE'
+      })       
+    },
     createPoint(obj){
         return service({
             url:`/points`,

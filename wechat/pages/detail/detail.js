@@ -7,8 +7,10 @@ Page({
    * 页面的初始数据
    */
   data: {
+    user:{},
     author:null,
     poi:null,
+    comments:[],
     scopeIndex:0,
     scopeType:[
       {
@@ -25,7 +27,8 @@ Page({
     editContentAnimation:null,
     keyboardHeight:0,
     titleFontSize:24,
-    contentHeight:300
+    contentHeight:300,
+    isLogin:false
   },
 
   /**
@@ -68,21 +71,43 @@ Page({
         menus: ['shareAppMessage', 'shareTimeline']
       })      
     }
+    _this.getComments(poi.id)
+
+  },
+  getComments(pid){
+    let _this = this
+    api.getPointComments({
+      pid:pid
+    })
+    .then(res=>{
+      if(res.status==1){
+        _this.setData({
+          isLogin:true,
+          comments:res.data
+        })
+      }
+    })
+    .catch(e=>{
+      
+    })    
+  },
+  onShow(){
     const app = getApp()
-    if(app.globalData.USER.isLogin){
-      api.getPointComments({
-        pid:poi.id
-      })
-      .then(res=>{
-        console.log(res)
-      })
-    }     
-
-    
-
+    let _this = this 
+    if(app.globalData.USER){
+      this.setData({
+        user:app.globalData.USER.userInfo
+      }) 
+    }    
+    app.makeWatcher('USER.userInfo', app.globalData, function(newValue) {
+      _this.setData({
+          user: newValue
+        })
+    })                   
   },
   onLoad(option) {
     const _this = this
+  
     if(option.author){
       this.setData({
         author:option.author
@@ -238,6 +263,48 @@ Page({
       })
     })
   },  
+  openDeleteComment(e){
+    let comment = e.currentTarget.dataset.comment
+    const app = getApp()
+    if(comment.from_id==app.globalData.USER.userInfo.id){
+      wx.showModal({
+        title:"确认删除评论？",
+        content:comment.content,
+        success:(e)=>{
+          if(e.confirm){
+            api.removeComment(comment.id)
+          }
+        }
+      })
+    }
+  },
+  openComment(){
+    let _this = this
+    let poi = _this.data.poi
+    wx.showModal({
+      title:"评论足迹",
+      editable:true,
+      confirmText:"发表评论",
+      success:(e)=>{
+        if(e.confirm&&e.content){
+          let query = {
+            content:e.content,
+            to_id:poi.uid,
+            pid:poi.id
+          }
+          api.createComment(query)
+          .then(res=>{
+            if(res.status==1){
+              wx.showToast({
+                title: '评论成功',
+              })
+              _this.getComments(poi.id)
+            }
+          })
+        }
+      }
+    })
+  },
   /**
    * 用户点击右上角分享
    */

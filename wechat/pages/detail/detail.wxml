@@ -24,6 +24,29 @@
         <view><text class="p">{{poi.remark}}</text></view>
   </view>
 
+  <view class="comment-container" wx:if="{{isLogin}}">
+    <view class="comment-control" wx:if="{{!poi.owned}}">
+      <!-- <view class="comment-title">
+        <text class="h1">评论区</text>
+      </view> -->
+      <view class="comment-input-cell flex" style="justify-content: flex-end;">
+        <button type="primary" size="mini" style="margin:0;" bindtap="openComment">发表评论</button>
+      </view>
+    </view>
+    <view class="comments-list" wx:if="{{comments.length}}">
+      <view class="comment-item" wx:for="{{comments}}">
+        <view class="flex">
+          <text class="h2">{{item.nickname}} </text>
+          <text class="d">{{util.formatTime(item.create_time,"MM月dd日 hh:mm")}}</text>
+        </view>
+        <text class="p">{{item.content}}</text>
+        <view class="remove" wx:if="{{item.from_id==user.id}}" data-index="{{index}}" data-comment="{{item}}" bindtap="openDeleteComment">
+          <image mode="aspectFill" src="../../src/images/delete.png"></image>
+        </view>
+      </view>
+    </view>
+  </view>
+
 </scroll-view>
 <view wx:if="{{poi.owned}}" >
     <view class="detail-control flex" >
@@ -42,9 +65,6 @@
       </view>                 
     </view>
 </view>
-
-
-
 <view class="poi-edit-container" animation="{{editContainerAnimation}}"  wx:if="{{isEditShow}}"> 
   <view class="poi-edit" animation="{{editContentAnimation}}" style="bottom:{{keyboardHeight}}px">
     <form catchsubmit="formSubmit" catchreset="formReset">
