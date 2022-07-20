@@ -10,7 +10,7 @@
         {
           "name": "转发详情",
           "pathName": "pages/detail/detail",
-          "query": "id=141&author=张三",
+          "query": "id=118&author=他想要的不多",
           "launchMode": "default",
           "scene": 1007
         },

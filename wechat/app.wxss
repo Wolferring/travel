@@ -1,4 +1,7 @@
 /**app.wxss**/
+page{
+  overflow-x: hidden;
+}
 text{
   color: #333;
 }

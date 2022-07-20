@@ -67,6 +67,11 @@ let findDeletePoints = async (uid)=>{
     return [result]
   }
 }
+let findPointStateById = function(pid) {
+  // let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,",'thumb':'",img.thumb,"'}") as images  from points as p left join images as img on img.pid = p.id where p.id=${value} AND p.uid = ${uid} AND p.status = "ACTIVE"  group by p.id;`
+  let _sql = `SELECT * from points where id=${pid} limit 1;`
+  return mysql.query( _sql )
+}
 let findPointById = function(value,uid) {
   let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,",'thumb':'",img.thumb,"'}") as images  from points as p left join images as img on img.pid = p.id where p.id=${value} AND p.uid = ${uid} AND p.status = "ACTIVE"  group by p.id;`
   return mysql.query( _sql )
@@ -171,6 +176,7 @@ module.exports = {
     findPoints,
     findDeletePoints,
     findPointById,
+    findPointStateById,
     findSharedPointById,
     removePointsById,
     findPointsGroupByCity,

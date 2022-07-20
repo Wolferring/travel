@@ -4,6 +4,9 @@ const user = require('../store/user.js')
 exports.set = (user)=>{
  return new Promise((resolve,reject)=>{
   const token = jwt.sign({
+    phone:user.phone,
+    avatar:user.avatar,
+    nickname:user.nickname,
     username:user.username,
     id:user.id
   },config.secret,{ expiresIn: "7d" })

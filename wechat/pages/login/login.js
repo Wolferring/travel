@@ -97,8 +97,8 @@ Page({
     api.login(query)
     .then(res=>{
       if(res.data.token){
-        app.globalData.USER.isLogin = true
         wx.setStorageSync('AUTH', res.data.token)
+        app.globalData.USER.isLogin = true
         if(this.data.isSavedPassword){
           wx.setStorageSync('PASS', _this.encrypt(form.password1))
           wx.setStorageSync('USERNAME', form.username1)
@@ -106,7 +106,6 @@ Page({
         api.getUserInfo()
         .then(res=>{
           app.globalData.USER.userInfo  = res.data
-          app.globalData.USER.isLogin = true
         })     
         wx.navigateBack({
           delta: 0,

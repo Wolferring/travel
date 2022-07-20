@@ -45,6 +45,7 @@
   height: 80rpx;
   line-height: 60rpx;
 }
+.page-body{overflow-x: hidden;}
 .input-cell{
   border-bottom: 1rpx solid #eee;
   height: 100%;

@@ -112,8 +112,7 @@ route
 .post("/test",async (ctx,next)=>{
   const user = ctx.state.user
   const files = ctx.request.files; // 获取上传文件
-  console.log(ctx.request.body)
-  console.log(files)
+
   let type = Object.prototype.toString.call(files)
   ctx.body = {}
 

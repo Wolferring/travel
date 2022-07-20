@@ -4,6 +4,7 @@ const app = getApp()
 const api = require("../../utils/fetch")
 Page({
   data: {
+    banner:null,
     isLogin:false,
     isEditShow:false,
     points:[],
@@ -25,8 +26,22 @@ Page({
     app.makeWatcher('USER.isLogin', app.globalData, function(newValue) {
       _this.setData({
           isLogin: newValue
-        })
-    })      
+      })
+      if(newValue&&!_this.data.banner){
+        api.getPointByRand()
+        .then(res=>{
+          _this.setData({
+            banner:res.data
+          })      
+        })           
+      }
+    })   
+    api.getPointByRand()
+    .then(res=>{
+      _this.setData({
+        banner:res.data
+      })      
+    })       
   },
   onShow() {
     let _this = this
@@ -36,6 +51,7 @@ Page({
         points:res.data.points
       })
     })
+
     if(app.globalData.USER){
       this.setData({
         user:app.globalData.USER.userInfo,

@@ -59,6 +59,7 @@ Page({
       })
       
     })
+
     wx.setNavigationBarTitle({
       title: poi.title,
     })  
@@ -67,6 +68,12 @@ Page({
         menus: ['shareAppMessage', 'shareTimeline']
       })      
     }
+    api.getPointComments({
+      pid:poi.id
+    })
+    .then(res=>{
+      console.log(res)
+    })
     
 
   },
@@ -82,10 +89,6 @@ Page({
       .then(res=>{
         _this.render(res.data)
       })
-      .catch(e=>{
-        
-      })   
-
       return false
     }
   
@@ -238,13 +241,13 @@ Page({
     let author = null
     let query = `id=${this.data.poi.id}`
     const app = getApp()
-    console.log(app.globalData.USER.userInfo)
     if(this.data.poi.owned&&app.globalData.USER.userInfo){
       author = app.globalData.USER.userInfo.nickname
       query+=`&author=${author}`
     }    
+    let title = author?`来自${author}的分享`:this.data.poi.title
     return {
-      title: `${this.data.poi.title}`,
+      title: title,
       path: '/pages/detail/detail?'+query
     }
   },

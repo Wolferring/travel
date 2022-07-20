@@ -65,6 +65,13 @@ const api = (()=>{
         params: query
       })      
     },
+    getPointByRand(query){
+      return service({
+        url:`/points/rand`,
+        method:'GET',
+        params: query
+      })      
+    },    
     getPointsStatistic(){
         return service({
             url:`/statistic`,
@@ -76,7 +83,14 @@ const api = (()=>{
           url:`/points/shared/${id}`,
           method:'get'
       })        
-    },       
+    },   
+    getPointComments(query){
+      return service({
+        url:`/comments`,
+        method:'GET',
+        params: query
+      })        
+    },    
     createPoint(obj){
         return service({
             url:`/points`,

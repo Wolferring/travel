@@ -3,6 +3,7 @@ const mysql = require('mysql')
 
 var pool  = mysql.createPool({
   timezone: 'Asia/Shanghai',
+  charset  :"utf8mb4",
   host     : config.database.HOST,
   user     : config.database.USERNAME,
   password : config.database.PASSWORD,
