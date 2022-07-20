@@ -2,6 +2,11 @@
 const api = require("../../utils/fetch")
 const aesjs = require('../../utils/crypto.js')
 const app = getApp()
+const validPhone = (phone)=>{
+  const reg_tel = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/;
+  return reg_tel.test(phone)
+}
+
 Page({
 
   /**
@@ -11,8 +16,9 @@ Page({
     key:[ 12, 2, 3, 44, 5, 6, 74, 8, 91, 10, 11, 12, 3, 14, 15, 16 ],
     logoAnimation:{},
     contentAnimation:{},
-    savedPass:"",
-    savedUsername:"",
+    currentPhone:"",
+    smsDisabled:true,
+    smsLoading:false,
     isSavedPassword:false
   },
 
@@ -58,14 +64,44 @@ Page({
     })
  
   },
-
+  phoneInput(e){
+    let disabled = !validPhone(e.detail.value)
+    this.setData({
+      currentPhone:e.detail.value,
+      smsDisabled:disabled
+    })
+  },
+  sendSMS(){
+    let phone = this.data.currentPhone,
+        _this = this;
+    if(this.data.smsLoading){
+      return false
+    }
+    _this.setData({
+      smsLoading:true
+    })
+    api.sendRegisterSMS({
+      phone:phone
+    })
+    .then(res=>{
+      wx.showToast({
+        title: '验证码已发送',
+      })
+    })
+    .finally(res=>{
+      _this.setData({
+        smsLoading:false
+      })
+    })
+  },
   formSubmit(e){
-    let hasEmptyValue = Object.keys(e.detail.value).some((item=>{
-      return e.detail.value[item]==""
+    let form = e.detail.value
+    let hasEmptyValue = Object.keys(form).some((item=>{
+      return form[item]==""
     }))
-    let usernameNotAllow = e.detail.value.username.length<5
-    let passwordNotEqual = (e.detail.value.password!=e.detail.value.valid_password)
-    let passwordNotAllow = e.detail.value.password.length<8
+    let usernameNotAllow = !validPhone(form.phone)
+    let passwordNotEqual = (form.password!=form.valid_password)
+    let passwordNotAllow = form.password.length<8
     let message = {
       hasEmptyValue:{
         invalid:hasEmptyValue,
@@ -73,7 +109,7 @@ Page({
       },
       usernameNotAllow:{
         invalid:usernameNotAllow,
-        msg:"登录账户不符合规范"
+        msg:"手机号填写错误"
       },
       passwordNotEqual:{
         invalid:passwordNotEqual,
@@ -96,7 +132,7 @@ Page({
       }
     }
     let _this = this
-    api.register(e.detail.value)
+    api.register(form)
     .then(res=>{
       if(res.data.token){
         app.globalData.USER.isLogin = true

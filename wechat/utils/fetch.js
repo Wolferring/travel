@@ -128,6 +128,13 @@ const api = (()=>{
           data: obj
       })       
     },
+    sendRegisterSMS(query){
+      return service({
+        url:`/sms/r`,
+        method:'GET',
+        params: query
+      })        
+    },
     register(obj){ 
         return service({
             url:`/register`,

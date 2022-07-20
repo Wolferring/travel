@@ -30,9 +30,7 @@ Page({
   },
   onShow() {
     let _this = this
-    api.getPointsByTime({
-      limit:16
-    })
+    api.getPoints()
     .then(res=>{
       _this.setData({
         points:res.data.points

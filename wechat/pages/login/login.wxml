@@ -13,9 +13,8 @@
       <view class="page-body">
         <view class="page-section">
           <view class="input-cell">
-              <view class="weui-cell__bd">
-                <input value="{{savedUsername}}" class="weui-input" name="username1" placeholder="登录账户" />
-                
+              <view class="weui-cell__bd flex">
+                <input value="{{savedUsername}}" type="digit" maxlength="11" class="weui-input" name="username1" placeholder="手机号" />
               </view>
             </view>
         </view>

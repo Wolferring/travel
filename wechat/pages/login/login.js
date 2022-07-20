@@ -85,12 +85,13 @@ Page({
     })
   },
   formSubmit(e){
-    if(!e.detail.value.password1||!e.detail.value.username1){
+    let form = e.detail.value
+    if(!form.password1||!form.username1){
       return false
     }
     let query = {
-      username:e.detail.value.username1,
-      password:e.detail.value.password1
+      username:form.username1,
+      password:form.password1
     }
     let _this = this
     api.login(query)
@@ -99,8 +100,8 @@ Page({
         app.globalData.USER.isLogin = true
         wx.setStorageSync('AUTH', res.data.token)
         if(this.data.isSavedPassword){
-          wx.setStorageSync('PASS', _this.encrypt(e.detail.value.password))
-          wx.setStorageSync('USERNAME', e.detail.value.username)
+          wx.setStorageSync('PASS', _this.encrypt(form.password1))
+          wx.setStorageSync('USERNAME', form.username1)
         }
         api.getUserInfo()
         .then(res=>{

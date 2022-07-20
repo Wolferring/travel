@@ -16,14 +16,21 @@
         <view class="page-section">
           <view class="input-cell flex">
               <view class="weui-cell__bd">
-                <input  class="weui-input" name="username" placeholder="登录账户（5位以上英文或数字）" />
+                <input maxlength="11" type="digit" bindinput="phoneInput" class="weui-input" name="phone" placeholder="手机号" />
               </view>
             </view>
             <view class="input-cell flex">
               <view class="weui-cell__bd">
+                <input  maxlength="4" class="weui-input" type="digit"  name="code" placeholder="验证码" />
+              </view>
+                <button loading="{{smsLoading}}" disabled="{{smsDisabled}}" bindtap="sendSMS" type="primary" size="mini">发送验证码</button>          
+            </view>              
+            <view class="input-cell flex">
+              <view class="weui-cell__bd">
                 <input  class="weui-input" type="nickname" name="nickname" placeholder="显示用的昵称" />
               </view>
-            </view>            
+            </view>   
+                     
         </view>
         <view class="page-section">
           <view class="input-cell flex">

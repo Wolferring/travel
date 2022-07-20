@@ -34,9 +34,7 @@ const resolveImages = (imageStr)=>{
 
 route
 .get("/points",async (ctx,next)=>{
-    let pageSize = ctx.request.query.pageSize||4
-    let pageNum = ctx.request.query.pageNum||1
-    let ps = await pointModel.findPoints(ctx.state.user.id,pageSize,pageNum)    
+    let ps = await pointModel.findPoints(ctx.state.user.id)    
     if(ps&&ps.length){
         ps.forEach(poi=>{
             if(poi.images){
@@ -102,8 +100,9 @@ route
     }    
 })
 .get("/points/recent",async (ctx,next)=>{
-    let limit = ctx.request.query.limit||4
-    let ps = await pointModel.findPointsByTime(ctx.state.user.id,limit)
+    let pageSize = ctx.request.query.pageSize||4
+    let pageNum = ctx.request.query.pageNum||1
+    let ps = await pointModel.findPointsByTime(ctx.state.user.id,pageSize,pageNum)
     if(Object.prototype.toString.call(ps)=="[object Object]"){
         ps = [ps]
     }    

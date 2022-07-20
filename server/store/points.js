@@ -17,8 +17,7 @@ const mysql = require('./mysql.js')
 
 // mysql.createTable(points)
 
-let findPoints = async (uid,pageSize=8,pageNum=1)=>{
-  // let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,",'thumb':'",img.thumb,"'}") as images  from points as p left join images as img on img.pid = p.id where p.uid = ${uid} AND p.status = "ACTIVE"  group by p.id;`
+let findPoints = async (uid)=>{
   let _sql = `
   SELECT 
   points.*,
@@ -33,7 +32,32 @@ let findPoints = async (uid,pageSize=8,pageNum=1)=>{
   INNER JOIN images ON images.pid = points.id
   WHERE points.uid=${uid} AND points.status="ACTIVE"
   GROUP BY points.id
-  ORDER BY points.dateTime DESC limit ${(pageNum-1)*pageSize},${pageSize};`
+  ORDER BY points.dateTime DESC;`
+
+  let result = await mysql.query( _sql )
+  if(!result) return []
+  if(Object.prototype.toString.call(result)==="[object Array]"){
+    return result
+  }else{
+    return [result]
+  }
+}
+let findDeletePoints = async (uid)=>{
+  let _sql = `
+  SELECT 
+  points.*,
+  JSON_ARRAYAGG(
+      JSON_OBJECT(
+          "id",images.id,
+          "url",images.url,
+          "thumb",images.thumb
+      )
+  ) as images
+  FROM points
+  INNER JOIN images ON images.pid = points.id
+  WHERE points.uid=${uid} AND points.status="DELETE"
+  GROUP BY points.id
+  ORDER BY points.dateTime DESC;`
 
   let result = await mysql.query( _sql )
   if(!result) return []
@@ -86,7 +110,7 @@ let findPointsByTime = function(uid,limit=4) {
   INNER JOIN images ON images.pid = points.id
   WHERE points.uid=${uid} AND points.status="ACTIVE"
   GROUP BY points.id
-  ORDER BY points.dateTime DESC limit ${limit};`
+  ORDER BY points.dateTime DESC limit ${(pageNum-1)*pageSize},${pageSize};`
   return mysql.query( _sql )
 }
 
@@ -145,6 +169,7 @@ let updatePoint = function(value,pid,uid) {
 
 module.exports = {
     findPoints,
+    findDeletePoints,
     findPointById,
     findSharedPointById,
     removePointsById,
