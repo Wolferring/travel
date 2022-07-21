@@ -57,7 +57,7 @@ route
                     "thing1":{value:point.title},
                     "thing2":{value:from.nickname},
                     "thing3":{value:comment.content},
-                    "date4":{value:new Date().toLocaleString()}
+                    "date4":{value:new Date().toLocaleString('zh-CN',{hour12:false})}
                 },
                 miniprogram_state:'formal',
                 lang:'zh_CN'
