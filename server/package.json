@@ -15,6 +15,7 @@
     "@alicloud/openapi-client": "^0.4.1",
     "@alicloud/pop-core": "^1.7.10",
     "ali-oss": "^6.12.0",
+    "axios": "^0.27.2",
     "bcrypt": "^5.0.0",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.0",

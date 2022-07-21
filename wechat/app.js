@@ -50,6 +50,15 @@ App({
       .then(res=>{
         _this.globalData.USER.userInfo  = res.data
         _this.globalData.USER.isLogin = true
+        if(!res.data.openId){
+          wx.login({
+            success:(e=>{
+              if(e.errMsg=='login:ok'){
+                api.bindWX(e.code)
+              }
+            })
+          })
+        }
       })
     }    
   },

@@ -43,7 +43,13 @@
       </view>
     </view>
   </view>
-
+  <view class="comment-container" wx:else>
+    <view class="comment-control">
+      <view class="comment-input-cell flex" style="justify-content: flex-end;">
+        <button type="primary" size="mini" style="margin:0;" bindtap="openLogin">发表评论</button>
+      </view>
+    </view>
+  </view>
 </scroll-view>
 <view wx:if="{{poi.owned}}" >
     <view class="detail-control flex" >

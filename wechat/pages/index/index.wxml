@@ -94,7 +94,12 @@
     </view>
   </view>
   <view wx:if="{{!isLogin}}" class="login-container">
-    <button type="primary" bindtap="openLogin">登录</button>
+    <view style="margin-bottom: 40rpx;display: flex;flex-direction: column;">
+      <text>欢迎使用途纪～</text>
+      <text>通过地图标点，纪录你的旅途和故事</text>
+      <text></text>
+    </view>
+    <button type="default" bindtap="openLogin">开始纪录</button>
   </view>
 </view>
 </scroll-view>

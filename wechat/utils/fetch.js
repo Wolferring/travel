@@ -48,7 +48,8 @@ const api = (()=>{
       return service({
           url:`/points`,
           method:'GET',
-          params: query
+          params: query,
+          auth:false
       })
     },
     getPointsByCity(query){
@@ -69,7 +70,8 @@ const api = (()=>{
       return service({
         url:`/points/rand`,
         method:'GET',
-        params: query
+        params: query,
+        auth:false
       })      
     },    
     getPointsStatistic(){
@@ -128,7 +130,8 @@ const api = (()=>{
     getUserInfo(){
         return service({
             url:`/user`,
-            method:'GET'
+            method:'GET',
+            auth:false
         })      
     },    
     login(obj){ 
@@ -169,6 +172,15 @@ const api = (()=>{
             method:'POST',
             data: obj
         })   
+    },
+    bindWX(code){
+      return service({
+        url:`/bindWX`,
+        method:'POST',
+        data: {
+          code:code
+        }
+    })  
     },
     getRandomCover(query){
       return service({

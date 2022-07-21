@@ -8,6 +8,17 @@
 page{
   height: 100%;
 }
+.no-content{
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  padding-top: 270rpx;
+}
+.no-content text{
+  line-height: 2;
+  color: #999;
+  font-size: 28rpx;
+}
 .page-banner{
   position: relative;
 }
@@ -40,17 +51,7 @@ image{
   width: 100%;
   height: 100%;
 }
-.no-content{
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  padding-top: 270rpx;
-}
-.no-content text{
-  line-height: 2;
-  color: #999;
-  font-size: 28rpx;
-}
+
 .poi-edit-container{
   position: fixed;
   width: 100%;
@@ -205,4 +206,16 @@ image{
 .grid-mode-3 .picture:last-of-type{ 
   grid-column: 1 / span 2;
   grid-row: 1 / span 2;      
+}
+
+.login-container{
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  padding-top: 270rpx;
+}
+.login-container text{
+  line-height: 2;
+  color: #999;
+  font-size: 28rpx;
 }

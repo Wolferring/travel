@@ -1,8 +1,12 @@
 const mysql = require('./mysql.js')
-let cols = "id,phone,username,nickname,avatar,create_time,update_time"
+let cols = "id,openId,phone,username,nickname,avatar,create_time,update_time"
 
 let findUserByPhone = function(phone) {
   let _sql = `select ${cols} from user where phone = '${phone}';`
+  return mysql.query( _sql )
+}
+let findUserByOpenId = function(openId) {
+  let _sql = `select * from user where openId = '${openId}';`
   return mysql.query( _sql )
 }
 let findRawUserByPhone = function(username){
@@ -33,6 +37,11 @@ let insertSMS = function(sms) {
   bizId=?;`
   return mysql.query( _sql, sms )
 }
+let bindOpenId = function(id,openId){
+  let _sql = `update user set openId = '${openId}' where id=${id};`
+  console.log(_sql)
+  return mysql.query( _sql)
+}
 let updateUser = function(id,query){
   let query_string = [],
       values = []
@@ -50,11 +59,13 @@ let updateUserPassword = function(id,pass){
 }
 module.exports = {
   findUserById,
+  findUserByOpenId,
   updateUserPassword,
   findSMSByPhone,
   findRawUserByPhone,
   findUserByPhone,
   updateUser,
+  bindOpenId,
   insertUser,
   insertSMS
 }

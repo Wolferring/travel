@@ -146,6 +146,13 @@ Page({
         wx.switchTab({
           url: '/pages/index/index',
         })
+        wx.login({
+          success:(e=>{
+            if(e.errMsg=='login:ok'){
+              api.bindWX(e.code)
+            }
+          })
+        })
       }
     })
     .catch(err=>{

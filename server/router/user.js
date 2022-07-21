@@ -5,6 +5,7 @@ const userModel = require('../store/user.js')
 const token = require('../util/token.js')
 const crypt = require('../util/crypt.js')
 const util = require("../util/util.js")
+const axios = require("axios")
 const Dysmsapi20170525  =  require('@alicloud/dysmsapi20170525');
 // 依赖的模块可通过下载工程中的模块依赖文件或右上角的获取 SDK 依赖信息查看
 const $OpenApi  =  require('@alicloud/openapi-client');
@@ -114,6 +115,30 @@ route
         }        
     }
 })
+.post("/login/wx",async (ctx,next)=>{
+    //微信登录
+    let query = ctx.request.body
+    let user = await userModel.findRawUserByPhone(query.username)
+    if(user&&crypt.decrypt(query.password,user.password)){
+        let auth_token = await token.set(user)
+        ctx.body={
+            status:1,
+            data:{
+                phone:user.phone,
+                username:user.username,
+                nickname:user.nickname,
+                avatar:user.avatar,
+                token:auth_token    
+            }
+        } 
+
+    }else{
+        ctx.body = {
+            status: 0,
+            msg: '用户名密码不匹配'
+        }        
+    }
+})
 .post("/register",async (ctx,next)=>{
     let user = ctx.request.body
     if(!validPhone(user.phone)){
@@ -167,6 +192,52 @@ route
         ctx.body = {
             status: 1,
             data:userData
+        }            
+    })
+    next()
+})
+.post("/bindWX",async (ctx,next)=>{
+    //绑定微信openid与用户id
+    let query = ctx.request.body
+    let user = ctx.state.user
+    let wxUser = await axios.get('https://api.weixin.qq.com/sns/jscode2session', {
+        params: {
+            appid: config.wechat.appid,
+            secret:config.wechat.secret,
+            js_code:query.code,
+            grant_type:"authorization_code"
+        }
+    })
+    if(wxUser.data.errcode){
+        ctx.body = {
+            status:0,
+            msg:"微信绑定失败",
+            rawError:`${wxUser.data.errcode}-${wxUser.data.errmsg}`            
+        }
+        return false
+    }
+    let openId = wxUser.data.openid
+    let hasOpenId = await userModel.findUserByOpenId(openId)
+    let hasUser = await userModel.findUserById(user.id)
+    if(hasOpenId&&hasOpenId&&hasOpenId.id==hasUser.id){
+        ctx.body = {
+            status:0,
+            msg:`已经绑定过了`
+        } 
+        return false        
+    }         
+    if(hasOpenId&&hasOpenId.id){
+        ctx.body = {
+            status:0,
+            msg:`该微信已经被手机尾号${hasOpenId.phone.substr(-4)}绑定`
+        } 
+        return false        
+    }     
+    await userModel.bindOpenId(user.id,openId)
+    .then(async res=>{
+        ctx.body = {
+            status:0,
+            msg:`绑定微信成功`
         }            
     })
     next()

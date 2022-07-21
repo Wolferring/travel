@@ -1,5 +1,5 @@
 const api = require("../../utils/fetch")
-
+const util = require("../../utils/util")
 // pages/detail/detail.js
 Page({
 
@@ -108,12 +108,14 @@ Page({
     app.makeWatcher('USER.isLogin', app.globalData, function(newValue) {
       _this.setData({
           isLogin: newValue
-        })
+      })
+      if(newValue&&_this.data.poi.id){
+        _this.getComments(_this.data.poi.id)
+      }
     })                       
   },
   onLoad(option) {
     const _this = this
-  
     if(option.author){
       this.setData({
         author:option.author
@@ -320,6 +322,9 @@ Page({
         }
       }
     })
+  },
+  openLogin(){
+    util.openLogin()
   },
   /**
    * 用户点击右上角分享

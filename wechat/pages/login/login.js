@@ -103,6 +103,14 @@ Page({
           wx.setStorageSync('PASS', _this.encrypt(form.password1))
           wx.setStorageSync('USERNAME', form.username1)
         }
+        wx.login({
+          success:(e)=>{
+            console.log(e)
+          }
+        })
+        // wx.requestSubscribeMessage({
+        //   tmplIds: ['SYnJ0O9IaRByBo-f491qlk-XA_yi_N8HYOdNCMYTQc0'],
+        // })
         api.getUserInfo()
         .then(res=>{
           app.globalData.USER.userInfo  = res.data
