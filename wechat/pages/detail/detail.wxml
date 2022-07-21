@@ -1,11 +1,13 @@
 <!--pages/detail/detail.wxml-->
 <wxs src="../../utils/util.wxs" module="util" />
+<view class="home-button" wx:if="{{isShareMode}}" bindtap="openIndex">
+  <text>前往主页</text>
+</view>
 <block wx:if="{{poi}}">
-
 <swiper wx:if="{{poi.images.length}}" indicator-dots="{{poi.images.length>1}}" indicator-color="rgba(100,100,100,0.3)"	indicator-active-color="#45a1e2">
   <block wx:for="{{poi.images}}" wx:key="id" wx:for-item="img" wx:for-key="imgIndex">
-    <swiper-item>
-      <image bindtap="openPreview" data-current="{{img.url}}" data-src="{{poi.images}}" src="{{img.url}}" mode="aspectFill"></image>
+    <swiper-item bindtap="openPreview" data-current="{{img.url}}" data-src="{{poi.images}}">
+      <image lazy-load="{{false}}" src="{{img.url}}" mode="aspectFill"></image>
     </swiper-item>
   </block>
 </swiper>
@@ -69,19 +71,24 @@
     </view>
 </view>
 <view class="poi-edit-container" animation="{{editContainerAnimation}}"  wx:if="{{isEditShow}}"> 
+  <view style="background-color: transparent;height: 100%;" bindtap="closeEdit"></view>
   <view class="poi-edit" animation="{{editContentAnimation}}" style="bottom:{{keyboardHeight}}px">
     <form catchsubmit="formSubmit" catchreset="formReset">
+   
       <view class="input-cell" style="border-bottom: 1rpx solid #dedede;">
           <view class="weui-cell__bd">
             <picker name="dateTime" bindchange="scopeChange" mode="selector" range="{{scopeType}}" range-key="desc" value="{{scopeIndex}}" class="input flex">
-              <view class="flex" style="height: 90rpx;line-height: 90rpx;width:730rpx;">
+              <view class="flex" style="height: 100rpx;line-height: 90rpx;width:730rpx;">
                 <text style="color: #808080;">谁可以看</text>
-                <text style="clear: #000;">{{scopeType[scopeIndex]['desc']}}</text>              
+                <text style="clear: #000;font-weight: bold;">{{scopeType[scopeIndex]['desc']}}</text>              
               </view>
             </picker>
             
           </view>
-      </view>            
+      </view>
+      <view class="input-cell" style="padding: 10rpx 0;">
+        <input type="text" name="title" value="{{poi.title}}"/>
+      </view>                
       <view class="input-cell">
         <textarea disable-default-padding	 name="remark" cursor-spacing="100" fixed	 value="{{poi.remark}}" maxlength="-1" bindblur="poiEditBlur" bindfocus="poiEditFocus" adjust-position="{{false}}" show-confirm-bar="{{false}}"></textarea>
       </view>      

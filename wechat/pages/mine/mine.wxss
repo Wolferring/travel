@@ -1,21 +1,36 @@
 /* pages/mine/mine.wxss */
-.container{
-  padding:0 15rpx;
-  
+.page-heading{
+  padding: 0 10rpx;
+  padding-top: 88rpx;
+  padding-bottom: 20rpx;
+  box-sizing: border-box;
+  border-bottom: 1rpx solid #dedede;
 }
-.section{
-  margin-bottom: 80rpx;
+.container{
+  padding:0 10rpx;
 }
 .section-heading{
   padding:0 10rpx;
 }
-.section-heading text{
+.section-heading .h1{
   font-size: 60rpx;
   font-weight: 600;
   color: #305eae;
+  line-height: 1;
+  margin-bottom: 20rpx;
+}
+.section-heading .p{
+  font-size: 28rpx;
+  color: #999;
 }
 .section-content{
 
+}
+.mine-content{
+  padding: 40rpx 10rpx;
+}
+.mine-content .section{
+  margin-bottom: 80rpx;
 }
 .poi-item{
   /* min-height: 180rpx; */

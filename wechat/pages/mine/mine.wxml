@@ -1,9 +1,15 @@
-<view class="container">
-  <view class="section">
-    <view class="section-heading">
-      <text>{{user.nickname}}</text>
-    </view>  
-  </view>
+<wxs src="../../utils/util.wxs" module="util" />
+<view class="section page-heading" style="padding-top: {{statusBarHeight}}px;">
+  <view class="section-heading flex" style="flex-direction: column;align-items: flex-start;">
+    <text class="h1">{{user.nickname}}</text>
+    <view class="flex" style="width: 100%;">
+      <text class="p">{{util.formatTime(user.create_time,"yyyy-MM-dd")}} 加入</text>
+      <text class="p">走过了{{sta.total}}个地点</text>
+    </view>
+  </view>  
+</view>
+<scroll-view class="" enhanced scroll-y="{{true}}" enable-back-to-top="{{true}}" style="height: {{contentHeight}}px;" id="scroll-content">
+<view class="container mine-content">
   <view class="section" wx:if="{{sta.total==0}}">
     <view class="section-content poi-item" >
       <view>
@@ -13,19 +19,19 @@
   </view>  
   <view class="section" wx:if="{{sta.city.length}}">
     <view class="section-heading flex">
-      <text>城市</text>
-      <text>{{sta.city.length}}个</text>
+      <text class="h1">城市</text>
+      <text class="h1">{{sta.city.length}}个</text>
     </view>
     <view class="section-content poi-item" >
       <view wx:for="{{sta.city}}" >
         <text>{{item}}</text>
       </view>
-    </view>
+    </view>       
   </view>
   <view class="section" wx:if="{{sta.province.length}}">
     <view class="section-heading flex">
-      <text>省份</text>
-      <text>{{sta.province.length}}个</text>
+      <text class="h1">省份</text>
+      <text class="h1">{{sta.province.length}}个</text>
     </view>
     <view class="section-content poi-item" >
       <view wx:for="{{sta.province}}" >
@@ -33,7 +39,9 @@
       </view>
     </view>
   </view>  
-  <view class="section" wx:if="{{isLogin}}">
+  <view class="section" style="margin-bottom: 0px;">
     <button type="default" plain bindtap="logout">退出登录</button>
   </view>
 </view>
+
+</scroll-view>

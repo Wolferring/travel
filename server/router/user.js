@@ -101,7 +101,6 @@ route
             status:1,
             data:{
                 phone:user.phone,
-                username:user.username,
                 nickname:user.nickname,
                 avatar:user.avatar,
                 token:auth_token    
@@ -202,7 +201,7 @@ route
     let user = ctx.state.user
     let wxUser = await axios.get('https://api.weixin.qq.com/sns/jscode2session', {
         params: {
-            appid: config.wechat.appid,
+            appid:config.wechat.appid,
             secret:config.wechat.secret,
             js_code:query.code,
             grant_type:"authorization_code"

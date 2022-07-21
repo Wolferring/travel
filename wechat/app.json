@@ -1,13 +1,11 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/logs/logs",
     "pages/login/login",
     "pages/mine/mine",
     "pages/detail/detail",
     "pages/register/register",
-    "pages/create/create",
-    "pages/shared/shared"
+    "pages/create/create"
   ],
   "permission": {},
   "tabBar": {

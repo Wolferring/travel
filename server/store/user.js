@@ -6,7 +6,7 @@ let findUserByPhone = function(phone) {
   return mysql.query( _sql )
 }
 let findUserByOpenId = function(openId) {
-  let _sql = `select * from user where openId = '${openId}';`
+  let _sql = `select ${cols} from user where openId = '${openId}';`
   return mysql.query( _sql )
 }
 let findRawUserByPhone = function(username){

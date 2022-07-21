@@ -8,6 +8,8 @@ Page({
    */
   data: {
     isLogin:false,
+    statusBarHeight:44,
+    contentHeight:300,
     user:{},
     sta:{}
   },
@@ -57,18 +59,14 @@ Page({
       
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
-  },
 
   /**
    * 生命周期函数--监听页面显示
    */
   onShow() {
-    let _this = this
+    let window = wx.getSystemInfoSync(),
+        windowHeight = 0,
+        _this = this; 
     api.getPointsStatistic()
     .then(res=>{
       _this.setData({
@@ -81,7 +79,23 @@ Page({
         isLogin:app.globalData.USER.isLogin
       }) 
     }
-    
+    let menu = wx.getMenuButtonBoundingClientRect()
+    _this.setData({
+      statusBarHeight:menu.top      
+    })
+    if(window){
+      windowHeight = window.windowHeight
+    }    
+    const tabbarHeight = ( window.screenHeight - window.windowHeight - window.statusBarHeight )   
+    let scrollContent = wx.createSelectorQuery()
+    scrollContent.select('#scroll-content').boundingClientRect()
+    scrollContent.exec(res=>{
+      windowHeight = windowHeight - res[0].top - tabbarHeight + 35
+      _this.setData({
+        contentHeight:windowHeight
+      })
+      
+    })    
   },
 
   /**

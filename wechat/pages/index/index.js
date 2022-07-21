@@ -2,9 +2,13 @@
 // 获取应用实例
 const app = getApp()
 const api = require("../../utils/fetch")
+let bannerLoading = false
 Page({
   data: {
-    banner:null,
+    banner:{
+      id:null
+    },
+    bannerLoading:false,
     isLogin:false,
     isEditShow:false,
     points:[],
@@ -21,6 +25,27 @@ Page({
   formatTime(t){
     return new Date(t).format("yyyy-MM-dd")
   },
+  renderBanner(){
+    let _this = this
+    if(!_this.data.banner.id&&!_this.data.bannerLoading){
+      _this.setData({
+        bannerLoading:true
+      })      
+      api.getPointByRand()
+      .then(res=>{
+        if(res.data){
+          _this.setData({
+            banner:res.data
+          })      
+        }
+      })  
+      .finally(res=>{
+        _this.setData({
+          bannerLoading:false
+        })
+      })     
+    }  
+  },
   onLoad(){
     let _this = this
     app.makeWatcher('USER.isLogin', app.globalData, function(newValue) {
@@ -28,20 +53,9 @@ Page({
           isLogin: newValue
       })
       if(newValue){
-        api.getPointByRand()
-        .then(res=>{
-          _this.setData({
-            banner:res.data
-          })      
-        })           
+        _this.renderBanner()
       }
-    })
-    api.getPointByRand()
-    .then(res=>{
-      _this.setData({
-        banner:res.data
-      })      
-    })       
+    })    
   },
   onShow() {
     let _this = this
@@ -51,6 +65,7 @@ Page({
         points:res.data.points
       })
     })
+    _this.renderBanner()      
 
     if(app.globalData.USER){
       this.setData({

@@ -2,7 +2,7 @@ const Router = require('koa-router')
 const route = new Router()
 const pointModel = require('../store/points.js');
 const commentModel = require('../store/comments.js');
-
+const userModel = require('../store/user.js')
 const config = require("../store/config.js")
 const path = require('path')
 const token = require('../util/token.js')
@@ -10,6 +10,7 @@ const util  = require("../util/util.js")
 
 route
 .get("/comments",async (ctx,next)=>{
+
     if(!ctx.request.query.pid){
         ctx.body={
             status:0,
@@ -26,6 +27,8 @@ route
         return false
     }  
     let comments = await commentModel.findCommentsByPid(ctx.request.query.pid)
+    
+
     ctx.body={
         status:1,
         data:comments
@@ -33,7 +36,6 @@ route
 })
 .post("/comment",async (ctx,next)=>{
     let comment = ctx.request.body
-    console.log(ctx.state)
     await commentModel.insertComment([
         comment.content,
         ctx.state.user.id,
@@ -43,6 +45,26 @@ route
         ctx.state.user.avatar||""  
     ]) 
     .then(async(res)=>{     
+        let from = await userModel.findUserById(ctx.state.user.id)
+        let to = await userModel.findUserById(comment.to_id)
+        let point = await pointModel.findPointById(comment.pid,to.id)
+        if(to.openId){
+            util.sendCommentWXNotify({
+                touser:to.openId,
+                template_id:"SYnJ0O9IaRByBo-f491qlk-XA_yi_N8HYOdNCMYTQc0",
+                page:`/pages/detail/detail?id=${comment.pid}&author=${to.nickname}`,
+                data:{
+                    "thing1":{value:point.title},
+                    "thing2":{value:from.nickname},
+                    "thing3":{value:comment.content},
+                    "date4":{value:new Date().toLocaleString()}
+                },
+                miniprogram_state:'formal',
+                lang:'zh_CN'
+
+            })   
+        }
+     
         ctx.body={
             status:1,
             msg:"评论完成"

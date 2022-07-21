@@ -103,17 +103,22 @@ Page({
           wx.setStorageSync('PASS', _this.encrypt(form.password1))
           wx.setStorageSync('USERNAME', form.username1)
         }
-        wx.login({
-          success:(e)=>{
-            console.log(e)
-          }
-        })
-        // wx.requestSubscribeMessage({
-        //   tmplIds: ['SYnJ0O9IaRByBo-f491qlk-XA_yi_N8HYOdNCMYTQc0'],
-        // })
+
+        wx.requestSubscribeMessage({
+          tmplIds: ['SYnJ0O9IaRByBo-f491qlk-XA_yi_N8HYOdNCMYTQc0']
+        }) 
         api.getUserInfo()
         .then(res=>{
           app.globalData.USER.userInfo  = res.data
+          if(!res.data.openId){
+            wx.login({
+              success:(e=>{
+                if(e.errMsg=='login:ok'){
+                  api.bindWX(e.code)
+                }
+              })
+            })
+          }         
         })     
         wx.navigateBack({
           delta: 0,

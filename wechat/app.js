@@ -43,6 +43,8 @@ Dep.prototype = {
 App({
   onShow(options){
     this.observe(this.globalData.USER)
+  },
+  onLaunch(options) {
     const _this = this
     let isLaunchShare = (options.path=="pages/detail/detail"&&options.query.id)
     if(!isLaunchShare||wx.getStorageSync('AUTH')){
@@ -60,22 +62,7 @@ App({
           })
         }
       })
-    }    
-  },
-  onLaunch(options) {
-    // 展示本地存储能力
-    // 登录
-    // this.observe(this.globalData.USER)
-    // const _this = this
-    // let isLaunchShare = (options.path=="pages/detail/detail"&&options.query.id)
-    // if(!isLaunchShare||wx.getStorageSync('AUTH')){
-    //   api.getUserInfo()
-    //   .then(res=>{
-    //     _this.globalData.USER.userInfo  = res.data
-    //     _this.globalData.USER.isLogin = true
-    //   })
-    // }
-
+    } 
   },
   Observe: function (data) {
     let _this = this

@@ -28,7 +28,8 @@ Page({
     keyboardHeight:0,
     titleFontSize:24,
     contentHeight:300,
-    isLogin:false
+    isLogin:false,
+    isShareMode:false
   },
 
   /**
@@ -100,6 +101,12 @@ Page({
         user:app.globalData.USER.userInfo
       }) 
     }    
+    let launch = getCurrentPages()
+    if(launch.length==1){
+      _this.setData({
+        isShareMode:true
+      })
+    }   
     app.makeWatcher('USER.userInfo', app.globalData, function(newValue) {
       _this.setData({
           user: newValue
@@ -109,9 +116,12 @@ Page({
       _this.setData({
           isLogin: newValue
       })
-      if(newValue&&_this.data.poi.id){
-        _this.getComments(_this.data.poi.id)
-      }
+      try{
+        if(newValue&&_this.data.poi.id){
+          _this.getComments(_this.data.poi.id)
+        }
+      }catch(e){}
+
     })                       
   },
   onLoad(option) {
@@ -126,8 +136,9 @@ Page({
       .then(res=>{
         _this.render(res.data)
       })
-      return false
+          
     }
+
   
     const eventChannel = this.getOpenerEventChannel()
     if(eventChannel&&!option.id){
@@ -252,9 +263,10 @@ Page({
     let current = this.data.poi,
         _this = this,
         scope = this.data.scopeType[this.data.scopeIndex]['value'], 
+        newTitle = e.detail.value.title,
         newRemark = e.detail.value.remark;
     api.updatePoint(current.id,{
-      title:current.title,
+      title:newTitle,
       remark:newRemark,
       scope:scope,
       dateTime:new Date(current.dateTime).toISOString().slice(0, 19).replace('T', ' ')
@@ -325,6 +337,11 @@ Page({
   },
   openLogin(){
     util.openLogin()
+  },
+  openIndex(){
+    wx.switchTab({
+      url: '/pages/index/index'
+    })
   },
   /**
    * 用户点击右上角分享
