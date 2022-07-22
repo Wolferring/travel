@@ -17,7 +17,7 @@ const mysql = require('./mysql.js')
 
 // mysql.createTable(points)
 
-let findPoints = async (uid,$where)=>{
+let findPoints = async (uid,$where='')=>{
   let _sql = `
   SELECT 
   points.*,
