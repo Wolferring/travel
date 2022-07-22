@@ -100,6 +100,7 @@ route
         ctx.body={
             status:1,
             data:{
+                id:user.id,
                 phone:user.phone,
                 nickname:user.nickname,
                 avatar:user.avatar,
@@ -116,15 +117,32 @@ route
 })
 .post("/login/wx",async (ctx,next)=>{
     //微信登录
-    let query = ctx.request.body
-    let user = await userModel.findRawUserByPhone(query.username)
-    if(user&&crypt.decrypt(query.password,user.password)){
+    let code = ctx.request.body.code
+    let wxUser = await axios.get('https://api.weixin.qq.com/sns/jscode2session', {
+        params: {
+            appid:config.wechat.appid,
+            secret:config.wechat.secret,
+            js_code:code,
+            grant_type:"authorization_code"
+        }
+    }) 
+    if(wxUser.data.errcode){
+        ctx.body = {
+            status:0,
+            msg:"微信登录失败",
+            rawError:`${wxUser.data.errcode}-${wxUser.data.errmsg}`            
+        }
+        return false
+    } 
+    let openId = wxUser.data.openid   
+    let user = await userModel.findUserByOpenId(openId) 
+    if(user){
         let auth_token = await token.set(user)
         ctx.body={
             status:1,
             data:{
+                id:user.id,
                 phone:user.phone,
-                username:user.username,
                 nickname:user.nickname,
                 avatar:user.avatar,
                 token:auth_token    
@@ -133,8 +151,8 @@ route
 
     }else{
         ctx.body = {
-            status: 0,
-            msg: '用户名密码不匹配'
+            status: 2,
+            msg: '微信号未绑定用户，请先注册'
         }        
     }
 })
