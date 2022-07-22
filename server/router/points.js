@@ -34,7 +34,16 @@ const resolveImages = (imageStr)=>{
 
 route
 .get("/points",async (ctx,next)=>{
-    let ps = await pointModel.findPoints(ctx.state.user.id)    
+    let $where = ctx.request.query
+    let $sql = ''
+    let keys = Object.keys($where)
+    if(keys.length){
+        keys.forEach(item=>{
+            $sql+=` AND points.${item}='${$where[item]}' `
+        })
+    }
+    
+    let ps = await pointModel.findPoints(ctx.state.user.id,$sql)    
     if(ps&&ps.length){
         ps.forEach(poi=>{
             if(poi.images){

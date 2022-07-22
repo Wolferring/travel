@@ -17,7 +17,7 @@ const mysql = require('./mysql.js')
 
 // mysql.createTable(points)
 
-let findPoints = async (uid)=>{
+let findPoints = async (uid,$where)=>{
   let _sql = `
   SELECT 
   points.*,
@@ -30,10 +30,9 @@ let findPoints = async (uid)=>{
   ) as images
   FROM points
   INNER JOIN images ON images.pid = points.id
-  WHERE points.uid=${uid} AND points.status="ACTIVE"
+  WHERE points.uid=${uid} AND points.status="ACTIVE" ${$where}
   GROUP BY points.id
   ORDER BY points.dateTime DESC;`
-
   let result = await mysql.query( _sql )
   if(!result) return []
   if(Object.prototype.toString.call(result)==="[object Array]"){
