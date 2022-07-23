@@ -25,6 +25,58 @@ const validPhone = (phone)=>{
     return reg_tel.test(phone)
 }
 route
+.get("/sms/l",async (ctx)=>{
+    let randCode = getRand(1000,9989),
+    phone = ctx.request.query.phone;
+    let query = {
+        code:randCode
+    }   
+    if(!validPhone(phone)){
+        ctx.body = {
+            status:0,
+            msg:"手机号不合法"
+        } 
+        return false             
+    }    
+    let hasUser = await userModel.findUserByPhone(phone)
+    if(!hasUser){
+        ctx.body = {
+            status:0,
+            msg:"手机号尚未注册"
+        } 
+        return false        
+    }   
+    let validCode = await userModel.findSMSByPhone(phone)
+    if(validCode&&new Date().getTime()- new Date(validCode.create_time).getTime()<60000){
+        ctx.body = {
+            status:0,
+            msg:"发送频率过快"
+        } 
+        return false
+    }  
+    const SentSMS = new Dysmsapi20170525.SendSmsRequest({
+        signName:"途纪",
+        phoneNumbers:phone,
+        templateCode:"SMS_246355004",
+        templateParam:JSON.stringify(query)
+    })
+    try{
+        const response = await client.sendSms(SentSMS)
+        if(response.body.code=="OK"){
+            userModel.insertSMS([randCode,phone,"login",response.body.bizId])
+            ctx.body = {
+                status:1,
+                msg:"短信发送成功"
+            }
+        }else{
+            ctx.body = {
+                status:0,
+                msg:response.body.message
+            }            
+        }
+    }catch(e){    
+    }        
+})
 .get("/sms/r",async (ctx)=>{
     let randCode = getRand(1000,9989),
         phone = ctx.request.query.phone;
@@ -95,6 +147,7 @@ route
 .post("/login",async (ctx,next)=>{
     let query = ctx.request.body
     let user = await userModel.findRawUserByPhone(query.username)
+    let sms = await userModel.findSMSByPhone(query.username)
     if(user&&crypt.decrypt(query.password,user.password)){
         let auth_token = await token.set(user)
         ctx.body={
@@ -104,14 +157,44 @@ route
                 phone:user.phone,
                 nickname:user.nickname,
                 avatar:user.avatar,
-                token:auth_token    
+                token:auth_token,
+                authMode:"password"  
             }
         } 
 
-    }else{
+    }else if(user&&sms.id){
+        if(new Date().getTime()- new Date(sms.create_time).getTime()>300000){
+            ctx.body ={
+                status:0,
+                msg:"短信验证码已经过期"
+            }
+            return false
+        }        
+        if(sms.type=="login"&&query.password==sms.code){
+            let auth_token = await token.set(user)
+            ctx.body={
+                status:1,
+                data:{
+                    id:user.id,
+                    phone:user.phone,
+                    nickname:user.nickname,
+                    avatar:user.avatar,
+                    token:auth_token,
+                    authMode:"sms"  
+                }
+            }            
+        }else{
+            ctx.body ={
+                status:0,
+                msg:"短信验证码无效"
+            }
+            return false            
+        }
+    }
+    else{
         ctx.body = {
             status: 0,
-            msg: '用户名密码不匹配'
+            msg: '登录失败'
         }        
     }
 })
@@ -253,7 +336,7 @@ route
     await userModel.bindOpenId(user.id,openId)
     .then(async res=>{
         ctx.body = {
-            status:0,
+            status:1,
             msg:`绑定微信成功`
         }            
     })

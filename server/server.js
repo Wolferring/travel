@@ -77,3 +77,6 @@ app.use(staticFiles(path.join(__dirname + './public/')))
 app.listen(3000,()=>{
     console.log('[travel] server is starting at port 3000');
 });
+process.on('uncaughtException', function (err) {
+  console.log('Caught exception: ', err);
+});
