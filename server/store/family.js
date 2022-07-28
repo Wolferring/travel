@@ -17,9 +17,8 @@ let findFamilyByUser = async (uid)=>{
 	INNER JOIN family_relation 
 	on family.id=family_relation.family_id
 	AND family_relation.u_id=${uid}
-    AND family_relation.status='ACTIVE'
-    WHERE family.status = 'ACTIVE'
-	GROUP BY family.id ),
+    AND family_relation.status != 'DELETE'
+    WHERE family.status = 'ACTIVE'),
     r as (
         SELECT  
         JSON_ARRAYAGG(
@@ -139,6 +138,23 @@ let insertFamily = async (nickname,uid)=>{
     return step1
   }
 }
+let findPendingRequestByUser = async (uid)=>{
+      let _sql = `
+      SELECT family.nickname,family.id,user.nickname as unickname,user.id as uid,family_relation.status as joined from family_relation 
+        INNER JOIN family
+        ON family.id = family_relation.family_id 
+        AND family.owner = ${uid}
+        LEFT JOIN user on user.id = family_relation.u_id
+        WHERE family_relation.status = 'PENDING'
+      `  
+      let result = await mysql.query( _sql)
+      if(!result) return []
+      if(Object.prototype.toString.call(result)==="[object Array]"){
+        return result
+      }else{
+        return [result]
+      }  
+}
 let removeCommentById = function(id,uid) {
   let _sql = `UPDATE comments SET status = 'DELETE' where id = ${id} and from_id = ${uid};`
   return mysql.query( _sql )
@@ -150,5 +166,6 @@ module.exports = {
     leaveFamily,
     findFamilyByUser,
     findFamilyById,
-    findOwnedFamilyByUser
+    findOwnedFamilyByUser,
+    findPendingRequestByUser
 }

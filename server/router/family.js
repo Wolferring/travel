@@ -32,6 +32,13 @@ route
         data:family
     }    
 })
+.get("/certify/family",async (ctx,next)=>{
+    let family = await familyModel.findPendingRequestByUser(ctx.state.user.id)
+    ctx.body={
+        status:1,
+        data:family
+    }    
+})
 .get("/share/familyTicket",async (ctx,next)=>{
     let user = await userModel.findUserById(ctx.state.user.id)
     let wxActivity = await util.getWXActivity(user.openid)    
