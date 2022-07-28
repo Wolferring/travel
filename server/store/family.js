@@ -8,7 +8,7 @@ let findFamilyByUser = async (uid)=>{
     family.create_time,
 	family.id,
 	family.status,
-	count(family_relation.id) AS 'joined',
+	family_relation.status AS 'joined',
 	user.id as 'owner_id',
 	user.nickname as 'owner'
 	from family 
@@ -65,14 +65,14 @@ let findFamilyById = async (id,uid)=>{
       WITH f as (SELECT 
       family.*,
       user.nickname AS owner_name,
-      count(family_relation.id) AS joined
+      family_relation.status AS joined
       from family 
       INNER JOIN user on user.id=family.owner 
       LEFT JOIN family_relation 
 			on family.id=family_relation.family_id  
 			and family_relation.u_id=${uid}
 			and family_relation.status!='DELETE'
-        WHERE family.id=${id} AND family.status = 'ACTIVE'),
+        WHERE family.id=${id} AND family.status = 'ACTIVE' ),
       t as (SELECT  
         JSON_ARRAYAGG(
             JSON_OBJECT(
