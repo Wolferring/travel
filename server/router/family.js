@@ -39,11 +39,24 @@ route
         data:family
     }    
 })
+.post("/certify/family",async (ctx,next)=>{
+    let isOwned = await familyModel.isFamilyOwned(ctx.request.body.family_id,ctx.state.user.id)
+    if(!isOwned){
+        ctx.body={
+            status:0,
+            msg:'无法通过请求'
+        } 
+    }
+    let certify = await familyModel.certifyRequest(ctx.request.body.family_id,ctx.request.body.uid)
+    ctx.body={
+        status:1,
+        data:null
+    }    
+})
 .get("/share/familyTicket",async (ctx,next)=>{
     let user = await userModel.findUserById(ctx.state.user.id)
     let wxActivity = await util.getWXActivity(user.openid)    
     // let family = await familyModel.findFamilyById(ctx.params.id,ctx.state.user.id)
-    console.log(wxActivity)
     ctx.body={
         status:1,
         data:wxActivity.data
@@ -110,7 +123,6 @@ route
     }
     await familyModel.insertFamily(ctx.request.body.nickname,ctx.state.user.id) 
     .then(async(res)=>{     
-        console.log(res)
         ctx.body={
             status:1,
             msg:"创建分享组成功"

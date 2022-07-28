@@ -127,6 +127,16 @@ let isFamilyJoined = async (id,uid)=>{
     let result = await mysql.query( _sql ) 
     return result
 }
+let isFamilyOwned = async (id,uid)=>{
+    let _sql = `
+    SELECT * from family 
+    where owner=${uid} 
+    AND id=${id}
+    AND status='ACTIVE'`
+    let result = await mysql.query( _sql ) 
+    return result
+}
+
 let insertFamily = async (nickname,uid)=>{
   let _sql = `
   insert into family 
@@ -138,9 +148,34 @@ let insertFamily = async (nickname,uid)=>{
     return step1
   }
 }
+let certifyRequest = async (id,uid)=>{
+    let _sql = ``
+    let hasRelation = await mysql.query(`
+        SELECT * from family_relation WHERE family_id=${id} AND u_id=${uid}
+    `)
+    if(hasRelation&&hasRelation.id){
+        _sql = `
+        UPDATE family_relation SET 
+        status = 'ACTIVE'
+        where family_id = ${id} and u_id = ${uid};        
+        `
+        let result = await mysql.query( _sql ) 
+        return result        
+    }
+    return false
+
+}
 let findPendingRequestByUser = async (uid)=>{
       let _sql = `
-      SELECT family.nickname,family.id,user.nickname as unickname,user.id as uid,family_relation.status as joined from family_relation 
+      SELECT 
+      family.id as family_id,
+      family.nickname as family_name,
+      user.avatar as uavatar,
+      user.nickname as unickname,
+      user.id as uid,
+      family_relation.create_time,
+      family_relation.status as joined 
+      FROM family_relation 
         INNER JOIN family
         ON family.id = family_relation.family_id 
         AND family.owner = ${uid}
@@ -160,6 +195,7 @@ let removeCommentById = function(id,uid) {
   return mysql.query( _sql )
 }
 module.exports = {
+    isFamilyOwned,
     isFamilyJoined,
     insertFamily,
     joinFamily,
@@ -167,5 +203,6 @@ module.exports = {
     findFamilyByUser,
     findFamilyById,
     findOwnedFamilyByUser,
+    certifyRequest,
     findPendingRequestByUser
 }

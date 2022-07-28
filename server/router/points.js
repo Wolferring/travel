@@ -70,22 +70,27 @@ route
     }    
 })
 .get("/points/family/:id",async (ctx,next)=>{
-    let hasJoin = await familyModel.findFamilyByUser(ctx.state.user.id)
-    if(hasJoin.length){
-        let join = hasJoin.some((i)=>{
-            return i.id==ctx.params.id
-        })
-        if(!join){
-            ctx.body={
-                status:0,
-                msg:"没有访问权限"
-            }           
-            return false  
-        }
+    let hasJoin = await familyModel.isFamilyJoined(ctx.params.id,ctx.state.user.id)
+    // if(hasJoin.length){
+    //     let join = hasJoin.some((i)=>{
+    //         return i.id==ctx.params.id&&i.status=='ACTIVE'
+    //     })
+    //     if(!join){
+    //         ctx.body={
+    //             status:0,
+    //             msg:"没有访问权限"
+    //         }           
+    //         return false  
+    //     }
       
-    }
-    if(!hasJoin.length){
-      
+    // }
+    console.log(hasJoin)
+    if(!hasJoin){
+        ctx.body={
+            status:0,
+            msg:"没有访问权限"
+        }           
+        return false        
     }    
     let ps = await pointModel.findPointsByFamily(ctx.params.id,ctx.state.user.id)
     if(Object.prototype.toString.call(ps)=="[object Object]"){
