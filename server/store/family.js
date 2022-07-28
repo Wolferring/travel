@@ -97,7 +97,7 @@ let joinFamily = async (id,uid)=>{
     if(hasRelation&&hasRelation.id){
         _sql = `
         UPDATE family_relation SET 
-        status = 'ACTIVE' 
+        status = 'PENDING' 
         where family_id = ${id} and u_id = ${uid};        
         `
     }else{
@@ -105,7 +105,7 @@ let joinFamily = async (id,uid)=>{
         insert into family_relation 
         set family_id='${id}',
         u_id=${uid},
-        status='ACTIVE';`
+        status='PENDING';`
     }
 
     let result = await mysql.query( _sql ) 
