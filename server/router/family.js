@@ -143,6 +143,22 @@ route
         }    
     })
 })
+.delete("/family/member",async (ctx,next)=>{
+    console.log(ctx)
+    let isOwner = await familyModel.isFamilyOwned(ctx.request.body.family_id,ctx.state.user.id)
+    if(!isOwner){
+        ctx.body={
+            status:0,
+            msg:"没有操作权限"
+        }           
+        return false        
+    }
+    await familyModel.removeMember(ctx.request.body.family_id,ctx.request.body.uid) 
+    ctx.body={
+        status:1,
+        msg:"删除成功"
+    }      
+})
 .put("/family/:id",async(ctx,next)=>{
     // let point = ctx.request.body
     // await pointModel.updatePoint([

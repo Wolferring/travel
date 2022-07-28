@@ -264,6 +264,25 @@ const api = (()=>{
         }
       })      
     },
+    leaveFamily(id){
+      return service({
+        url:`/family/leave`,
+        method:'POST',
+        data: {
+          family_id:id
+        }
+      })      
+    }, 
+    removeFamilyMember(fid,uid){
+      return service({
+        url:`/family/leave`,
+        method:'DELETE',
+        data: {
+          family_id:fid,
+          uid:uid
+        }
+      })      
+    },    
     getOneWord(){
       return axios.get(
         "http://api.tianapi.com/one/index",

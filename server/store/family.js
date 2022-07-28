@@ -17,7 +17,7 @@ let findFamilyByUser = async (uid)=>{
 	INNER JOIN family_relation 
 	on family.id=family_relation.family_id
 	AND family_relation.u_id=${uid}
-    AND family_relation.status != 'DELETE'
+    AND family_relation.status IN ('ACTIVE','PENDING')
     WHERE family.status = 'ACTIVE'),
     r as (
         SELECT  
@@ -144,7 +144,7 @@ let insertFamily = async (nickname,uid)=>{
   owner=${uid};`
   let step1 = await mysql.query( _sql ) 
   if(step1.insertId){
-    await joinFamily(step1.insertId,uid)
+    await mysql.query(`insert into family_relation set family_id='${step1.insertId}',u_id=${uid},status='ACTIVE';`)
     return step1
   }
 }
@@ -208,8 +208,10 @@ let findPendingRequestByUser = async (uid)=>{
         return [result]
       }  
 }
-let removeCommentById = function(id,uid) {
-  let _sql = `UPDATE comments SET status = 'DELETE' where id = ${id} and from_id = ${uid};`
+let removeMember = function(id,uid) {
+  let _sql = `
+  UPDATE family_relation 
+  SET status = 'INACTIVE' where family_id = ${id} and u_id = ${uid};`
   return mysql.query( _sql )
 }
 module.exports = {
@@ -223,5 +225,6 @@ module.exports = {
     findOwnedFamilyByUser,
     certifyRequest,
     refuseRequest,
+    removeMember,
     findPendingRequestByUser
 }

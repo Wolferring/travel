@@ -33,6 +33,7 @@ app.use(cors({
 }));
 app.use(koaBody({
     multipart: true,
+    strict:false,
     formidable: {
         maxFileSize: 2000*1024*1024    // 设置上传文件大小最大限制，默认2M
     }
