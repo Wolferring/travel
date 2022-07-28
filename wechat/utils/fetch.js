@@ -236,7 +236,7 @@ const api = (()=>{
         data: data
       })        
     },
-    refuseFamilyCertify(){
+    refuseFamilyCertify(data){
       return service({
         url:`/refuse/family`,
         method:'POST',

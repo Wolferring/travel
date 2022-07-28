@@ -173,7 +173,7 @@ let refuseRequest = async (id,uid)=>{
     if(hasRelation&&hasRelation.id){
         _sql = `
         UPDATE family_relation SET 
-        status = 'DELETE'
+        status = 'INACTIVE'
         where family_id = ${id} and u_id = ${uid};        
         `
         let result = await mysql.query( _sql ) 
@@ -222,5 +222,6 @@ module.exports = {
     findFamilyById,
     findOwnedFamilyByUser,
     certifyRequest,
+    refuseRequest,
     findPendingRequestByUser
 }
