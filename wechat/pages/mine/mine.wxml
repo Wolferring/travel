@@ -1,6 +1,6 @@
 <wxs src="../../utils/util.wxs" module="util" />
 <view class="section page-heading" style="padding-top: {{statusBarHeight}}px;">
-  <view class="section-heading flex" style="flex-direction: column;align-items: flex-start;">
+  <view class="section-heading flex" bindtap="openProfile" style="flex-direction: column;align-items: flex-start;">
     <text class="h1">{{user.nickname}}</text>
     <view class="flex" style="width: 100%;">
       <text class="p">{{util.formatTime(user.create_time,"yyyy-MM-dd")}} 加入</text>
@@ -8,12 +8,12 @@
     </view>
   </view>  
 </view>
-<scroll-view class="" enhanced scroll-y="{{true}}" enable-back-to-top="{{true}}" style="height: {{contentHeight}}px;" id="scroll-content">
-<view class="container mine-content">
+<scroll-view class="" enhanced scroll-y="{{true}}" enable-back-to-top="{{true}}" style="height: {{contentHeight - statusBarHeight}}px;" id="scroll-content">
+<view class="container mine-content" >
   <view class="section" wx:if="{{sta.total==0}}">
     <view class="section-content poi-item" >
       <view>
-        <text>还没去过任何地方～</text>
+        <text style="color: #fff;">还没去过任何地方～</text>
       </view>
     </view>
   </view>  
@@ -23,19 +23,23 @@
       <text class="h1">{{sta.city.length}}个</text>
     </view>
     <view class="section-content poi-item" >
-      <view wx:for="{{sta.city}}" >
-        <text>{{item}}</text>
+      <view  wx:for="{{sta.city}}" class="city-name" >
+        <view  bindtap="openCityView" data-city="{{item}}" >
+        {{item}}<image src="../../src/images/right-white.png" style="width: 25rpx;height: 25rpx;"></image>
+        </view>      
       </view>
+
     </view>       
-  </view>
+  </view>      
   <view class="section" wx:if="{{sta.province.length}}">
     <view class="section-heading flex">
       <text class="h1">省份</text>
       <text class="h1">{{sta.province.length}}个</text>
     </view>
     <view class="section-content poi-item" >
-      <view wx:for="{{sta.province}}" >
-        <text>{{item}}</text>
+      <view wx:for="{{sta.province}}" class="city-name">
+        <view  bindtap="openProvinceView" data-province="{{item}}" >{{item}}<image src="../../src/images/right-white.png" style="width: 25rpx;height: 25rpx;"></image>
+        </view>      
       </view>
     </view>
   </view>  
@@ -45,3 +49,36 @@
 </view>
 
 </scroll-view>
+
+
+<page-container
+	show="{{pageShow}}"
+  position="bottom"
+  overlay
+  round
+  close-on-slideDown	
+  custom-style="height:80%"
+>
+	<view class="page-inner" >
+    <view class="page-heading">
+      <view class="city-name inner flex" style="font-size: {{(750/(pageTitle.length+6))>64?64:(750/(pageTitle.length+3))}}rpx;" transform>
+        <view >{{pageTitle}}</view>
+        <view>{{pagePois.length}}个</view>
+      </view>   
+    </view>
+		<scroll-view class="page-content" scroll-y style="height: {{contentHeight*0.8}}px;">
+      <view style="padding:0 20rpx;padding-bottom: 60rpx;">
+        <view wx:for="{{pagePois}}" class="poi-item" bindtap="openDetail" data-poi="{{item}}">
+          <view style="width: 100%;height: 300rpx;margin-bottom: 20rpx;">
+            <image src="{{item.images[0]['url']}}" style="width: 100%;height: 100%;" mode="aspectFill"></image>
+          </view>
+          <text class="h1">{{item.title}}</text>
+          <view class="flex" style="flex:1;">
+            <text class="p">{{util.formatTime(item.dateTime,"yyyy-MM-dd")}}</text>
+            <image wx:if="{{item.scope=='private'}}" style="width: 30rpx;height: 30rpx;margin-right: 20rpx;" src="../../src/images/lock-white.png" mode="aspectFill"></image>
+          </view>
+        </view>     
+      </view>
+    </scroll-view>
+	</view>
+</page-container>

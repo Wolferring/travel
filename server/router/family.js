@@ -53,6 +53,20 @@ route
         data:null
     }    
 })
+.post("/refuse/family",async (ctx,next)=>{
+    let isOwned = await familyModel.isFamilyOwned(ctx.request.body.family_id,ctx.state.user.id)
+    if(!isOwned){
+        ctx.body={
+            status:0,
+            msg:'无法通过请求'
+        } 
+    }
+    let certify = await familyModel.refuseRequest(ctx.request.body.family_id,ctx.request.body.uid)
+    ctx.body={
+        status:1,
+        data:null
+    }    
+})
 .get("/share/familyTicket",async (ctx,next)=>{
     let user = await userModel.findUserById(ctx.state.user.id)
     let wxActivity = await util.getWXActivity(user.openid)    

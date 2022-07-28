@@ -12,10 +12,13 @@
     <form catchsubmit="formSubmit" catchreset="formReset">
       <view class="page-body">
         <view class="page-section">
-          <view class="input-cell">
+          <view class="input-cell flex">
               <view class="weui-cell__bd flex">
-                <input value="{{savedUsername}}" type="digit" maxlength="11" class="weui-input" name="username1" placeholder="手机号" />
+                <input bindinput="phoneInput" value="{{savedUsername}}" type="digit" maxlength="11" class="weui-input" name="username1" placeholder="手机号" />
               </view>
+              <view class="weui-cell__bd flex" style="justify-content: flex-end;flex:none;">
+                <button disabled="{{smsDisabled}}" loading="{{smsLoading}}" type="default" size="mini" style="margin:0;font-size: 28rpx;" bindtap="sendSMS">发送验证码</button>
+              </view>              
             </view>
         </view>
         
@@ -24,25 +27,24 @@
         <view class="page-section">
           <view class="input-cell flex">
               <view class="weui-cell__bd flex"  >
-                
-                <input class="weui-input" value="{{savedPass}}" name="password1"  placeholder="密码" password />
-                <view>
-                  <text style="font-size: 24rpx;color: #999;">保存密码 </text>
-                  <switch type="switch" checked="{{isSavedPassword}}" bindchange="savePasswordChange"/>
-                </view>
-                
+                <input class="weui-input" bindtap="passwordFocus" bindblur="passwordBlur" value="{{savedPass}}" name="password1"  placeholder="密码/短信验证码" password="{{!isPasswordFocus}}" />
               </view>
+              <view class="weui-cell__bd flex" style="justify-content: flex-end;flex:none;">
+                  <text style="font-size: 24rpx;color: #999;margin-right: 4rpx;">保存密码</text>
+                  <switch type="switch" checked="{{isSavedPassword}}" bindchange="savePasswordChange"/>
+                </view>              
             </view>
         </view>      
 
-        <view class="page-section flex" style="margin: 30rpx 0;">
-          <button type="primary" style="width: 100%;" formType="submit">登录</button>
+        <view class="page-section flex" style="margin: 30rpx 0;flex-direction: column;">
+          <button type="primary" style="width: 100%;margin-bottom: 20rpx;" formType="submit">登录</button>
+          <button type="default" bindtap="loginWX" style="width: 100%;">微信快速登录</button>
         </view>
       </view>
 
     </form>
     <view class="flex-center">
-      <navigator style="text-align: center;color: #999;" url="/pages/register/register">没有账号？注册</navigator>
+      <navigator style="text-align: center;color: #999;padding: 10rpx 0;" url="/pages/register/register">没有账号？注册</navigator>
     </view>
 
 </view>

@@ -7,7 +7,11 @@ Page({
    * 页面的初始数据
    */
   data: {
+    pagePois:[],
+    pageShow:false,
+    pageTitle:null,
     isLogin:false,
+    windowHeight:400,
     statusBarHeight:44,
     contentHeight:300,
     user:{},
@@ -66,6 +70,8 @@ Page({
   onShow() {
     let window = wx.getSystemInfoSync(),
         windowHeight = 0,
+        windowWidth = 0,
+        w = 0,
         _this = this; 
     api.getPointsStatistic()
     .then(res=>{
@@ -85,7 +91,11 @@ Page({
     })
     if(window){
       windowHeight = window.windowHeight
+      windowWidth = window.windowWidth
     }    
+    _this.setData({
+      windowHeight:windowHeight
+    })     
     const tabbarHeight = ( window.screenHeight - window.windowHeight - window.statusBarHeight )   
     let scrollContent = wx.createSelectorQuery()
     scrollContent.select('#scroll-content').boundingClientRect()
@@ -97,11 +107,49 @@ Page({
       
     })    
   },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
-  }
+  openCityView(e){
+    let _this = this
+    console.log(e.currentTarget.dataset.city)
+    let city = e.currentTarget.dataset.city
+    api.getPoints({
+      city:city
+    })
+    .then(res=>{
+      _this.setData({
+        pagePois:res.data.points,
+        pageShow:true,
+        pageTitle:city
+      })
+      console.log(res)
+    })
+  },
+  openDetail(e){
+    let poi = e.currentTarget.dataset.poi
+    wx.navigateTo({
+      url: '/pages/detail/detail',
+      success: function(res) {
+        // 通过 eventChannel 向被打开页面传送数据
+        res.eventChannel.emit('sendPoiDetail', poi)
+      }
+    })    
+  },  
+  openProvinceView(e){
+    let _this = this
+    let province = e.currentTarget.dataset.province
+    api.getPoints({
+      province:province
+    })
+    .then(res=>{
+      _this.setData({
+        pagePois:res.data.points,
+        pageShow:true,
+        pageTitle:province
+      })
+    })
+  }, 
+  openProfile(){
+    wx.navigateTo({
+      url: '/pages/profile/profile?id='+this.data.user.id,
+    })
+  }   
 })

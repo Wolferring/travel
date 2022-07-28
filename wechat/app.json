@@ -5,9 +5,14 @@
     "pages/mine/mine",
     "pages/detail/detail",
     "pages/register/register",
-    "pages/create/create"
+    "pages/create/create",
+    "pages/map/map",
+    "pages/family/family",
+    "pages/family/detail"
   ],
-  "permission": {},
+  "requiredPrivateInfos": [
+    "chooseLocation"
+  ],
   "tabBar": {
     "color": "#999",
     "selectedColor": "#45a1e2",
@@ -17,6 +22,12 @@
         "text": "时间线",
         "iconPath": "./src/images/timeline-line.png",
         "selectedIconPath": "./src/images/timeline-line-active.png"
+      },
+      {
+        "pagePath": "pages/family/family",
+        "text": "共享",
+        "iconPath": "./src/images/group.png",
+        "selectedIconPath": "./src/images/group-active.png"
       },
       {
         "pagePath": "pages/mine/mine",

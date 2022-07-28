@@ -16,6 +16,7 @@ Page({
     key:[ 12, 2, 3, 44, 5, 6, 74, 8, 91, 10, 11, 12, 3, 14, 15, 16 ],
     logoAnimation:{},
     contentAnimation:{},
+    avatarUrl:"",
     currentPhone:"",
     smsDisabled:true,
     smsLoading:false,
@@ -106,7 +107,6 @@ Page({
       return form[item]==""
     }))
     let usernameNotAllow = !validPhone(form.phone)
-    let passwordNotEqual = (form.password!=form.valid_password)
     let passwordNotAllow = form.password.length<8
     let message = {
       hasEmptyValue:{
@@ -116,10 +116,6 @@ Page({
       usernameNotAllow:{
         invalid:usernameNotAllow,
         msg:"手机号填写错误"
-      },
-      passwordNotEqual:{
-        invalid:passwordNotEqual,
-        msg:"两次密码不符"
       },
       passwordNotAllow:{
         invalid:passwordNotAllow,
@@ -143,15 +139,30 @@ Page({
       if(res.data.token){
         app.globalData.USER.isLogin = true
         wx.setStorageSync('AUTH', res.data.token)
-        wx.switchTab({
-          url: '/pages/index/index',
-        })
-        wx.login({
-          success:(e=>{
-            if(e.errMsg=='login:ok'){
-              api.bindWX(e.code)
+        wx.showModal({
+          title:"开启微信快速登录",
+          content:"是否绑定当前微信号，下次快速登录",
+          confirmText:"绑定微信",
+          success(modal){
+            if(modal.confirm){
+              wx.login({
+                success:(e=>{
+                  if(e.errMsg=='login:ok'){
+                    api.bindWX(e.code)
+                  }
+                })
+              })                
             }
-          })
+          },
+          complete(){
+            wx.switchTab({
+              url: '/pages/index/index',
+            })
+            wx.requestSubscribeMessage({
+              tmplIds: ['SYnJ0O9IaRByBo-f491qlk-XA_yi_N8HYOdNCMYTQc0']
+            })
+          }
+          
         })
       }
     })
@@ -159,12 +170,15 @@ Page({
       if(err.msg){
         wx.showToast({
           title: err.msg,
-          icon:"error"
+          icon:"none"
         })
       }
     })
   },  
   onChooseAvatar(e){
-    console.log(e.detail)
+    const { avatarUrl } = e.detail 
+    this.setData({
+      avatarUrl,
+    })    
   }
 })

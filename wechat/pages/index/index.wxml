@@ -11,7 +11,7 @@
   bindrefresherrefresh="onRefresh"
   class="main-scroll"
 >
-  <view slot="refresher" class="refresh-container"
+  <view slot="refresher" wx:if="{{isLogin}}" class="refresh-container"
     style=" width: 100%; height: 80rpx;display: flex; align-items: center;"
   >
     <view class="flex" style="justify-content: center;width: 100%;">
@@ -51,15 +51,6 @@
       <text class="h1">{{item.city}}</text>
     </view>
     <view class="card" data-poi="{{item}}" bindtap="openDetail" data-poi="{{item}}"> 
-      <!-- <view>
-        <swiper wx:if="{{item.images.length}}" indicator-dots="{{item.images.length>1}}" indicator-color="rgba(100,100,100,0.3)"	indicator-active-color="#45a1e2">
-          <block wx:for="{{item.images}}" wx:for-item="img" wx:for-key="imgIndex">
-            <swiper-item>
-              <image lazy-load bindtap="openPreview" data-current="{{img.url}}" data-src="{{item.images}}" src="{{img.url}}" mode="aspectFill"></image>
-            </swiper-item>
-          </block>
-        </swiper>
-      </view> -->
       <view class="poi-banner">
         <image lazy-load src="{{item.images[0].url}}" mode="aspectFill"></image>      
       </view>

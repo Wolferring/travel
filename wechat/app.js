@@ -42,7 +42,7 @@ Dep.prototype = {
 // app.js
 App({
   onShow(options){
-    this.observe(this.globalData.USER)
+    this.observe(this.globalData.USER)    
   },
   onLaunch(options) {
     const _this = this
@@ -52,17 +52,23 @@ App({
       .then(res=>{
         _this.globalData.USER.userInfo  = res.data
         _this.globalData.USER.isLogin = true
-        if(!res.data.openId){
-          wx.login({
-            success:(e=>{
-              if(e.errMsg=='login:ok'){
-                api.bindWX(e.code)
-              }
-            })
-          })
-        }
       })
-    } 
+    }
+    let NOTIFY_EXPIRE = wx.getStorageSync('NOTIFY_EXPIRE')
+    if(new Date().getTime() - Number(NOTIFY_EXPIRE)>24*60*60*1000){
+      wx.showModal({
+        title:"想知道有人给您评论了？",
+        content:"请允许给您发送新评论通知",
+        success(e){
+          wx.requestSubscribeMessage({
+            tmplIds: ['SYnJ0O9IaRByBo-f491qlk-XA_yi_N8HYOdNCMYTQc0'],
+            fail(e){console.log(e)}
+          })
+          wx.setStorageSync('NOTIFY_EXPIRE', new Date().getTime())
+        }
+      }) 
+    }
+    
   },
   Observe: function (data) {
     let _this = this

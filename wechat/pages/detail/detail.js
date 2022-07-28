@@ -36,6 +36,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   render(poi){
+    console.log(poi)
     let window = wx.getSystemInfoSync(),
         windowWidth = 0,
         windowHeight = 0,
@@ -70,7 +71,22 @@ Page({
     if(!poi.owned){
       wx.hideShareMenu({
         menus: ['shareAppMessage', 'shareTimeline']
-      })      
+      })     
+    }else{
+      const launch = wx.getLaunchOptionsSync()
+      if([1014,1107].indexOf(launch.scene)>-1){
+        wx.showModal({
+          title:"想知道有人给您评论了？",
+          content:"请允许给您发送新评论通知",
+          success(e){
+            wx.requestSubscribeMessage({
+              tmplIds: ['SYnJ0O9IaRByBo-f491qlk-XA_yi_N8HYOdNCMYTQc0'],
+              fail(e){console.log(e)}
+            })
+            wx.setStorageSync('NOTIFY_EXPIRE', new Date().getTime())
+          }
+        })       
+      }      
     }
     _this.getComments(poi.id)
 
@@ -86,6 +102,7 @@ Page({
           isLogin:true,
           comments:res.data
         })
+        
       }
     })
     .catch(e=>{
@@ -135,15 +152,16 @@ Page({
       api.getSharedPoint(option.id)
       .then(res=>{
         _this.render(res.data)
-      })
-          
+
+      }) 
     }
+
 
   
     const eventChannel = this.getOpenerEventChannel()
     if(eventChannel&&!option.id){
       eventChannel.on('sendPoiDetail', function(data) {
-        _this.render({owned:true,...data})
+        _this.render({owned:data.owned,...data})
       })
     }
 
@@ -211,22 +229,22 @@ Page({
       isEditShow:true
     })    
     
-    let ani = wx.createAnimation({
-      delay: 200,
-      timingFunction: 'ease',
-      duration:300
-    })
-    let ani2 = wx.createAnimation({
-      delay: 0,
-      timingFunction: 'ease',
-      duration:400
-    })    
-    ani.translateY(0).step()
-    ani2.opacity(1).step()
-    this.setData({
-      editContainerAnimation:ani2.export(),
-      editContentAnimation:ani.export()
-    })
+    // let ani = wx.createAnimation({
+    //   delay: 200,
+    //   timingFunction: 'ease',
+    //   duration:300
+    // })
+    // let ani2 = wx.createAnimation({
+    //   delay: 0,
+    //   timingFunction: 'ease',
+    //   duration:400
+    // })    
+    // ani.translateY(0).step()
+    // ani2.opacity(1).step()
+    // this.setData({
+    //   editContainerAnimation:ani2.export(),
+    //   editContentAnimation:ani.export()
+    // })
   },
   scopeChange(e){
     this.setData({
@@ -235,28 +253,28 @@ Page({
   },  
   closeEdit(){
     let _this = this
-    let ani = wx.createAnimation({
-      delay: 0,
-      timingFunction: 'ease',
-      duration:300
+    // let ani = wx.createAnimation({
+    //   delay: 0,
+    //   timingFunction: 'ease',
+    //   duration:300
+    // })
+    // let ani2 = wx.createAnimation({
+    //   delay: 0,
+    //   timingFunction: 'ease',
+    //   duration:400
+    // })      
+    // ani.translateY(300).step()    
+    // ani2.opacity(0).step()
+    // this.setData({
+    //   editContainerAnimation:ani2.export(),
+    //   editContentAnimation:ani.export(),
+    //   keyboardHeight:0
+    // })
+    // setTimeout(function(){
+    // },300)
+    _this.setData({
+      isEditShow:false
     })
-    let ani2 = wx.createAnimation({
-      delay: 0,
-      timingFunction: 'ease',
-      duration:400
-    })      
-    ani.translateY(300).step()    
-    ani2.opacity(0).step()
-    this.setData({
-      editContainerAnimation:ani2.export(),
-      editContentAnimation:ani.export(),
-      keyboardHeight:0
-    })
-    setTimeout(function(){
-      _this.setData({
-        isEditShow:false
-      })
-    },300)
 
   },  
   formSubmit(e){
@@ -275,6 +293,7 @@ Page({
       wx.showToast({
         title: '修改成功',
       })
+      current.title = newTitle
       current.remark = newRemark
       current.scope = scope
       _this.setData({
@@ -342,6 +361,17 @@ Page({
     wx.switchTab({
       url: '/pages/index/index'
     })
+  },
+  openMap(){
+    let _this = this
+    wx.navigateTo({
+      url: '/pages/map/map',
+      success:(res)=>{
+        if(_this.data.poi.lnglat){
+          res.eventChannel.emit('acceptDataFromOpenerPage', _this.data.poi)
+        }
+      }
+    })     
   },
   /**
    * 用户点击右上角分享

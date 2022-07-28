@@ -9,7 +9,7 @@
   </view>
 <view class="container">
   <!-- <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-    <image class="avatar" src="{{avatarUrl}}"></image>
+    <image style="width: 100rpx;height: 100rpx;" mode="aspectFill" class="avatar" src="{{avatarUrl}}"></image>
   </button>  -->
     <form catchsubmit="formSubmit" catchreset="formReset">
       <view class="page-body">
@@ -37,12 +37,7 @@
               <view class="weui-cell__bd flex"  >
                 <input class="weui-input"  confirm-type="done" name="password" placeholder="密码（8位以上英文或数字）" />
               </view>
-            </view>
-            <view class="input-cell flex">
-              <view class="weui-cell__bd flex"  >
-                <input class="weui-input"  confirm-type="done" name="valid_password" placeholder="确认密码" />
-              </view>
-            </view>            
+            </view>         
         </view>      
 
         <view class="page-section flex" style="margin: 30rpx 0;">

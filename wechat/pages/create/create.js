@@ -1,5 +1,6 @@
 const bmap = require('../../libs/bmap.js'); 
 const api = require('../../utils/fetch.js');
+const ADDRESS_REG='(?<province>[^省]+自治区|.*?省|.*?行政区|.*?市)(?<city>[^市]+自治州|.*?地区|.*?行政单位|.+盟|市辖区|.*?市|.*?县)(?<county>[^县]+县|.+区|.+市|.+旗|.+海域|.+岛)?(?<town>[^区]+区|.+镇)?(?<village>.*)'
 Page({ 
     data: { 
         pois: [], 
@@ -34,17 +35,14 @@ Page({
     onLoad: function() { 
         var that = this; 
         // 新建百度地图对象 
-        var BMap = new bmap.BMapWX({ 
-            ak: '6vLcscHlzeFyTF9Nb7SH9OXVshLU7yYu' 
-        }); 
-        that.setData({
-          MAP:BMap
-        })
-       // 发起POI检索请求 
-        // this.poiSuggestion("兴隆湖")
+        // var BMap = new bmap.BMapWX({ 
+        //     ak: '6vLcscHlzeFyTF9Nb7SH9OXVshLU7yYu' 
+        // }); 
+        // that.setData({
+        //   MAP:BMap
+        // })
     }, 
     searchFormSubmit(e){
-      console.log(e)
       if(e.detail.value.query){
         this.poiSuggestion(e.detail.value.query)
       }
@@ -130,10 +128,10 @@ Page({
       
     },
     poiSelect(e){
-      this.setData({
-        pois:[]
-      })
-      let poi = e.currentTarget.dataset.poi
+      // this.setData({
+      //   pois:[]
+      // })
+      let poi = e
       let form = this.data.create
       form.city = poi.city
       form.province = poi.province
@@ -195,7 +193,6 @@ Page({
             imagesCount--
             item.status = "uploaded"
             uploadedImages.push(result.data[0])
-            console.log(result)
             _this.setData({
               tempImages:images,
               uploadedImageIds:uploadedImages
@@ -239,5 +236,31 @@ Page({
         sizeType:["compressed"],
         success:onImageChoose
       })
+    },
+    openMap(){
+      let _this = this
+      let query = {
+        success(res){
+          if(res.errMsg=="chooseLocation:ok"){
+            let add = res.address.match(ADDRESS_REG)
+            let p = {
+              city:add[2],
+              province:add[1],
+              name:res.name,
+              location:{
+                lng:res.longitude,
+                lat:res.latitude
+              }
+            }     
+            _this.poiSelect(p)    
+          }
+        } 
+      }
+      if(_this.data.create.lnglat){
+        query['latitude'] = _this.data.create.lnglat.split(",")[1]
+        query['longitude'] = _this.data.create.lnglat.split(",")[0]
+      }
+      wx.chooseLocation(query)
+     
     }
 })

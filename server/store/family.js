@@ -165,6 +165,23 @@ let certifyRequest = async (id,uid)=>{
     return false
 
 }
+let refuseRequest = async (id,uid)=>{
+    let _sql = ``
+    let hasRelation = await mysql.query(`
+        SELECT * from family_relation WHERE family_id=${id} AND u_id=${uid}
+    `)
+    if(hasRelation&&hasRelation.id){
+        _sql = `
+        UPDATE family_relation SET 
+        status = 'DELETE'
+        where family_id = ${id} and u_id = ${uid};        
+        `
+        let result = await mysql.query( _sql ) 
+        return result        
+    }
+    return false
+
+}
 let findPendingRequestByUser = async (uid)=>{
       let _sql = `
       SELECT 
@@ -181,6 +198,7 @@ let findPendingRequestByUser = async (uid)=>{
         AND family.owner = ${uid}
         LEFT JOIN user on user.id = family_relation.u_id
         WHERE family_relation.status = 'PENDING'
+        ORDER BY family_relation.id DESC
       `  
       let result = await mysql.query( _sql)
       if(!result) return []

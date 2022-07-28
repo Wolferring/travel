@@ -1,6 +1,8 @@
 // index.js
 // 获取应用实例
 const app = getApp()
+const util = require("../../utils/util")
+
 const api = require("../../utils/fetch")
 let bannerLoading = false
 Page({
@@ -76,14 +78,9 @@ Page({
   },
   openDetail(e){
     let poi = e.currentTarget.dataset.poi
+    poi.owned = true
     wx.navigateTo({
       url: '/pages/detail/detail',
-      events: {
-        someEvent: function(data) {
-          console.log(data)
-        }
-
-      },
       success: function(res) {
         // 通过 eventChannel 向被打开页面传送数据
         res.eventChannel.emit('sendPoiDetail', poi)
@@ -134,7 +131,7 @@ Page({
     })
   },
   openLogin(){
-    wx.navigateTo({url:'/pages/login/login'})
+    util.openLogin()
   },
   closeEdit(){
     this.setData({
@@ -188,13 +185,17 @@ Page({
   },
   onRefresh(){
     let _this = this
-    wx.navigateTo({
-      url: '/pages/create/create',
-    })
+    if(_this.data.isLogin){
+      wx.navigateTo({
+        url: '/pages/create/create',
+      })
+    }else{
+      _this.openLogin()
+    }
     setTimeout(function(){
       _this.setData({
         triggered:false
       })
-    },800)
+    },800)    
   }
 })

@@ -28,6 +28,7 @@
 }
 .mine-content{
   padding: 40rpx 10rpx;
+  padding-bottom: 100rpx;
 }
 .mine-content .section{
   margin-bottom: 80rpx;
@@ -47,12 +48,43 @@
   /* background: linear-gradient(#6279c5,#72bcc5); */
   /* background: linear-gradient(135deg,#049cb7,#3dd9bd); */
 }
-.poi-item view{
-  padding: 10rpx 0;
-  padding-right: 20rpx;
-}
-.poi-item text{
+.poi-item{
   color: #fff;
   font-weight: 500;
   font-size: 36rpx;
+}
+.city-name{
+  line-height: 1;
+  padding:20rpx 0;
+  padding-right: 20rpx;
+}
+.city-name.inner{
+  font-weight: 600; 
+  font-size: 80rpx;
+  color: #305eae;
+}
+.page-inner{
+  padding: 0px;
+}
+.page-inner .page-heading{
+  padding: 0 20rpx;
+  padding-top: 40rpx;
+}
+.page-inner .poi-item{
+  margin: 20rpx 0;
+  border-radius: 20rpx;
+  overflow: hidden;
+  padding: 0;
+  padding-bottom: 20rpx;
+}
+.page-inner .poi-item text{
+  color: #fff;
+  display: block;
+  width: 100%;
+  padding: 0 20rpx;
+  margin-top: 10rpx;
+}
+.page-inner .poi-item .p{
+  font-weight: normal;
+  font-size: 28rpx;
 }

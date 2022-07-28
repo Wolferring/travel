@@ -27,9 +27,58 @@
           "query": "id=120&author=whimsy",
           "launchMode": "default",
           "scene": 1154
+        },
+        {
+          "name": "订阅消息进入",
+          "pathName": "pages/detail/detail",
+          "query": "id=118&author=他想要的不多",
+          "launchMode": "default",
+          "scene": 1107
+        },
+        {
+          "name": "map",
+          "pathName": "pages/map/map",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "创建",
+          "pathName": "pages/create/create",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "我的",
+          "pathName": "pages/mine/mine",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "共享",
+          "pathName": "pages/family/family",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "共享组详情-点击",
+          "pathName": "pages/family/detail",
+          "query": "id=1",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "共享组-分享",
+          "pathName": "pages/family/detail",
+          "query": "id=10&share=1",
+          "launchMode": "default",
+          "scene": null
         }
       ]
     }
   },
-  "libVersion": "2.25.0"
+  "libVersion": "2.20.3"
 }

@@ -54,6 +54,7 @@
 }
 .input-cell .weui-cell__bd input{
   height: 100%;
+  width: 100%;
 }
 .input-cell{
   /* padding: 30rpx 0; */

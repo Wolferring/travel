@@ -1,9 +1,9 @@
 <!-- <view class="map_container"> 
   <map class="map" id="map" bindpoitap="mapClick" longitude="{{longitude}}" latitude="{{latitude}}" scale="14" show-location="true"></map> 
 </view>  -->
-<view class="">
+<!-- <view class="">
   <form catchsubmit="searchFormSubmit">
-      <view class="page-body">
+      <view class="page-body" style="overflow: visible;">
         <view class="page-section">
           <view class="input-cell flex">
               <view class="search-input flex">
@@ -21,16 +21,16 @@
       </view>
 
   </form>  
-</view>
+</view> -->
 
 <view class="container" >
 
 <form catchsubmit="createFormSubmit">
     <view class="page-body">
       <view class="page-section">
-        <view class="input-cell">
+        <view class="input-cell" bindtap="openMap">
             <view class="weui-cell__bd">
-              <input disabled class="weui-input" value="{{create.address}}" name="address" placeholder="地点(搜索后自动填充)" />
+              <input disabled class="weui-input" value="{{create.address}}" name="address" placeholder="地点(点击选择)" />
             </view>
         </view>      
         <view class="input-cell">
@@ -46,7 +46,7 @@
         </view>          
         <view class="input-cell">
             <view class="weui-cell__bd">
-              <input class="weui-input" name="title" placeholder="标题" />
+              <input class="weui-input"  name="title" placeholder="标题" />
             </view>
         </view>
         <view class="input-cell">
@@ -72,7 +72,7 @@
               <picker name="dateTime" bindchange="scopeChange" mode="selector" range="{{scopeType}}" range-key="desc" value="{{scopeIndex}}" class="input flex">
                 <view class="flex" style="height: 80rpx;line-height: 80rpx;width:700rpx;">
                   <text style="color: #808080;">谁可以看</text>
-                  <text style="clear: #000;">{{scopeType[scopeIndex]['desc']}}</text>              
+                  <text style="clear: #000;font-weight: 500;">{{scopeType[scopeIndex]['desc']}}</text>              
                 </view>
               </picker>
               

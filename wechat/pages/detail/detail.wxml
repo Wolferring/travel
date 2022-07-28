@@ -15,12 +15,17 @@
 <scroll-view class="container" enhanced scroll-y="{{true}}" enable-back-to-top="{{true}}" style="height: {{contentHeight}}px;" id="scroll-content">
 
   <view class="poi-content" bindlongpress="openEditAction" data-poi="{{poi}}">
-        <view><text class="h3" style="font-size: {{titleFontSize}}px;">{{poi.title}}</text></view>
+        <view class="flex">
+          <text class="h3" style="font-size: {{titleFontSize}}px;">{{poi.title}}</text>
+          <image wx:if="{{poi.scope=='private'}}" style="width: 40rpx;height: 40rpx;margin-right: 20rpx;" src="../../src/images/lock.png" mode="aspectFill"></image>
+        </view>
         <view wx:if="{{author&&!poi.owned}}">
           <text class="p">来自 <text style="color: #06ae56;font-weight: bold;">「{{author}}」</text>的分享</text>
         </view>
         <view class="flex" style="margin:10rpx 0;">
-          <text class="h4">{{poi.address}}</text>
+          <view class="flex" bindtap="openMap">
+            <text class="h4" style="color: #45a1e2;">{{poi.address}}</text>
+            <image src="../../src/images/right.png" style="width: 30rpx;height: 30rpx;margin-bottom: 1rpx;"></image></view>
           <text class="h4">{{util.formatTime(poi.dateTime,"yyyy-MM-dd")}}</text>
         </view>
         <view><text class="p">{{poi.remark}}</text></view>
@@ -70,9 +75,9 @@
       </view>                 
     </view>
 </view>
-<view class="poi-edit-container" animation="{{editContainerAnimation}}"  wx:if="{{isEditShow}}"> 
+<page-container class="poi-edit-container" overlay position="bottom"  show="{{isEditShow}}"> 
   <view style="background-color: transparent;height: 100%;" bindtap="closeEdit"></view>
-  <view class="poi-edit" animation="{{editContentAnimation}}" style="bottom:{{keyboardHeight}}px">
+  <view class="poi-edit" style="bottom:{{keyboardHeight}}px">
     <form catchsubmit="formSubmit" catchreset="formReset">
    
       <view class="input-cell" style="border-bottom: 1rpx solid #dedede;">
@@ -90,7 +95,7 @@
         <input type="text" name="title" value="{{poi.title}}"/>
       </view>                
       <view class="input-cell">
-        <textarea disable-default-padding	 name="remark" cursor-spacing="100" fixed	 value="{{poi.remark}}" maxlength="-1" bindblur="poiEditBlur" bindfocus="poiEditFocus" adjust-position="{{false}}" show-confirm-bar="{{false}}"></textarea>
+        <textarea disable-default-padding	 name="remark" cursor-spacing="100"  value="{{poi.remark}}" maxlength="-1"></textarea>
       </view>      
 
       <view class="flex">
@@ -99,7 +104,7 @@
       </view>
     </form>
   </view>
-</view>
+</page-container>
 </block>
 <block wx:else>
 <view class="container flex" style="justify-content: center;padding-top: 200rpx;">

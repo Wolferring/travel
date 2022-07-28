@@ -166,6 +166,13 @@ const api = (()=>{
         params: query
       })        
     },
+    sendLoginSMS(query){
+      return service({
+        url:`/sms/l`,
+        method:'GET',
+        params: query
+      })        
+    },    
     register(obj){ 
         return service({
             url:`/register`,
@@ -173,6 +180,15 @@ const api = (()=>{
             data: obj
         })   
     },
+    loginWX(code){
+      return service({
+        url:`/login/wx`,
+        method:'POST',
+        data: {
+          code:code
+        }
+      })  
+    },    
     bindWX(code){
       return service({
         url:`/bindWX`,
@@ -180,13 +196,73 @@ const api = (()=>{
         data: {
           code:code
         }
-    })  
+      })  
     },
+    createFamily(data){
+      return service({
+        url:`/family`,
+        method:'POST',
+        data: data
+      })  
+    },    
+    getFamily(){
+      return service({
+        url:`/family`,
+        method:'GET'
+      })         
+    },    
+    getFamilyDetail(id){
+      return service({
+        url:`/family/`+id,
+        method:'GET'
+      })         
+    },   
+    getFamilyPoints(id){
+      return service({
+        url:`/points/family/`+id,
+        method:'GET'
+      })         
+    },  
+    getFamilyCertify(){
+      return service({
+        url:'/certify/family',
+        method:'GET'
+      })         
+    }, 
+    familyCertify(data){
+      return service({
+        url:`/certify/family`,
+        method:'POST',
+        data: data
+      })        
+    },
+    refuseFamilyCertify(){
+      return service({
+        url:`/refuse/family`,
+        method:'POST',
+        data: data
+      })         
+    },         
+    getShareFamilyTicket(){
+      return service({
+        url:'/share/familyTicket',
+        method:'GET'
+      })         
+    },       
     getRandomCover(query){
       return service({
         url:`/points/rand`,
         method:'GET'
       })         
+    },
+    joinFamily(id){
+      return service({
+        url:`/family/join`,
+        method:'POST',
+        data: {
+          family_id:id
+        }
+      })      
     },
     getOneWord(){
       return axios.get(
