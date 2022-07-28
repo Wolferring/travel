@@ -2,6 +2,7 @@ const Router = require('koa-router')
 const route = new Router()
 const pointModel = require('../store/points.js');
 const imageModel = require('../store/image.js');
+const familyModel = require('../store/family.js')
 const config = require("../store/config.js")
 const path = require('path')
 const token = require('../util/token.js')
@@ -66,6 +67,42 @@ route
     ctx.body={
         status:1,
         data:ps
+    }    
+})
+.get("/points/family/:id",async (ctx,next)=>{
+    let hasJoin = await familyModel.findFamilyByUser(ctx.state.user.id)
+    if(hasJoin.length){
+        let join = hasJoin.some((i)=>{
+            return i.id==ctx.params.id
+        })
+        if(!join){
+            ctx.body={
+                status:0,
+                msg:"没有访问权限"
+            }           
+            return false  
+        }
+      
+    }
+    if(!hasJoin.length){
+      
+    }    
+    let ps = await pointModel.findPointsByFamily(ctx.params.id,ctx.state.user.id)
+    if(Object.prototype.toString.call(ps)=="[object Object]"){
+        ps = [ps]
+    }
+    if(ps&&ps.length){
+        ps.forEach(poi=>{
+            if(poi.images){
+                poi.images = resolveImages(poi.images)
+            }
+        })    
+    }
+    ctx.body={
+        status:1,
+        data:{
+            points:ps
+        }
     }    
 })
 .get("/points/city",async (ctx,next)=>{

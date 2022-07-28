@@ -117,7 +117,30 @@ let findPointsByTime = function(uid,limit=4) {
   ORDER BY points.dateTime DESC limit ${(pageNum-1)*pageSize},${pageSize};`
   return mysql.query( _sql )
 }
-
+let findPointsByFamily = function(fid) {
+  let _sql = `
+  SELECT 
+  points.*,
+  user.nickname as unickname,
+  JSON_ARRAYAGG(
+      JSON_OBJECT(
+          "id",images.id,
+          "url",images.url,
+          "thumb",images.thumb
+      )
+  ) as images
+  from points 
+  LEFT JOIN images 
+  ON images.pid = points.id 
+  LEFT JOIN user
+  ON user.id = points.uid
+  WHERE points.uid in (SELECT u_id from family_relation WHERE family_relation.family_id=${fid}) 
+  AND points.status = 'ACTIVE'
+  AND points.scope = 'PUBLIC'
+  GROUP BY points.id
+  ORDER BY dateTime DESC  `
+  return mysql.query( _sql )
+}
 let findPointsByGroup = function(uid) {
   let _sql = `SELECT province FROM points WHERE status = 'ACTIVE' and uid = ${uid} GROUP BY province`
   return mysql.query( _sql )
@@ -172,6 +195,7 @@ let updatePoint = function(value,pid,uid) {
 }
 
 module.exports = {
+    findPointsByFamily,
     findPoints,
     findDeletePoints,
     findPointById,
