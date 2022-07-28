@@ -5,7 +5,9 @@ let findFamilyByUser = async (uid)=>{
   let _sql = `
   WITH t as (select 
 	family.nickname,
+    family.create_time,
 	family.id,
+	family.status,
 	count(family_relation.id) AS 'joined',
 	user.id as 'owner_id',
 	user.nickname as 'owner'
@@ -15,7 +17,9 @@ let findFamilyByUser = async (uid)=>{
 	INNER JOIN family_relation 
 	on family.id=family_relation.family_id
 	AND family_relation.u_id=${uid}
-	GROUP BY family.id),
+    AND family_relation.status='ACTIVE'
+    WHERE family.status = 'ACTIVE'
+	GROUP BY family.id ),
     r as (
         SELECT  
         JSON_ARRAYAGG(
@@ -27,7 +31,7 @@ let findFamilyByUser = async (uid)=>{
         family_id as id 
         from family_relation 
         INNER JOIN user ON user.id = family_relation.u_id
-        WHERE  family_id in (select id from t)
+        WHERE  family_id in (select id from t)  AND status='ACTIVE'
         GROUP BY family_id  )
     SELECT t.*,r.users from t INNER JOIN r on t.id=r.id;
   `  
@@ -68,7 +72,7 @@ let findFamilyById = async (id,uid)=>{
 			on family.id=family_relation.family_id  
 			and family_relation.u_id=${uid}
 			and family_relation.status!='DELETE'
-        WHERE family.id=${id}),
+        WHERE family.id=${id} AND family.status = 'ACTIVE'),
       t as (SELECT  
         JSON_ARRAYAGG(
             JSON_OBJECT(
@@ -79,20 +83,51 @@ let findFamilyById = async (id,uid)=>{
         family_id as id 
         from family_relation 
         INNER JOIN user ON user.id = family_relation.u_id
-        WHERE family_id = ${id} )
+        WHERE family_id = ${id} AND status='ACTIVE')
         SELECT f.*,t.users from f INNER JOIN t on f.id=t.id;
       `  
       let result = await mysql.query( _sql)
       return result
 }
 let joinFamily = async (id,uid)=>{
-    let _sql = `
-    insert into family_relation 
-    set family_id='${id}',
-    u_id=${uid};`
+    let _sql = ``
+    let hasRelation = await mysql.query(`
+        SELECT * from family_relation WHERE family_id=${id} AND u_id=${uid}
+    `)
+    if(hasRelation&&hasRelation.id){
+        _sql = `
+        UPDATE family_relation SET 
+        status = 'ACTIVE' 
+        where family_id = ${id} and u_id = ${uid};        
+        `
+    }else{
+        _sql = `
+        insert into family_relation 
+        set family_id='${id}',
+        u_id=${uid},
+        status='ACTIVE';`
+    }
+
     let result = await mysql.query( _sql ) 
     return result
-  }
+}
+let leaveFamily = async (id,uid)=>{
+    let _sql = `
+    UPDATE family_relation SET 
+    status = 'LEAVE' 
+    where family_id = ${id} and u_id = ${uid};`
+    let result = await mysql.query( _sql ) 
+    return result
+}
+let isFamilyJoined = async (id,uid)=>{
+    let _sql = `
+    SELECT * from family_relation 
+    where u_id=${uid} 
+    AND family_id=${id}
+    AND status='ACTIVE'`
+    let result = await mysql.query( _sql ) 
+    return result
+}
 let insertFamily = async (nickname,uid)=>{
   let _sql = `
   insert into family 
@@ -109,8 +144,10 @@ let removeCommentById = function(id,uid) {
   return mysql.query( _sql )
 }
 module.exports = {
+    isFamilyJoined,
     insertFamily,
     joinFamily,
+    leaveFamily,
     findFamilyByUser,
     findFamilyById,
     findOwnedFamilyByUser

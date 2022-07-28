@@ -31,6 +31,15 @@ const util = (()=>{
     resolveImagePath:(path)=>{
       return "//cdn.whimsylove.cn"+path
     },
+    getWXActivity:async (openid)=>{
+      const wxToken = await wechat.getAccessToken() 
+      return  axios.get('https://api.weixin.qq.com/cgi-bin/message/wxopen/activityid/create', {
+          params: {
+              access_token:wxToken,
+              openid:openid
+          }
+      })
+    },
     sendCommentWXNotify:async (params)=>{
       const wxToken = await wechat.getAccessToken() 
       let query = params
