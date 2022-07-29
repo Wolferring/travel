@@ -177,22 +177,19 @@ route
     // })       
 })
 .delete("/family/:id",async (ctx,next)=>{
-    // let comment = await commentModel.findCommentById(ctx.params.id)
-    // console.log(comment,ctx.state.user.id)
-    // if(comment&&comment.from_id==ctx.state.user.id){
-    //     await commentModel.removeCommentById(ctx.params.id,ctx.state.user.id)
-    //     .then(async(res)=>{
-    //         ctx.body={
-    //             status:1,
-    //             data:{}
-    //         }    
-    //     })
-    // }else{
-    //     ctx.body={
-    //         status:0,
-    //         msg:"没有操作权限"
-    //     }          
-    // }
+    let isOwned = await familyModel.isFamilyOwned(ctx.params.id,ctx.state.user.id)
+    if(!isOwned){
+        ctx.body={
+            status:0,
+            msg:"没有操作权限"
+        }           
+        return false          
+    }
+    let result = await familyModel.removeFamily(ctx.params.id)
+    ctx.body={
+        status:1,
+        msg:"解散成功"
+    }
 
 })
 module.exports = route

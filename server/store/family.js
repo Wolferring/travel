@@ -47,7 +47,7 @@ let findOwnedFamilyByUser = async (uid,$where="")=>{
     //   let _sql = `SELECT * from family_relation where u_id = ${uid} and status='ACTIVE' order by id desc;`
     
       let _sql = `
-      SELECT * from family WHERE owner=${uid} ${$where}
+        SELECT * from family WHERE owner=${uid} AND status = 'ACTIVE'
       `  
       let result = await mysql.query( _sql)
       if(!result) return []
@@ -214,6 +214,14 @@ let removeMember = function(id,uid) {
   SET status = 'INACTIVE' where family_id = ${id} and u_id = ${uid};`
   return mysql.query( _sql )
 }
+
+let removeFamily = async function(id) {
+    let delete_relation = ` DELETE from family_relation WHERE family_id=${id}`
+    let delete_family = `DELETE from family WHERE id=${id} limit 1`
+    await mysql.query( delete_relation )
+    return mysql.query( delete_family )
+    // return mysql.query( _sql )
+  }
 module.exports = {
     isFamilyOwned,
     isFamilyJoined,
@@ -226,5 +234,6 @@ module.exports = {
     certifyRequest,
     refuseRequest,
     removeMember,
+    removeFamily,
     findPendingRequestByUser
 }
