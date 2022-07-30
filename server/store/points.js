@@ -134,7 +134,9 @@ let findPointsByFamily = function(fid) {
   ON images.pid = points.id 
   LEFT JOIN user
   ON user.id = points.uid
-  WHERE points.uid in (SELECT u_id from family_relation WHERE family_relation.family_id=${fid}) 
+  WHERE 
+  points.uid in 
+  (SELECT u_id from family_relation WHERE family_relation.family_id=${fid} AND family_relation.status='ACTIVE') 
   AND points.status = 'ACTIVE'
   AND points.scope = 'PUBLIC'
   GROUP BY points.id
