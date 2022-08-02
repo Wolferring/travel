@@ -11,7 +11,9 @@
 <scroll-view class="" enhanced scroll-y="{{true}}" enable-back-to-top="{{true}}" style="height: {{contentHeight}}px;" id="scroll-content">
 <view class="container mine-content" >
   <view class="section">
-    <map name=""></map>
+    <view class="map-container">
+      <map include-points="{{mapMarkers}}" scale="12" min-scale="4" max-scale="18" id="map" markers="{{mapMarkers}}"></map>
+    </view>
   </view>
   <view class="section" wx:if="{{sta.total==0}}">
     <view class="section-content poi-item" >

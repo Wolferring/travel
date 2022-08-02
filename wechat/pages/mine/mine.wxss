@@ -6,6 +6,17 @@
   box-sizing: border-box;
   border-bottom: 1rpx solid #dedede;
 }
+.map-container{
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0rpx 10rpx 30rpx #ccc;
+  transform: translateY(0);
+}
+#map{
+  width: 100%;
+  height: 400rpx;
+  border-radius: 20rpx;
+}
 .container{
   padding:0 10rpx;
 }
@@ -23,15 +34,12 @@
   font-size: 28rpx;
   color: #999;
 }
-.section-content{
-
-}
 .mine-content{
   padding: 40rpx 10rpx;
   padding-bottom: 100rpx;
 }
 .mine-content .section{
-  margin-bottom: 80rpx;
+  margin-bottom: 40rpx;
 }
 .poi-item{
   /* min-height: 180rpx; */

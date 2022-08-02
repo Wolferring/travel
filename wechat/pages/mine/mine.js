@@ -7,6 +7,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    mapMarkers:[],
     pagePois:[],
     pageShow:false,
     pageTitle:null,
@@ -75,9 +76,28 @@ Page({
         _this = this; 
     api.getPointsStatistic()
     .then(res=>{
-      _this.setData({
-        sta:res.data
+
+      let markers = res.data.pois.map(item=>{
+        return {
+          title:item.id,
+          width:20,
+          height:20,
+          iconPath:'../../src/images/locationfill.png',
+          id:item.id,
+          latitude:parseFloat(item.latitude),
+          longitude:parseFloat(item.longitude)
+        }
       })
+      _this.setData({
+        sta:res.data,
+        mapMarkers:markers
+      })   
+      // let map = wx.createMapContext("map")
+      // wx.nextTick(function(){
+      //   console.log(markers)
+      //   map.includePoints(markers)
+      // })
+   
     })
     if(app.globalData.USER){
       this.setData({

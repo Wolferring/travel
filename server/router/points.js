@@ -188,6 +188,7 @@ route
         } 
         pois.push({
             id:ps[i].id,
+            title:ps[i].address,
             latitude:gps[1],
             longitude:gps[0]
         })      
