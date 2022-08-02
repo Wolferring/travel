@@ -273,9 +273,15 @@ const api = (()=>{
         }
       })      
     }, 
+    removeFamily(fid){
+      return service({
+        url:`/family/${fid}`,
+        method:'DELETE'
+      })      
+    },    
     removeFamilyMember(fid,uid){
       return service({
-        url:`/family/leave`,
+        url:`/family/member`,
         method:'DELETE',
         data: {
           family_id:fid,

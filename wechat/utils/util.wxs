@@ -31,7 +31,7 @@ var formatTime = function (strDate, format = "yyyy-MM-dd hh:mm:ss") {
 
 var shortRemark = function(str,len) {
   var length = len||80
-  return str.length>length?str.substring(0,length)+"......\n+"+(str.length-length)+"字":str
+  return str.length>length?str.substring(0,length)+"...... +"+(str.length-length)+"字":str
 }
 module.exports = {
   shortRemark:shortRemark,

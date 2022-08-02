@@ -35,7 +35,7 @@
         </view>      
         <view class="input-cell">
             <view class="weui-cell__bd">
-              <picker name="dateTime" bindchange="dateTimeChange" mode="date" class="input flex">
+              <picker name="dateTime" bindchange="dateTimeChange" mode="date" class="input flex" value="{{create.dateTime}}">
                 <view class="flex" style="height: 80rpx;line-height: 80rpx;width:700rpx;">
                   <text wx:if="{{!create.dateTime}}" style="color: #808080;">去的时间</text>
                   <text style="clear: #000;">{{create.dateTime}}</text>              

@@ -84,7 +84,6 @@ route
     //     }
       
     // }
-    console.log(hasJoin)
     if(!hasJoin){
         ctx.body={
             status:0,
@@ -174,24 +173,32 @@ route
 .get("/statistic",async (ctx,next)=>{   
     let ps = await pointModel.findPoints(ctx.state.user.id)||[],
         province = [],
-        city = [];
+        city = [],
+        pois = [];
     if(Object.prototype.toString.call(ps)=="[object Object]"){
         ps = [ps]
     }
     for(let i = 0;i<ps.length;i++){
+        let gps = ps[i].lnglat.split(',')
         if(province.indexOf(ps[i].province)<0){
             province.push(ps[i].province)
         }
         if(city.indexOf(ps[i].city)<0){
             city.push(ps[i].city)
-        }       
+        } 
+        pois.push({
+            id:ps[i].id,
+            latitude:gps[1],
+            longitude:gps[0]
+        })      
     }
     ctx.body={
         status:1,
         data:{
+            pois,
             total:ps.length,
-            province:province,
-            city:city
+            province,
+            city
         }
     }    
 })

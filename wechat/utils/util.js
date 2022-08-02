@@ -10,6 +10,7 @@ const formatTime = date => {
 }
 const openLogin = ()=>{
   let current = getCurrentPages()
+  console.log(current)
   var hasLoginOpen = current.some(function (currentValue) {
     return currentValue.route == 'pages/login/login';
   })

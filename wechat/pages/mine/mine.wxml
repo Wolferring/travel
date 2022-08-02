@@ -8,8 +8,11 @@
     </view>
   </view>  
 </view>
-<scroll-view class="" enhanced scroll-y="{{true}}" enable-back-to-top="{{true}}" style="height: {{contentHeight - statusBarHeight}}px;" id="scroll-content">
+<scroll-view class="" enhanced scroll-y="{{true}}" enable-back-to-top="{{true}}" style="height: {{contentHeight}}px;" id="scroll-content">
 <view class="container mine-content" >
+  <view class="section">
+    <map name=""></map>
+  </view>
   <view class="section" wx:if="{{sta.total==0}}">
     <view class="section-content poi-item" >
       <view>
@@ -23,7 +26,7 @@
       <text class="h1">{{sta.city.length}}个</text>
     </view>
     <view class="section-content poi-item" >
-      <view  wx:for="{{sta.city}}" class="city-name" >
+      <view  wx:for="{{sta.city}}" wx:key="index" class="city-name" >
         <view  bindtap="openCityView" data-city="{{item}}" >
         {{item}}<image src="../../src/images/right-white.png" style="width: 25rpx;height: 25rpx;"></image>
         </view>      
@@ -37,7 +40,7 @@
       <text class="h1">{{sta.province.length}}个</text>
     </view>
     <view class="section-content poi-item" >
-      <view wx:for="{{sta.province}}" class="city-name">
+      <view wx:for="{{sta.province}}" wx:key="index" class="city-name">
         <view  bindtap="openProvinceView" data-province="{{item}}" >{{item}}<image src="../../src/images/right-white.png" style="width: 25rpx;height: 25rpx;"></image>
         </view>      
       </view>
@@ -68,7 +71,7 @@
     </view>
 		<scroll-view class="page-content" scroll-y style="height: {{contentHeight*0.8}}px;">
       <view style="padding:0 20rpx;padding-bottom: 60rpx;">
-        <view wx:for="{{pagePois}}" class="poi-item" bindtap="openDetail" data-poi="{{item}}">
+        <view wx:for="{{pagePois}}" wx:key="id" class="poi-item" bindtap="openDetail" data-poi="{{item}}">
           <view style="width: 100%;height: 300rpx;margin-bottom: 20rpx;">
             <image src="{{item.images[0]['url']}}" style="width: 100%;height: 100%;" mode="aspectFill"></image>
           </view>

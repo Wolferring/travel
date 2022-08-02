@@ -1,4 +1,5 @@
-const bmap = require('../../libs/bmap.js'); 
+const util = require('../../utils/util.js');
+
 const api = require('../../utils/fetch.js');
 const ADDRESS_REG='(?<province>[^省]+自治区|.*?省|.*?行政区|.*?市)(?<city>[^市]+自治州|.*?地区|.*?行政单位|.+盟|市辖区|.*?市|.*?县)(?<county>[^县]+县|.+区|.+市|.+旗|.+海域|.+岛)?(?<town>[^区]+区|.+镇)?(?<village>.*)'
 Page({ 
@@ -213,8 +214,40 @@ Page({
         tempImages:images
       })
     },
+    parseImage(data){
+      // data为ArrayBuffer类型的JPG文件的二进制数据
+      let arr=new Uint8Array(data);
+      let base=0; // TIFF数据头开始地址
+      let timeTagIndex=0; // EXIF时间信息标记开始地址
+      for(let i=0;i<arr.length;i++){
+          // 获取TIFF数据头地址
+          if(arr[i]==69 && arr[i+1]==120 && arr[i+2]==105 && arr[i+3]==102 && arr[i+4]==0 && arr[i+5]==0){
+              base=i+6;
+          }
+          // 获取时间标签地址
+          if(arr[i]==0x90 && arr[i+1]==0x03){
+              timeTagIndex=i;
+              break; // 因为这个if的条件比较容易重复，但是我们要的是第一个，所以这里就可以直接退出了
+          }
+      }
+      
+      let bias=0; // 偏移地址
+      for(let i=0;i<=3;i++){
+          bias=bias<<8;
+          bias+=arr[timeTagIndex+8+i];
+      }        
+      let datetime_addr_index=base+bias; // 实际地址
+
+      let datetimestr=""; // 日期字符串
+      for(let i=datetime_addr_index;i<=datetime_addr_index+19;i++){
+          datetimestr+=String.fromCharCode(arr[i]);
+      }
+      console.log(datetimestr)
+      return datetimestr.replaceAll(':','/').split(" ")[0]
+  },
     chooseImages(){
-      let _this = this
+      let _this = this,
+          create = this.data.create;
       let onImageChoose = function(e){
         if(e.tempFiles.length){
           let images = e.tempFiles.map(item=>{
@@ -233,7 +266,7 @@ Page({
       wx.chooseMedia({
         mediaType:["image"],
         sourceType:["album"],
-        sizeType:["compressed"],
+        sizeType:["original"], 
         success:onImageChoose
       })
     },

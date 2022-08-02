@@ -73,7 +73,7 @@
         {
           "name": "共享组-分享",
           "pathName": "pages/family/detail",
-          "query": "id=10&share=1",
+          "query": "id=14&share=1",
           "launchMode": "default",
           "scene": null
         }

@@ -7,8 +7,12 @@ const api = require("../../utils/fetch")
 let bannerLoading = false
 Page({
   data: {
+    user:{
+      id:""
+    },
     banner:{
-      id:null
+      id:"",
+      uid:""
     },
     bannerLoading:false,
     isLogin:false,
@@ -29,7 +33,8 @@ Page({
   },
   renderBanner(){
     let _this = this
-    if(!_this.data.banner.id&&!_this.data.bannerLoading){
+
+    if(_this.data.user.id!=_this.data.banner.uid&&!_this.data.bannerLoading){
       _this.setData({
         bannerLoading:true
       })      
@@ -38,7 +43,7 @@ Page({
         if(res.data){
           _this.setData({
             banner:res.data
-          })      
+          })             
         }
       })  
       .finally(res=>{
@@ -55,9 +60,16 @@ Page({
           isLogin: newValue
       })
       if(newValue){
-        _this.renderBanner()
+        // _this.renderBanner()
       }
-    })    
+    }) 
+    app.makeWatcher('USER.userInfo', app.globalData, function(newValue) {
+      _this.setData({
+        user:newValue
+      })  
+      // console.log(newValue)     
+      // _this.renderBanner()
+    })        
   },
   onShow() {
     let _this = this
@@ -67,13 +79,12 @@ Page({
         points:res.data.points
       })
     })
-    _this.renderBanner()      
-
     if(app.globalData.USER){
       this.setData({
         user:app.globalData.USER.userInfo,
         isLogin:app.globalData.USER.isLogin
       }) 
+      _this.renderBanner()
     }    
   },
   openDetail(e){

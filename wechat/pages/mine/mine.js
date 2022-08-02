@@ -13,7 +13,7 @@ Page({
     isLogin:false,
     windowHeight:400,
     statusBarHeight:44,
-    contentHeight:300,
+    contentHeight:400,
     user:{},
     sta:{}
   },
