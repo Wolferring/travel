@@ -33,7 +33,7 @@ Page({
   },
   renderBanner(){
     let _this = this
-
+    console.log(_this.data.user)
     if(_this.data.user.id!=_this.data.banner.uid&&!_this.data.bannerLoading){
       _this.setData({
         bannerLoading:true
@@ -60,14 +60,14 @@ Page({
           isLogin: newValue
       })
       if(newValue){
-        // _this.renderBanner()
+        _this.renderBanner()
       }
     }) 
     app.makeWatcher('USER.userInfo', app.globalData, function(newValue) {
       _this.setData({
         user:newValue
       })  
-      // console.log(newValue)     
+      console.log(newValue)     
       // _this.renderBanner()
     })        
   },
@@ -79,7 +79,7 @@ Page({
         points:res.data.points
       })
     })
-    if(app.globalData.USER){
+    if(app.globalData.USER.isLogin){
       this.setData({
         user:app.globalData.USER.userInfo,
         isLogin:app.globalData.USER.isLogin

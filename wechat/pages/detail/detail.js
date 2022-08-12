@@ -12,6 +12,7 @@ Page({
     poi:null,
     comments:[],
     scopeIndex:0,
+    scope_list:[],
     scopeType:[
       {
         desc:"公开（可分享）",
@@ -20,8 +21,16 @@ Page({
       {
         desc:"仅自己可见",
         value:"private"
-      }
-    ],    
+      },
+      {
+        desc:"部分可见",
+        value:"must_in"
+      },
+      {
+        desc:"不给谁看",
+        value:"not_in"
+      }                    
+    ],  
     isEditShow:false,
     editContainerAnimation:null,
     editContentAnimation:null,
@@ -36,7 +45,6 @@ Page({
    * 生命周期函数--监听页面加载
    */
   render(poi){
-    console.log(poi)
     let window = wx.getSystemInfoSync(),
         windowWidth = 0,
         windowHeight = 0,
@@ -47,9 +55,14 @@ Page({
         windowHeight = window.windowHeight
         w = windowWidth/(poi.title.length+1)
     }
+    let scope_list = []
+    if(poi.scope=="must_in"||poi.scope=="not_in"){
+      scope_list = poi.scoped_list.split(',')
+    }
     _this.setData({
       poi:poi,
-      scopeIndex:{'private':1,'public':0}[poi.scope],
+      scope_list:scope_list,
+      scopeIndex:{'private':1,'public':0,'must_in':2,'not_in':3}[poi.scope],
       titleFontSize:w>32?32:w
     })        
     let scrollContent = wx.createSelectorQuery()
@@ -152,7 +165,6 @@ Page({
       api.getSharedPoint(option.id)
       .then(res=>{
         _this.render(res.data)
-
       }) 
     }
 
@@ -228,24 +240,38 @@ Page({
     this.setData({
       isEditShow:true
     })    
-    
-    // let ani = wx.createAnimation({
-    //   delay: 200,
-    //   timingFunction: 'ease',
-    //   duration:300
-    // })
-    // let ani2 = wx.createAnimation({
-    //   delay: 0,
-    //   timingFunction: 'ease',
-    //   duration:400
-    // })    
-    // ani.translateY(0).step()
-    // ani2.opacity(1).step()
-    // this.setData({
-    //   editContainerAnimation:ani2.export(),
-    //   editContentAnimation:ani.export()
-    // })
   },
+  openScope(){
+    let _this = this
+    wx.navigateTo({
+      url: '/pages/create/scope',
+      events: {
+        // 为指定事件添加一个监听器，获取被打开页面传送到当前页面的数据
+        acceptDataFromOpenedPage: function(data) {
+          let scope_list = data.list.length==0?[]:data.list.map(item=>item.id)
+          let scopeIndex = 0;
+          _this.data.scopeType.forEach((item,index)=>{
+            if(item.value==data.scope){
+              scopeIndex=index
+            }
+            console.log(item,index)
+          })
+          _this.setData({
+            scope_list:scope_list,
+            scopeIndex:scopeIndex
+          })
+        },
+      },
+      success: function(res) {
+        // 通过 eventChannel 向被打开页面传送数据
+        res.eventChannel.emit('acceptDataFromOpenerPage', {
+          scope:_this.data.scopeType[_this.data.scopeIndex]['value'],
+          scope_list:_this.data.scope_list||[]
+        })
+
+      }
+    })      
+  },  
   scopeChange(e){
     this.setData({
       scopeIndex:e.detail.value,
@@ -253,25 +279,7 @@ Page({
   },  
   closeEdit(){
     let _this = this
-    // let ani = wx.createAnimation({
-    //   delay: 0,
-    //   timingFunction: 'ease',
-    //   duration:300
-    // })
-    // let ani2 = wx.createAnimation({
-    //   delay: 0,
-    //   timingFunction: 'ease',
-    //   duration:400
-    // })      
-    // ani.translateY(300).step()    
-    // ani2.opacity(0).step()
-    // this.setData({
-    //   editContainerAnimation:ani2.export(),
-    //   editContentAnimation:ani.export(),
-    //   keyboardHeight:0
-    // })
-    // setTimeout(function(){
-    // },300)
+   
     _this.setData({
       isEditShow:false
     })
@@ -280,6 +288,7 @@ Page({
   formSubmit(e){
     let current = this.data.poi,
         _this = this,
+        scope_list = this.data.scope_list,
         scope = this.data.scopeType[this.data.scopeIndex]['value'], 
         newTitle = e.detail.value.title,
         newRemark = e.detail.value.remark;
@@ -287,6 +296,7 @@ Page({
       title:newTitle,
       remark:newRemark,
       scope:scope,
+      scope_list:scope_list,
       dateTime:new Date(current.dateTime).toISOString().slice(0, 19).replace('T', ' ')
     })
     .then(res=>{

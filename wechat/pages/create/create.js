@@ -15,7 +15,15 @@ Page({
           {
             desc:"仅自己可见",
             value:"private"
-          }
+          },
+          {
+            desc:"部分可见",
+            value:"must_in"
+          },
+          {
+            desc:"不给谁看",
+            value:"not_in"
+          }                    
         ],
         create:{
           dateTime:"",
@@ -24,7 +32,8 @@ Page({
           address:"",
           city:"",
           province:"",
-          scope:"public"
+          scope:"public",
+          scoped_list:[]
         },
         latitude: '', 
         longitude: '', 
@@ -149,14 +158,7 @@ Page({
         create:form
       })
     },
-    scopeChange(e){
-      let create = this.data.create
-      create.scope = this.data.scopeType[e.detail.value]['value']
-      this.setData({
-        scopeIndex:e.detail.value,
-        create:create
-      })
-    },
+
     async uploadImages(){
       let uploadedImages = []
       let images = this.data.tempImages,
@@ -295,5 +297,45 @@ Page({
       }
       wx.chooseLocation(query)
      
+    },
+    scopeChange(e){
+      let create = this.data.create
+      create.scope = this.data.scopeType[e.detail.value]['value']
+      this.setData({
+        scopeIndex:e.detail.value,
+        create:create
+      })
+    },    
+    openScope(){
+      let _this = this
+      wx.navigateTo({
+        url: '/pages/create/scope',
+        events: {
+          // 为指定事件添加一个监听器，获取被打开页面传送到当前页面的数据
+          acceptDataFromOpenedPage: function(data) {
+            let create = _this.data.create
+            create.scope = data.scope
+            create.scoped_list = data.list.length==0?[]:data.list.map(item=>item.id)
+            let scopeIndex = 0;
+            _this.data.scopeType.forEach((item,index)=>{
+              if(item.value==data.scope){
+                scopeIndex=index
+              }
+              console.log(item,index)
+            })
+            _this.setData({
+              scopeIndex:scopeIndex,
+              create:create
+            })
+          },
+        },
+        success: function(res) {
+          // 通过 eventChannel 向被打开页面传送数据
+          res.eventChannel.emit('acceptDataFromOpenerPage', {
+            scope:_this.data.create.scope,
+            scope_list:_this.data.create.scope_list
+          })
+        }
+      })      
     }
 })

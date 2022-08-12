@@ -76,6 +76,13 @@
           "query": "id=14&share=1",
           "launchMode": "default",
           "scene": null
+        },
+        {
+          "name": "选择权限",
+          "pathName": "pages/create/scope",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
         }
       ]
     }

@@ -205,6 +205,7 @@ route
 })
 .post("/points",async (ctx,next)=>{
     let point = ctx.request.body
+    let scoped_list = point.scoped_list.length>0?point.scoped_list.join(","):''
     await pointModel.insertPoint([
         point.title,
         point.address,
@@ -214,6 +215,7 @@ route
         point.province||point.city,
         point.city||point.province,
         point.scope||"public",
+        scoped_list,
         ctx.state.user.id   
     ],ctx.state.user.id) 
     .then(async(res)=>{
@@ -270,11 +272,14 @@ route
 })
 .put("/points/:id",async(ctx,next)=>{
     let point = ctx.request.body
+    console.log(point)
+    let scoped_list = point.scoped_list.length>0?point.scoped_list.join(","):''
     await pointModel.updatePoint([
         point.title,
         point.remark,
         point.dateTime,
-        point.scope
+        point.scope,
+        scoped_list
     ],
     ctx.params.id,
     ctx.state.user.id)  

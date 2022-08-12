@@ -30,7 +30,7 @@
     "packNpmManually": false,
     "enableEngineNative": false,
     "packNpmRelationList": [],
-    "minifyWXSS": true,
+    "minifyWXSS": false,
     "showES6CompileOption": false,
     "minifyWXML": true,
     "useStaticServer": true,

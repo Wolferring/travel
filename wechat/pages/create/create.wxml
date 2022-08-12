@@ -69,12 +69,10 @@
         </view>        
         <view class="input-cell">
             <view class="weui-cell__bd">
-              <picker name="dateTime" bindchange="scopeChange" mode="selector" range="{{scopeType}}" range-key="desc" value="{{scopeIndex}}" class="input flex">
-                <view class="flex" style="height: 80rpx;line-height: 80rpx;width:700rpx;">
+              <view bindtap="openScope" class="input flex">
                   <text style="color: #808080;">谁可以看</text>
                   <text style="clear: #000;font-weight: 500;">{{scopeType[scopeIndex]['desc']}}</text>              
-                </view>
-              </picker>
+              </view>
               
             </view>
         </view>                   

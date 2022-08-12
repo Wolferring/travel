@@ -139,6 +139,8 @@ let findPointsByFamily = function(fid) {
   (SELECT u_id from family_relation WHERE family_relation.family_id=${fid} AND family_relation.status='ACTIVE') 
   AND points.status = 'ACTIVE'
   AND points.scope = 'PUBLIC'
+  OR (points.scope = 'MUST_IN' AND  FIND_IN_SET(${fid},points.scoped_list))
+  OR (points.scope = 'NOT_IN' AND  NOT FIND_IN_SET(${fid},points.scoped_list) )
   GROUP BY points.id
   ORDER BY dateTime DESC  `
   return mysql.query( _sql )
@@ -183,6 +185,7 @@ let insertPoint = function(value,uid) {
   province=?,
   city=?,
   scope=?,
+  scoped_list=?,
   uid=?;`
   return mysql.query( _sql, value )
 }
@@ -191,7 +194,8 @@ let updatePoint = function(value,pid,uid) {
   set title=?,
   remark=?,
   dateTime=?,
-  scope=? 
+  scope=?,
+  scoped_list=?
   where id=${pid} and uid = ${uid};`
   return mysql.query( _sql, value )
 }

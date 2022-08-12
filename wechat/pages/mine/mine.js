@@ -7,6 +7,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    mapHeight:400,
     mapMarkers:[],
     pagePois:[],
     pageShow:false,
@@ -79,9 +80,9 @@ Page({
 
       let markers = res.data.pois.map(item=>{
         return {
-          title:item.id,
-          width:20,
-          height:20,
+          title:item.title,
+          width:25,
+          height:25,
           iconPath:'../../src/images/locationfill.png',
           id:item.id,
           latitude:parseFloat(item.latitude),
@@ -145,6 +146,7 @@ Page({
   },
   openDetail(e){
     let poi = e.currentTarget.dataset.poi
+    poi.owned = true
     wx.navigateTo({
       url: '/pages/detail/detail',
       success: function(res) {
@@ -152,7 +154,7 @@ Page({
         res.eventChannel.emit('sendPoiDetail', poi)
       }
     })    
-  },  
+  },
   openProvinceView(e){
     let _this = this
     let province = e.currentTarget.dataset.province
@@ -171,5 +173,10 @@ Page({
     wx.navigateTo({
       url: '/pages/profile/profile?id='+this.data.user.id,
     })
-  }   
+  },
+  toggleMapExpand(){
+    this.setData({
+      mapHeight:this.data.mapHeight==400?'880':'400'
+    })
+  }  
 })

@@ -11,8 +11,22 @@
 <scroll-view class="" enhanced scroll-y="{{true}}" enable-back-to-top="{{true}}" style="height: {{contentHeight}}px;" id="scroll-content">
 <view class="container mine-content" >
   <view class="section">
+    <view class="section-heading flex">
+      <text class="h1">足迹</text>
+      <text class="h1">{{mapMarkers.length}}个</text>
+    </view>  
     <view class="map-container">
-      <map include-points="{{mapMarkers}}" scale="12" min-scale="4" max-scale="18" id="map" markers="{{mapMarkers}}"></map>
+      <map  
+      subkey="QTSBZ-MCZC2-B3PU4-CTVQP-JDQ72-BGBYM"
+      layer-style="1"
+      include-points="{{mapMarkers}}" 
+      scale="12" 
+      min-scale="4" 
+      max-scale="18" 
+      id="map" 
+      style="height: {{mapHeight}}rpx;"
+      markers="{{mapMarkers}}">
+      </map>
     </view>
   </view>
   <view class="section" wx:if="{{sta.total==0}}">

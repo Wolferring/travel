@@ -8,7 +8,8 @@
     "pages/create/create",
     "pages/map/map",
     "pages/family/family",
-    "pages/family/detail"
+    "pages/family/detail",
+    "pages/create/scope"
   ],
   "requiredPrivateInfos": [
     "chooseLocation"
