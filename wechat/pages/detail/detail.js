@@ -292,11 +292,12 @@ Page({
         scope = this.data.scopeType[this.data.scopeIndex]['value'], 
         newTitle = e.detail.value.title,
         newRemark = e.detail.value.remark;
+        console.log(scope_list)
     api.updatePoint(current.id,{
       title:newTitle,
       remark:newRemark,
       scope:scope,
-      scope_list:scope_list,
+      scoped_list:scope_list,
       dateTime:new Date(current.dateTime).toISOString().slice(0, 19).replace('T', ' ')
     })
     .then(res=>{

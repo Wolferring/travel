@@ -58,6 +58,8 @@
         <view class="flex">
           <text class="h3">{{item.title}}</text>
           <image wx:if="{{item.scope=='private'}}" style="width: 40rpx;height: 40rpx;" src="../../src/images/lock.png" mode="aspectFill"></image>
+          <image wx:if="{{item.scope=='must_in'}}" style="width: 40rpx;height: 40rpx;" src="../../src/images/group-active.png" mode="aspectFill"></image>
+          <image wx:if="{{item.scope=='not_in'}}" style="width: 40rpx;height: 40rpx;" src="../../src/images/group-forbidden.png" mode="aspectFill"></image>
         </view>
         <view class="flex">
           <text class="h4">{{item.address}}</text>

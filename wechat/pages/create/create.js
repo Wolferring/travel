@@ -71,11 +71,13 @@ Page({
         city:this.data.create.city,
         province:this.data.create.province,
         address:this.data.create.address,
-        dateTime:this.data.create.dateTime
+        dateTime:this.data.create.dateTime,
+        scope:this.data.create.scope,
+        scoped_list:this.data.create.scoped_list
       }
       Object.keys(form).forEach(item=>{
         let v = form[item]
-        if(v==null||v==""||v==undefined){
+        if(v===null||v===""||v===undefined){
           wx.showToast({
             title: '请完整填写表单',
             icon: 'error'
@@ -321,7 +323,6 @@ Page({
               if(item.value==data.scope){
                 scopeIndex=index
               }
-              console.log(item,index)
             })
             _this.setData({
               scopeIndex:scopeIndex,
@@ -333,7 +334,7 @@ Page({
           // 通过 eventChannel 向被打开页面传送数据
           res.eventChannel.emit('acceptDataFromOpenerPage', {
             scope:_this.data.create.scope,
-            scope_list:_this.data.create.scope_list
+            scope_list:_this.data.create.scoped_list
           })
         }
       })      

@@ -72,11 +72,45 @@ let findPointStateById = function(pid) {
   return mysql.query( _sql )
 }
 let findPointById = function(value,uid) {
-  let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,",'thumb':'",img.thumb,"'}") as images  from points as p left join images as img on img.pid = p.id where p.id=${value} AND p.uid = ${uid} AND p.status = "ACTIVE"  group by p.id;`
+  // let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,",'thumb':'",img.thumb,"'}") as images  from points as p left join images as img on img.pid = p.id where p.id=${value} AND p.uid = ${uid} AND p.status = "ACTIVE"  group by p.id;`
+  let _sql = `
+  SELECT 
+  points.*,
+  JSON_ARRAYAGG(
+      JSON_OBJECT(
+          "id",images.id,
+          "url",images.url,
+          "thumb",images.thumb
+      )
+  ) as images
+  FROM points
+  INNER JOIN images ON images.pid = points.id
+  WHERE 
+  points.id=${value}
+  AND points.uid=${uid} 
+  AND points.status="ACTIVE"
+  GROUP BY points.id limit 1;`
   return mysql.query( _sql )
 }
 let findSharedPointById = function(value,d) {
-  let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,",'thumb':'",img.thumb,"'}") as images  from points as p left join images as img on img.pid = p.id where p.id=${value} AND p.status = "ACTIVE" AND p.scope = "public"  group by p.id;`
+  // let _sql = `SELECT p.* , GROUP_CONCAT("{'url':'",img.url,"',","'id':",img.id,",'thumb':'",img.thumb,"'}") as images  from points as p left join images as img on img.pid = p.id where p.id=${value} AND p.status = "ACTIVE" AND p.scope = "public"  group by p.id;`
+  let _sql = `
+  SELECT 
+  points.*,
+  JSON_ARRAYAGG(
+      JSON_OBJECT(
+          "id",images.id,
+          "url",images.url,
+          "thumb",images.thumb
+      )
+  ) as images
+  FROM points
+  INNER JOIN images ON images.pid = points.id
+  WHERE 
+  points.id=${value} 
+  AND points.status="ACTIVE"
+  AND points.scope="public"
+  GROUP BY points.id limit 1;`
   return mysql.query( _sql )
 }
 let findPointByRandom = function(uid) {

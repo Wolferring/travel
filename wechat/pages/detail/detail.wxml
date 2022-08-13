@@ -18,6 +18,8 @@
         <view class="flex">
           <text class="h3" style="font-size: {{titleFontSize}}px;">{{poi.title}}</text>
           <image wx:if="{{poi.scope=='private'}}" style="width: 40rpx;height: 40rpx;margin-right: 20rpx;" src="../../src/images/lock.png" mode="aspectFill"></image>
+          <image wx:if="{{poi.scope=='must_in'}}" style="width: 40rpx;height: 40rpx;margin-right: 20rpx;" src="../../src/images/group-active.png" mode="aspectFill"></image>
+          <image wx:if="{{poi.scope=='not_in'}}" style="width: 40rpx;height: 40rpx;margin-right: 20rpx;" src="../../src/images/group-forbidden.png" mode="aspectFill"></image>
         </view>
         <view wx:if="{{author&&!poi.owned}}">
           <text class="p">来自 <text style="color: #06ae56;font-weight: bold;">「{{author}}」</text>的分享</text>

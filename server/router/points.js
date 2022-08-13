@@ -71,19 +71,6 @@ route
 })
 .get("/points/family/:id",async (ctx,next)=>{
     let hasJoin = await familyModel.isFamilyJoined(ctx.params.id,ctx.state.user.id)
-    // if(hasJoin.length){
-    //     let join = hasJoin.some((i)=>{
-    //         return i.id==ctx.params.id&&i.status=='ACTIVE'
-    //     })
-    //     if(!join){
-    //         ctx.body={
-    //             status:0,
-    //             msg:"没有访问权限"
-    //         }           
-    //         return false  
-    //     }
-      
-    // }
     if(!hasJoin){
         ctx.body={
             status:0,
@@ -244,6 +231,7 @@ route
     }    
 })
 .get("/points/shared/:id",async (ctx,next)=>{
+    console.log(ctx)
     let ps = await pointModel.findSharedPointById(ctx.params.id)
     if(!ps){
         ctx.body={
@@ -272,7 +260,6 @@ route
 })
 .put("/points/:id",async(ctx,next)=>{
     let point = ctx.request.body
-    console.log(point)
     let scoped_list = point.scoped_list.length>0?point.scoped_list.join(","):''
     await pointModel.updatePoint([
         point.title,
